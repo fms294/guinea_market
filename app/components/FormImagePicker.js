@@ -2,7 +2,7 @@ import React from 'react';
 import {useFormikContext} from 'formik';
 
 
-import { ErrorMessage } from './ErrorMessage';
+import ErrorMessage from './forms/ErrorMessage';
 import ImageInputList from './ImageInputList';
 
 
@@ -22,7 +22,8 @@ function FormImagePicker({name}) {
             <ImageInputList 
                 imageUris={imageUris}
                 onAddImage={handleAdd}
-                onRemoveImage={handleRemove} />
+                onRemoveImage={handleRemove} 
+            />
             <ErrorMessage error={errors[name]} visible={touched[name]} />
         </>
   );
