@@ -19,7 +19,7 @@ function ImageInputList({ imageUris = [], onRemoveImage, onAddImage }) {
                     <ImageInput 
                             imageUri={uri} 
                             onChangeImage={() => onRemoveImage(uri)} 
-                            />
+                    />
                     </View>
                         ))}
                     <ImageInput onChangeImage={ uri => onAddImage(uri)} />
