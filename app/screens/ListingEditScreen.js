@@ -11,7 +11,6 @@ import {
 import Screen from "../components/Screen";
 import CategoryPickerItem from "../components/CategoryPickerItem";
 import FormImagePicker from "../components/FormImagePicker";
-import ListingsApi from '../api/listings';
 import useLocation from "../hooks/useLocation";
 import UploadScreen from "./UploadScreen";
 
@@ -37,7 +36,7 @@ function ListingEditScreen() {
 
   const [progress, setProgress] = useState(0);
 
-  const handleSubmit = async(listing) => {
+  const handleSubmit = async(listing, {resetForm}) => {
     setProgress(0);
     setUploadVisible(true)
     const result = await listingsApi.addListing(
@@ -49,6 +48,8 @@ function ListingEditScreen() {
       setUploadVisible(false)
       return alert('Could not save the listing.');
     } 
+
+    resetForm();
   }
   
   return (
