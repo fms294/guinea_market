@@ -17,7 +17,7 @@ function ListingsScreen({ navigation }){
     );
 
     useEffect(() =>{
-        getListingsApi.request(1,2,3)
+        getListingsApi.request()
     }, [] );
 
     
