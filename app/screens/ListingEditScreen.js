@@ -11,8 +11,9 @@ import {
 import Screen from "../components/Screen";
 import CategoryPickerItem from "../components/CategoryPickerItem";
 import FormImagePicker from "../components/FormImagePicker";
+import ListingsApi from '../api/listings';
 import useLocation from "../hooks/useLocation";
-import RegionPickerItem from "../components/RegionPickerItem";
+
 
 
 const validationSchema = Yup.object().shape({
@@ -20,7 +21,6 @@ const validationSchema = Yup.object().shape({
   price: Yup.number().required().min(1).max(10000).label("Price"),
   description: Yup.string().label("Description"),
   category: Yup.object().required().nullable().label("Category"),
-  region: Yup.object().required().nullable().label("Region"),
   images: Yup.array().required().min(1,"Please select at list one image")
 });
 
@@ -30,17 +30,18 @@ const categories = [
   { label: "Camera", value: 3 , backgroundColor:"blue", icon: "lock"},
 ];
 
-const regions = [
-  { label: "Conakry", value: 1, backgroundColor:"red" , icon: "apps"},
-  { label: "Kindia", value: 2, backgroundColor:"green", icon: "email"},
-  { label: "Boke", value: 3 , backgroundColor:"blue", icon: "lock"},
-  { label: "Labe", value: 4, backgroundColor:"red" , icon: "apps"},
-  { label: "Kankan", value: 5, backgroundColor:"green", icon: "email"},
-  { label: "Siguiri", value: 6 , backgroundColor:"blue", icon: "lock"},
-];
-
 function ListingEditScreen() {
   const location = useLocation();
+
+  const handleSubmit = async() => {
+    
+    const result = await listingsApi.addListing({ ...listing, location});
+
+    if(!result.ok) 
+      return alert('Could not save the listing.');
+    alert("Success");
+  }
+  
   return (
     <Screen style={styles.container}>
       <Form
@@ -52,7 +53,7 @@ function ListingEditScreen() {
           region:null,
           images:[]
         }}
-        onSubmit={(values) => console.log(location)}
+        onSubmit={handleSubmit}
         validationSchema={validationSchema}
       >
         <FormImagePicker name="images" />
@@ -69,13 +70,6 @@ function ListingEditScreen() {
           name="category"
           PickerItemComponent={CategoryPickerItem} 
           placeholder="Category" 
-        />
-        <Picker 
-          items={regions} 
-          numberOfColumns={3}
-          name="regions"
-          PickerItemComponent={RegionPickerItem} 
-          placeholder="Region" 
         />
         <FormField
           maxLength={255}
