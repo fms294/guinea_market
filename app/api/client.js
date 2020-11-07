@@ -1,4 +1,4 @@
-import {create } from 'apisauce';
+import { create } from 'apisauce';
 
 const apiClient = create({
     baseURL: 'http://192.168.1.73:9000/api'

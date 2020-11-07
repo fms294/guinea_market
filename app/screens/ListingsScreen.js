@@ -8,22 +8,40 @@ import colors from '../config/colors';
 import listingsApi from '../api/listings';
 import routes from '../navigation/routes';
 import Screen from '../components/Screen';
-
+       
 import useApi from '../hooks/useApi';
 
-function ListingsScreen({navigation}){
-   useApi(listingsApi.getListings);
+function ListingsScreen({ navigation }){
+    const [listings, setListings ] = useState([]);
 
-    useEffect(() =>{
-        loadListing();
-    }, [] );
+    const [error, setError] = useState(false);
+
+    useEffect(() => {
+        loadListings();
+    }, []);
+
+    const loadListings = async() =>{
+        const response = await listingsApi.getListings();
+        if(!response.ok) return setError(true)
+
+        setError(false);
+        setListings(response.data);
+    }
+
+//    const {data: listings, error, loading, request: loadListings} = useApi(
+//        listingsApi.getListings
+//     );
+
+//     useEffect(() =>{
+//         loadListings();
+//     }, [] );
 
     
     return (
         <Screen style={styles.screen}>
             {error && <> 
                 <AppText>Couldn't retrieve the listings.</AppText>
-                <Button title="Retry" onPress={loadListing}/>
+                <Button title="Retry" onPress={loadListings}/>
             </>}
             <FlatList             
                 data ={listings}
@@ -31,7 +49,7 @@ function ListingsScreen({navigation}){
                 renderItem={({ item }) => 
                     <Card 
                         title={item.title}
-                        subTitle={"GNF"+ item.price}
+                        subTitle={"GNF "+ item.price}
                         imageUrl={item.images[0].url}
                         onPress={() => navigation.navigate(routes.LISTING_DETAILS, item) }
                     />
