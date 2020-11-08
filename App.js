@@ -7,6 +7,7 @@ import {NavigationContainer, TabActions } from '@react-navigation/native';
 import AppNavigator from './app/navigation/AppNavigator';
 import navigationTheme from './app/navigation/navigationTheme';
 import OfflineNotice from './app/components/offlineNotice';
+import AuthNavigator from './app/navigation/AuthNavigator';
 
 export default function App() {
   
@@ -14,7 +15,8 @@ export default function App() {
     <>
       <OfflineNotice />
       <NavigationContainer theme={navigationTheme}>
-        <AppNavigator />
+        {/* <AppNavigator /> */}
+        <AuthNavigator />
       </NavigationContainer>
     </>
    
