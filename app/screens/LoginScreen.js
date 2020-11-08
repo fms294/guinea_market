@@ -15,7 +15,7 @@ const validationSchema = Yup.object().shape({
 })
 
 function LoginScreen(props) { 
-    const authContext =useContext(AuthContext);
+    const authContext = useContext(AuthContext);
     const [loginFailed, setLoginFailed] = useState(false);
     const handleSubmit = async ({email, password}) =>{
         const result = await authApi.login(email, password);

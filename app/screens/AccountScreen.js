@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { StyleSheet, View, FlatList } from 'react-native';
 
+import AuthContext from '../auth/context';
 import Screen from '../components/Screen';
 import ListItem from '../components/lists/ListItem';
 import colors from '../config/colors';
 import Icon from  '../components/Icon';
 import ListItemSeparator from '../components/lists/ListItemSeparator';
+import AuthNavigator from '../navigation/AuthNavigator';
 
 const menuItems = [
     {
@@ -23,18 +25,18 @@ const menuItems = [
             backgroundColor: colors.secondary,
         },
         targetScreen:"Messages",
-    
     }
-
 ]
 
 function AccountScreen({ navigation }){
+    const {user, setUser} = useContext(AuthContext);
+
     return(
         <Screen style={styles.screen}>
             <View style={styles.container}>
                 <ListItem 
-                    title="Fanta"
-                    subTitle="best online shop in Guinea"
+                    title={user.name}
+                    subTitle={user.email}
                     image ={require('../assets/fanta.jpeg')}
                 />
             </View>
@@ -65,7 +67,7 @@ function AccountScreen({ navigation }){
                         backgroundColor="#ffe66d"
                     />
                 }  
-                    
+                onPress = {() => setUser(null)}  
             />
         </Screen>
     )
