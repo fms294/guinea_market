@@ -18,8 +18,8 @@ export default function App() {
 
   const restoreUser = async() =>{
     const user = await authStorage.getUser();
-    if(!user) setUser(user);
-  }
+    if(user) setUser(user);
+  };
 
   if(!isReady)
     return (
