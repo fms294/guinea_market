@@ -7,7 +7,7 @@ import Screen from '../components/Screen';
 import { AppForm, AppFormField, ErrorMessage, SubmitButton} from '../components/forms'
 
 import authApi from '../api/auth';
-import useAuth from '../auth/useAuth';
+//import useAuth from '../auth/useAuth';
 import auth from '../api/auth';
 
 const validationSchema = Yup.object().shape({
@@ -15,8 +15,9 @@ const validationSchema = Yup.object().shape({
     password: Yup.string().required().min(4).label("Password")
 })
 
-function LoginScreen(props) { 
-    const auth = useAuth();
+function LoginScreen(props) {
+    //const auth = useAuth();
+    const auth = "hello";
     const [loginFailed, setLoginFailed] = useState(false);
 
     const handleSubmit = async ({email, password}) =>{
@@ -28,7 +29,7 @@ function LoginScreen(props) {
 
     return (
         <Screen style={styles.container}>
-            <Image 
+            <Image
                 style={styles.logo}
                 source={require('../assets/logo.png')}
             />
@@ -36,9 +37,9 @@ function LoginScreen(props) {
                 initialValues={{ email: '' , password: ''}}
                 onSubmit={handleSubmit}
                 validationSchema={validationSchema}
-            >   
+            >
                 <ErrorMessage error="Invalid email and / or password" visible={loginFailed}/>
-                <AppFormField 
+                <AppFormField
                     autoCapitalize="none"
                     autoCorrect={false}
                     icon="email"
@@ -51,12 +52,12 @@ function LoginScreen(props) {
                     autoCapitalize="none"
                     autoCorrect={false}
                     icon="lock"
-                    name="password"  
+                    name="password"
                     placeholder="Password"
                     secureTextEntry={true}
                     textContentType="password"
                 />
-                <SubmitButton title="Login" />       
+                <SubmitButton title="Login" />
             </AppForm>
         </Screen>
     );
@@ -73,7 +74,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         marginTop: 50,
         marginBottom:20,
-       
+
     }
 })
 

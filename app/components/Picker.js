@@ -4,8 +4,7 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   Modal,
-  Button,
-  FlatList,
+  FlatList, Text, TouchableOpacity,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -13,8 +12,10 @@ import AppText from "./Text";
 import Screen from "./Screen";
 import defaultStyles from "../config/styles";
 import PickerItem from "./PickerItem";
+import colors from "../config/colors";
 
-function AppPicker({ icon, items, numberOfColumns, onSelectItem,PickerItemComponent=PickerItem, placeholder, selectedItem }) {
+const AppPicker = (props) => {
+  const { icon, items, numberOfColumns, onSelectItem, PickerItemComponent=PickerItem, placeholder, selectedItem } = props;
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
@@ -34,7 +35,6 @@ function AppPicker({ icon, items, numberOfColumns, onSelectItem,PickerItemCompon
           ) : (
             <AppText style={styles.placeholder}>{placeholder}</AppText>
           )}
-
           <MaterialCommunityIcons
             name="chevron-down"
             size={20}
@@ -42,25 +42,41 @@ function AppPicker({ icon, items, numberOfColumns, onSelectItem,PickerItemCompon
           />
         </View>
       </TouchableWithoutFeedback>
-      <Modal visible={modalVisible} animationType="slide">
-        <Screen>
-          <Button title="Close" onPress={() => setModalVisible(false)} />
-          <FlatList
-            data={items}
-            keyExtractor={(item) => item.value.toString()}
-            numColumns={numberOfColumns}
-            renderItem={({ item }) => (
-              <PickerItemComponent
-                item={item}
-                label={item.label}
-                onPress={() => {
-                  setModalVisible(false);
-                  onSelectItem(item);
-                }}
-              />
-            )}
-          />
-        </Screen>
+      <Modal
+          animationType="slide"
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+      >
+          <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                  <FlatList
+                    data={items}
+                    keyExtractor={(item) => item.value.toString()}
+                    numColumns={numberOfColumns}
+                    renderItem={({ item }) => (
+                      <PickerItemComponent
+                        item={item}
+                        label={item.label}
+                        onPress={() => {
+                          setModalVisible(false);
+                          onSelectItem(item);
+                        }}
+                      />
+                    )}
+                  />
+                  <TouchableOpacity
+                      style={styles.openButton}
+                      onPress={() => {
+                          setModalVisible(!modalVisible);
+                      }}
+                  >
+                      <Text style={styles.textStyle}>Close</Text>
+                  </TouchableOpacity>
+           </View>
+       </View>
+        {/*</Screen>*/}
       </Modal>
     </>
   );
@@ -71,10 +87,32 @@ const styles = StyleSheet.create({
     backgroundColor: defaultStyles.colors.light,
     borderRadius: 25,
     flexDirection: "row",
-    width: "100%",
+    //width: "100%",
     padding: 15,
     marginVertical: 10,
   },
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        //alignItems: "center",
+        marginTop: 15
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+        height: 500
+    },
   icon: {
     marginRight: 10,
   },
@@ -84,6 +122,14 @@ const styles = StyleSheet.create({
   },
   text: {
     flex: 1,
+  },
+  openButton: {
+    margin: 20
+  },
+  textStyle: {
+    color: colors.primary,
+    textAlign: "center",
+    fontSize: 20
   },
 });
 

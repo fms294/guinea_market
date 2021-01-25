@@ -8,8 +8,8 @@ import {
   AppFormField as FormField,
   SubmitButton,
 } from "../components/forms";
-import useAuth from '../auth/useAuth';
-import register from '../api/users';
+//import useAuth from '../auth/useAuth';
+//import register from '../api/users';
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required().label("Name"),
@@ -17,9 +17,12 @@ const validationSchema = Yup.object().shape({
   password: Yup.string().required().min(4).label("Password"),
 });
 
-function RegisterScreen() {
-  const auth = useAuth()
+const RegisterScreen = (props) => {
+  //const auth = useAuth()
+  console.log("propsssss.", props.navigation);
+  const auth = "hello";
   const [error, setError ] = useState();
+  const [name, setName] = useState();
   const handleSubmit = async( userInfo) =>{
     const result = await usersApi.register(userInfo);
 
@@ -37,6 +40,10 @@ function RegisterScreen() {
     );
     auth.logIn(authToken);
   };
+
+  const navigationHandler = () => {
+    this.props.navigation.navigate("AppNavigator");
+  }
 
   return (
     <Screen style={styles.container}>
@@ -69,7 +76,7 @@ function RegisterScreen() {
           secureTextEntry
           textContentType="password"
         />
-        <SubmitButton title="Register" />
+        <SubmitButton title="Register" nav={props.navigation}/>
       </Form>
     </Screen>
   );

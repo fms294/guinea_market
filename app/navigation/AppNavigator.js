@@ -8,36 +8,34 @@ import FeedNavigator from './FeedNavigator';
 import ListingEditScreen from '../screens/ListingEditScreen';
 import NewListingButton from './NewListingButton';
 import routes from './routes';
-import useNotifications from '../hooks/useNotifications';
+//import useNotifications from '../hooks/useNotifications';
 
 const Tab = createBottomTabNavigator();
 
 const AppNavigator = () => {
-
-    useNotifications();
-    
+    //useNotifications();
     return (
         <Tab.Navigator>
-            <Tab.Screen 
-                name="Feed" 
+            <Tab.Screen
+                name="Feed"
                 component={FeedNavigator}
                 options={{
                     tabBarIcon: ({ color, size}) =>
                     <MaterialCommunityIcons name="home" color={color} size={size}/>
                 }}
                 />
-            <Tab.Screen 
-                name="ListingEdit" 
+            <Tab.Screen
+                name="ListingEdit"
                 component={ListingEditScreen}
                 options={({ navigation })=>({
                     tabBarButton: () => <NewListingButton onPress={() => navigation.navigate(routes.LISTING_EDIT) } />,
                     tabBarIcon: ({ color, size}) =>
                     <MaterialCommunityIcons name="plus-circle" color={color} size={size}/>
                 })}
-                
+
                 />
-            <Tab.Screen 
-                name="Account" 
+            <Tab.Screen
+                name="Account"
                 component={AccountNavigator}
                 options={{
                     tabBarIcon: ({ color, size}) =>
@@ -45,6 +43,6 @@ const AppNavigator = () => {
                 }}
                 />
         </Tab.Navigator>
-    );} 
+    );}
 
 export default AppNavigator;

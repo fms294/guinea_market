@@ -33,22 +33,22 @@ function MessagesScreen(props){
     };
     return (
         <Screen>
-            <FlatList 
+            <FlatList
                 data={messages}
                 keyExtractor={message => message.id.toString()}
                 renderItem={({ item }) => (
-                    <ListItem 
+                    <ListItem
                         title={item.title}
                         subTitle={item.description}
                         image={item.image}
                         onPress={() => console.log("Message Selected", item)}
-                        renderRightActions={() => 
-                            <ListItemDeleteAction 
+                        renderRightActions={() =>
+                            <ListItemDeleteAction
                                 onPress={() => handleDelete(item)}
                             />}
-                       
+
                     />
-                    )}  
+                    )}
                     ItemSeparatorComponent={ListItemSeparator}
                     refreshing={refreshing}
                     onRefresh={() =>{
@@ -58,17 +58,18 @@ function MessagesScreen(props){
                                 title: 'T2',
                                 description: 'D2',
                                 image:require('../assets/fanta.jpeg')
-                        
+
                             }
                         ])
                     }}
             />
         </Screen>
-        
+
     )
 }
 
 const styles = StyleSheet.create({
-  
+
 })
+
 export default MessagesScreen;

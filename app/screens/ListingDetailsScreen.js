@@ -4,33 +4,33 @@ import {Image} from 'react-native-expo-image-cache';
 
 import ListItem from '../components/lists/ListItem';
 import colors from '../config/colors';
-import ContactSellerForm from '../components/ContactSellerForm';
+//import ContactSellerForm from '../components/ContactSellerForm';
 import Text from '../components/Text';
 
-function ListingDetailsScreen({route}){
-    const listing = route.params;
+const ListingDetailsScreen = (props) => {
+    const listing = props.route.params.listing;
     return (
         <KeyboardAvoidingView
             behavior="position"
             keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 100}
         >
-            <Image 
-                style={styles.image} 
-                preview={{ uri: listing.images[0].thumbnailUrl }} 
+            <Image
+                style={styles.image}
+                preview={{ uri: listing.images[0].thumbnailUrl }}
                 tint="light"
-                uri={listing.images[0].url} 
+                uri={listing.images[0].url}
             />
             <View style={styles.detailContainer}>
                 <Text style={styles.title}>{listing.title}</Text>
                 <Text style={styles.price}>GNF {listing.price}</Text>
                 <View style={styles.userContainer}>
-                    <ListItem 
-                        image={require("../assets/fanta.jpeg")}
+                    <ListItem
+                        image={{uri: listing.images[0].url}}
                         title="Fanta"
                         subTitle="5 Listings"
                     />
                 </View>
-                <ContactSellerForm listing={listing} />
+                {/*<ContactSellerForm listing={listing} />*/}
             </View>
         </KeyboardAvoidingView>
     )
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
         fontSize:24,
         fontWeight:"500"
     },
-    
+
 })
 
 

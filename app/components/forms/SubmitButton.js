@@ -1,12 +1,12 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {useFormikContext } from 'formik';
 
 import AppButton from '../Button';
 
-function SubmitButton({title}) {
+const SubmitButton = (props) => {
     const {handleSubmit} = useFormikContext();
     return (
-        <AppButton title={title} onPress={handleSubmit} />
+        <AppButton title={props.title} onPress={handleSubmit} />
     );
 }
 

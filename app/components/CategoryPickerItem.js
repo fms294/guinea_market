@@ -4,27 +4,26 @@ import {View, StyleSheet } from "react-native";
 import Icon from "./Icon";
 import AppText from "./Text";
 
-function CategoryPickerItem({ item, onPress}) {
-    return (
+const CategoryPickerItem = (props) => {
+    return(
         <View style={styles.container}>
-            <Icon backgroundColor={item.backgroundColor} name={item.icon} size={80} />
-            <AppText style={styles.label}>{item.label}</AppText>
+            <Icon backgroundColor={props.item.backgroundColor} name={props.item.icon} size={80}/>
+            <AppText style={styles.label} onPress={props.onPress}>{props.item.label}</AppText>
         </View>
-        )
-        
+    );
 }
 
 const styles = StyleSheet.create({
     container:{
-        paddingHorizontal:30,
-        paddingVertical:15,
-        alignItems:"center",
-        width:"33%",
-    
+        paddingHorizontal: 10,
+        paddingVertical: 10,
+        alignItems: "center",
+        width: "50%"
     },
     label:{
-        marginTop:5,
-        textAlign:"center"
+        marginTop: 2,
+        textAlign: "center"
     }
-})
+});
+
 export default CategoryPickerItem;
