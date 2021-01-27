@@ -54,7 +54,7 @@ export const fetchFeed = () => {
                 const resData = await response.json();
                 throw new Error(resData.e);
             }
-            const resData =  await response.json();
+            const resData = await response.json();
             let listingData = [];
             resData.map((item,index) => {
                 //console.log("items...", resData[index]._id);

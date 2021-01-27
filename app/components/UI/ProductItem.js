@@ -26,7 +26,7 @@ const ProductItem = (props) => {
                         <Text style={styles.title} numberOfLines={2} ellipsizeMode={'tail'}>
                             {props.title}
                         </Text>
-                        <Text style={styles.price}>Fr {props.price.toFixed(2)}</Text>
+                        <Text style={styles.price}>GNF {props.price.toLocaleString()}</Text>
                         <View style={styles.actions}>{props.children}</View>
                     </View>
                 </View>
