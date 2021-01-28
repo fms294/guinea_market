@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import {FlatList, StyleSheet, View, Text, RefreshControl, TouchableOpacity} from 'react-native';
+import {FlatList, StyleSheet, View, Text, RefreshControl, TouchableOpacity, Alert} from 'react-native';
 import {HeaderButtons, Item} from 'react-navigation-header-buttons';
 import {Button, Searchbar} from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -10,6 +10,7 @@ import colors from '../config/colors';
 
 import * as listingActions from "../store/actions/listing";
 import {useDispatch, useSelector} from "react-redux";
+import CategoryPickerItem from "../components/CategoryPickerItem";
 
 const ListingsScreen = (props) => {
     const dispatch = useDispatch();
@@ -90,14 +91,24 @@ const ListingsScreen = (props) => {
 
     return (
         <View style={styles.screen}>
-            {!searchVisible ? <></> : <Searchbar
-                placeholder="Search"
-                icon={iconSet}
-                onChangeText={onChangeSearch}
-                value={searchQuery}
-                onIconPress={onIconPress}
-            />}
-            <View style={styles.visibleContent}>
+            {!searchVisible ?
+                <></> :
+                <>
+                    {filterVisible === "Home" ? <Searchbar
+                        placeholder="Search"
+                        icon={iconSet}
+                        onChangeText={onChangeSearch}
+                        value={searchQuery}
+                        onIconPress={onIconPress}
+                    /> : <>
+                        {Alert.alert("In-accessible",
+                            "While applying filter you cannot search for product.",
+                            [{text: "Okay", onPress: () => setSearchVisible(false)}]
+                        )}
+                    </>
+                    }
+                </>
+            }
             <View style={styles.filterContainer}>
                 <TouchableOpacity
                     style={activeFilter === "Category" ? [styles.filterObject, {borderColor: colors.primary}] : styles.filterObject}
@@ -124,7 +135,7 @@ const ListingsScreen = (props) => {
             {filterVisible !== "Home" ?
                 <>
                     {activeFilter === "Category" ?
-                        <View style={styles.centered}>
+                        <View style={styles.filterDisplay}>
                             <Text>All Category soon</Text>
                             <Button
                                 color={colors.medium}
@@ -133,10 +144,10 @@ const ListingsScreen = (props) => {
                                 onPress={() => {
                                     setFilterVisible("Home");
                                     setActiveFilter('');
-                            }}>Apply</Button>
+                                }}>Apply</Button>
                         </View>
                         :
-                        <View style={styles.centered}>
+                        <View style={styles.filterDisplay}>
                             <Text>All Region soon</Text>
                             <Button
                                 color={colors.medium}
@@ -145,25 +156,25 @@ const ListingsScreen = (props) => {
                                 onPress={() => {
                                     setFilterVisible("Home");
                                     setActiveFilter('');
-                            }}>Apply</Button>
+                                }}>Apply</Button>
                         </View>
                     }
                 </> : <>
                     {data.listing_data ?
                         (
                             <FlatList
-                                style={{marginTop: !searchVisible ? 0 : 32}}
                                 refreshControl={
                                     <RefreshControl refreshing={loading} onRefresh={loadFeed}/>
                                 }
                                 data={data.listing_data}
                                 renderItem={(itemData) => {
-                                    //console.log("Itemdata", itemData.item.images[0].url);
+                                    //console.log("Itemdata", itemData.item);
                                     return (
                                         <ProductItem
                                             image={itemData.item.images[0].url}
                                             title={itemData.item.title}
                                             price={itemData.item.price}
+                                            phone={itemData.item.phone}
                                             onSelect={() => props.navigation.navigate("ListingDetailsScreen", {
                                                 listing: itemData.item
                                             })}
@@ -186,7 +197,6 @@ const ListingsScreen = (props) => {
                             />
                         ) : (<><View style={styles.centered}><Text>Currently No Feed</Text></View></>)}
                 </>}
-            </View>
         </View>
     )
 }
@@ -196,12 +206,9 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: colors.light
     },
-    visibleContent:{
-        flex: 1
-    },
     filterContainer:{
-        flex: 1,
-        flexDirection: 'row'
+        flexDirection: 'row',
+        marginTop: 5
     },
     filterObject:{
         flex: 1,
@@ -221,34 +228,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    flatList:{
-        marginTop: 0
+    filterDisplay:{
+        flex: 1
     },
-    modalView: {
-        margin: 20,
-        backgroundColor: "white",
-        borderRadius: 20,
-        padding: 35,
-        alignItems: "center",
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5
-    },
-    openButton: {
-        marginTop: 20
-    },
-    modalText: {
-        fontWeight: "bold",
-        marginBottom: 15,
-        textAlign: "center",
-        fontSize: 30,
-        color: colors.primary
-    }
 })
 
 export default ListingsScreen;

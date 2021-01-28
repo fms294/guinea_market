@@ -15,9 +15,10 @@ import PickerItem from "./PickerItem";
 import colors from "../config/colors";
 
 const AppPicker = (props) => {
-  const { icon, items, numberOfColumns, onSelectItem, PickerItemComponent=PickerItem, placeholder, selectedItem } = props;
+  const { icon, items, numberOfColumns, onSelectItem, PickerItemComponent, placeholder, selectedItem } = props;
   const [modalVisible, setModalVisible] = useState(false);
-
+  const [value, setValue] = useState('');
+  console.log("app picker", props);
   return (
     <>
       <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
@@ -30,9 +31,8 @@ const AppPicker = (props) => {
               style={styles.icon}
             />
           )}
-          {selectedItem ? (
-            <AppText style={styles.text}>{selectedItem.label}</AppText>
-          ) : (
+          {selectedItem ?
+              (<AppText style={styles.text}>{selectedItem}</AppText>) : (
             <AppText style={styles.placeholder}>{placeholder}</AppText>
           )}
           <MaterialCommunityIcons
@@ -53,18 +53,34 @@ const AppPicker = (props) => {
               <View style={styles.modalView}>
                   <FlatList
                     data={items}
-                    keyExtractor={(item) => item.value.toString()}
-                    numColumns={numberOfColumns}
-                    renderItem={({ item }) => (
-                      <PickerItemComponent
-                        item={item}
-                        label={item.label}
-                        onPress={() => {
-                          setModalVisible(false);
-                          onSelectItem(item);
-                        }}
-                      />
-                    )}
+                    keyExtractor={(item) => item.category.toString()}
+                    //numColumns={numberOfColumns}
+                    renderItem={(itemData) => {
+                        // let data;
+                        // if(itemData.item.sub_category === undefined)
+                        // {
+                        //     data = itemData.item.category;
+                        //     console.log("itemData in if", itemData.item.category)
+                        // }else{
+                        //     itemData.item.sub_category.map((item) => console.log("item in map", item));
+                        //     console.log("itemData", itemData.item.sub_category);
+                        // }
+                        return(
+                            <PickerItemComponent
+                                item={
+                                    itemData.item.sub_category === undefined ? itemData.item.category
+                                        :
+                                    itemData.item.sub_category.map((item) => item)
+                                }
+                                onPress={() => {
+                                    setModalVisible(false);
+                                    onSelectItem(itemData.item.sub_category === undefined ? itemData.item.category
+                                        :
+                                        itemData.item.sub_category.map((item) => item));
+                                }}
+                            />
+                        );
+                    }}
                   />
                   <TouchableOpacity
                       style={styles.openButton}

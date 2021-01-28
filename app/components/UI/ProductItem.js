@@ -23,10 +23,11 @@ const ProductItem = (props) => {
                         />
                     </View>
                     <View style={styles.detailsContainer}>
-                        <Text style={styles.title} numberOfLines={2} ellipsizeMode={'tail'}>
+                        <Text style={styles.title} numberOfLines={2} ellipsizeMode={'middle'}>
                             {props.title}
                         </Text>
-                        <Text style={styles.price}>GNF {props.price.toLocaleString()}</Text>
+                        <Text style={styles.detail} numberOfLines={1}>GNF {props.price.toLocaleString()}</Text>
+                        <Text style={styles.detail}>Contact : {props.phone}</Text>
                         <View style={styles.actions}>{props.children}</View>
                     </View>
                 </View>
@@ -69,10 +70,10 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: Dimensions.get('window').width > 400 ? 18 : 14,
-        marginBottom: 10,
         fontWeight: 'bold',
     },
-    price: {
+    detail: {
+        marginTop: 10,
         fontSize: Dimensions.get('window').width > 400 ? 16 : 12,
         color: Colors.medium,
     },

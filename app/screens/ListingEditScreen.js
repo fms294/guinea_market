@@ -29,7 +29,6 @@ const validationSchema = Yup.object().shape({
 });
 
 const ListingEditScreen = (props) => {
-
     const dispatch = useDispatch();
 
     const location = useLocation();
@@ -37,6 +36,7 @@ const ListingEditScreen = (props) => {
     const [uploadVisible, setUploadVisible] = useState(false);
     const [progress, setProgress] = useState(0);
     const [region, setRegion] = useState();
+    //categories.map((item) => console.log(item));
 
     const handleSubmission = async (values) => {
         const finalData = {
@@ -53,9 +53,7 @@ const ListingEditScreen = (props) => {
         await dispatch(listingAction.add_item(finalData));
     }
 
-  let serviceItems = regions.map( (s,i) => {
-        return <Picker.Item value={s} label={s} key={i}/>
-  });
+  //let serviceItems =
 
   return (
     <Screen style={styles.container}>
@@ -99,7 +97,7 @@ const ListingEditScreen = (props) => {
         />
         <FormPicker
             items={categories}
-            numberOfColumns={2}
+            //numberOfColumns={1}
             name="category"
             PickerItemComponent={CategoryPickerItem}
             placeholder="Category"
@@ -117,7 +115,9 @@ const ListingEditScreen = (props) => {
                   style={styles.picker}
                   onValueChange={(itemValue) => setRegion(itemValue)}
               >
-                  {serviceItems}
+                  {regions.map( (s,i) => {
+                      return <Picker.Item value={s} label={s} key={i}/>
+                  })}
               </Picker>
           </View>
         <SubmitButton title="Post"/>
