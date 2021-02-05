@@ -28,13 +28,15 @@ import {forgetPassword, updatePassword} from "../api/apiCall";
 import {ActivityIndicator} from "react-native-web";
 
 const validationSchemaLogin = Yup.object().shape({
-    email: Yup.string().required().email().label("Email"),
+    //email: Yup.string().required().email().label("Email"),
+    phone: Yup.string().required().matches(/^\d{9}$/, {message: "Enter Valid Phone Number"}),
     password: Yup.string().required().min(6).label("Password"),
 });
 
 const validationSchemaRegister = Yup.object().shape({
     name: Yup.string().required().label("Name"),
-    email: Yup.string().required().email().label("Email"),
+    //email: Yup.string().required().email().label("Email"),
+    phone: Yup.string().required().matches(/^\d{9}$/, {message: "Enter Valid Phone Number"}),
     password: Yup.string().required().min(6).label("Password"),
     confirmPassword: Yup.string().label("Password Confirm").required()
         .oneOf([Yup.ref('password')], 'Confirm Password must matched Password'),
@@ -56,6 +58,7 @@ const WelcomeScreen = ({navigation}) => {
     const [title, setTitle] = useState();
     const [modalVisible, setModalVisible] = useState(false);
     const [loginFailed, setLoginFailed] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
     const [forgetView, setForgetView] = useState(false);
     const [otpView, setOtpView] = useState(false);
     const [serverOtp, setServerOtp] = useState();
@@ -129,6 +132,7 @@ const WelcomeScreen = ({navigation}) => {
                 .then((res) => {
                     //console.log("response in updatePassword", res);
                     setTitle("Login");
+                    setErrorMessage("");
                     setForgetView(false);
                     setOtpView(false);
                     setUpdatePasswordView(false);
@@ -144,28 +148,17 @@ const WelcomeScreen = ({navigation}) => {
     }
 
     const handleSubmission = async (values) => {
-        let action;
-        console.log("events...", values);
-        if(title === "Register"){
-            console.log("In if");
-            action = authActions.signup(values.name, values.email, values.password);
-        }else {
-            console.log("In else")
-            action = authActions.login(values.email, values.password);
-        }
-
+        //console.log("events...", values);
         try {
-            dispatch(action).then(() => {
-                //console.log("Success");
-                setLoginFailed(false);
-                navigation.navigate("AppNavigator");
-            }).catch((err) => {
-                setLoginFailed(true);
-                // console.log("catch", loginFailed);
-                // Alert.alert("Error", err.message, [{text: "Okay"}]);
-            })
-            //console.log("catch...", loginFailed);
+            if(title === "Register"){
+                await dispatch(authActions.signup(values.name, values.phone, values.password));
+            }else {
+                await dispatch(authActions.login(values.phone, values.password));
+            }
+            setLoginFailed(false);
         } catch (error) {
+            setLoginFailed(true);
+            setErrorMessage(error.message);
             console.log(error);
         }
     }
@@ -268,19 +261,23 @@ const WelcomeScreen = ({navigation}) => {
                                             source={require('../assets/logo.png')}
                                         />
                                         <Form
-                                            initialValues={{email: "", password: ""}}
+                                            initialValues={{phone: "", password: ""}}
                                             onSubmit={(values) => handleSubmission(values)}
                                             validationSchema={validationSchemaLogin}
                                         >
-                                            <ErrorMessage error="Invalid email and / or password" visible={loginFailed}/>
+                                            <ErrorMessage error={errorMessage} visible={loginFailed}/>
                                             <FormField
-                                                autoCapitalize="none"
-                                                autoCorrect={false}
-                                                icon="email"
-                                                keyboardType="email-address"
-                                                name='email'
-                                                placeholder="Email"
-                                                textContentType="emailAddress"
+                                                icon={"phone"}
+                                                keyboardType={"decimal-pad"}
+                                                name={"phone"}
+                                                placeholder={"Phone No."}
+                                                // autoCapitalize="none"
+                                                // autoCorrect={false}
+                                                // icon="email"
+                                                // keyboardType="email-address"
+                                                // name='email'
+                                                // placeholder="Email"
+                                                // textContentType="emailAddress"
                                             />
                                             <FormField
                                                 autoCapitalize="none"
@@ -306,6 +303,7 @@ const WelcomeScreen = ({navigation}) => {
                                             style={styles.openButton}
                                             onPress={() => {
                                                 setTitle("Register");
+                                                setErrorMessage("");
                                             }}
                                         >
                                             <Text style={styles.textStyle}>Register New Account</Text>
@@ -316,7 +314,7 @@ const WelcomeScreen = ({navigation}) => {
                         ) : (<>
                             <Text style={styles.modalText}>{title}</Text>
                             <Formik
-                                initialValues={{ name: "", email: "", password: "", confirmPassword: ""}}
+                                initialValues={{ name: "", phone: "", password: "", confirmPassword: ""}}
                                 onSubmit={(values) => handleSubmission(values)}
                                 validationSchema={validationSchemaRegister}
                             >{({
@@ -327,6 +325,11 @@ const WelcomeScreen = ({navigation}) => {
                                 handleBlur,
                             }) => (
                                 <>
+                                    <ErrorMessage
+                                        errorValue={touched.confirmPassword && errors.confirmPassword}
+                                        error={errorMessage}
+                                        visible={loginFailed}
+                                    />
                                     <FormField
                                         autoCorrect={false}
                                         icon="account"
@@ -334,13 +337,11 @@ const WelcomeScreen = ({navigation}) => {
                                         placeholder="Name"
                                     />
                                     <FormField
-                                        autoCapitalize="none"
-                                        autoCorrect={false}
-                                        icon="email"
-                                        keyboardType="email-address"
-                                        name="email"
-                                        placeholder="Email"
-                                        textContentType="emailAddress"
+                                        icon={"phone"}
+                                        keyboardType={"decimal-pad"}
+                                        name={"phone"}
+                                        placeholder={"Phone No."}
+                                        //textContentType={""}
                                     />
                                     <FormField
                                         autoCapitalize="none"
@@ -352,22 +353,21 @@ const WelcomeScreen = ({navigation}) => {
                                         textContentType="password"
                                     />
                                     <FormField
-                                        name='password'
+                                        name="password"
                                         value={values.confirmPassword}
-                                        onChangeText={handleChange('confirmPassword')}
-                                        placeholder='Confirm password'
+                                        onChangeText={handleChange("confirmPassword")}
+                                        placeholder="Confirm password"
                                         secureTextEntry
-                                        icon='lock'
-                                        onBlur={handleBlur('confirmPassword')}
-                                    />
-                                    <ErrorMessage
-                                        errorValue={touched.confirmPassword && errors.confirmPassword}
+                                        icon="lock"
+                                        onBlur={handleBlur("confirmPassword")}
+                                        textContentType="password"
                                     />
                                     <SubmitButton title="Register"/>
                                     <TouchableOpacity
                                         style={styles.openButton}
                                         onPress={() => {
                                             setTitle("Login");
+                                            setErrorMessage("");
                                             setForgetView(false);
                                             setOtpView(false);
                                         }}
@@ -383,6 +383,7 @@ const WelcomeScreen = ({navigation}) => {
                             style={styles.openButton}
                             onPress={() => {
                                 setModalVisible(!modalVisible);
+                                setErrorMessage("");
                                 setForgetView(false);
                                 setOtpView(false);
                                 setUpdatePasswordView(false);

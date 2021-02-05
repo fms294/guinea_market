@@ -1,36 +1,44 @@
-import React from 'react';
-import { StyleSheet, View, FlatList, Alert } from 'react-native';
+import React, {useEffect} from 'react';
+import {StyleSheet, View, FlatList, Alert, Text} from 'react-native';
 
-import Screen from '../components/Screen';
 import ListItem from '../components/lists/ListItem';
 import colors from '../config/colors';
 import Icon from  '../components/Icon';
 import ListItemSeparator from '../components/lists/ListItemSeparator';
 import {useDispatch, useSelector} from "react-redux";
 import * as authActions from "../store/actions/auth";
+import {Button} from "react-native-paper";
+import {Ionicons} from "@expo/vector-icons";
 
 const menuItems = [
     {
-        title: "My Listings ",
+        title: "My Listings",
         icon: {
-            name:"format-list-bulleted",
+            name: "format-list-bulleted",
             backgroundColor: colors.primary
-        }
-
+        },
+        targetScreen: "MyListingsScreen"
     },
     {
-        title: "My Message ",
+        title: "My Message",
         icon: {
-            name:"email",
+            name: "email",
             backgroundColor: colors.secondary,
         },
-        targetScreen:"Messages",
+        targetScreen:"MessagesScreen",
     }
 ]
 
-const AccountScreen = ({ navigation }) => {
+const AccountScreen = (props) => {
     const dispatch = useDispatch();
     const userData = useSelector((state) => state.auth.userData);
+    //console.log("userData", userData);
+
+    useEffect(() => {
+        props.navigation.setOptions({
+            title: "Account"
+        })
+    })
 
     const logoutHandler = () => {
         Alert.alert('Are you sure ?', 'Do you really want to logout ?', [
@@ -40,18 +48,18 @@ const AccountScreen = ({ navigation }) => {
                 style: 'destructive',
                 onPress: async () => {
                     await dispatch(authActions.logout());
-                    navigation.navigate("AuthNavigator");
+                    //props.navigation.navigate("AuthNavigator");
                 },
             },
         ]);
     }
 
     return(
-        <Screen style={styles.screen}>
+        <View style={styles.screen}>
             <View style={styles.container}>
                 <ListItem
                     title={userData.username}
-                    subTitle={userData.userEmail}
+                    subTitle={userData.userPhone}
                     image ={require('../assets/fanta.jpeg')}
                 />
             </View>
@@ -70,33 +78,39 @@ const AccountScreen = ({ navigation }) => {
                                         backgroundColor={item.icon.backgroundColor}
                                     />
                                 }
-                                onPress={() => navigation.navigate(item.targetScreen)}
+                                onPress={() => props.navigation.navigate(item.targetScreen)}
                             />
                         )
                     }
                 }
                 />
             </View>
-            <ListItem
-                title="Log Out"
-                IconComponent={
-                    <Icon
-                        name="logout"
-                        backgroundColor="#ffe66d"
-                    />
-                }
-                onPress = {() => logoutHandler() }
-            />
-        </Screen>
+            <View style={styles.container}>
+                <Button
+                    style={styles.button}
+                    labelStyle={styles.buttonText}
+                    icon={"logout"}
+                    color={colors.dark}
+                    uppercase={false}
+                    mode={"outline"}
+                    onPress={() => logoutHandler()}>Logout</Button>
+            </View>
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
     container:{
-        marginVertical:20
+        marginTop: 40
     },
     screen:{
         backgroundColor: colors.light
+    },
+    button:{
+        backgroundColor: colors.white,
+    },
+    buttonText:{
+        fontSize: 24
     }
 })
 

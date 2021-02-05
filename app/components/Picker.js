@@ -15,10 +15,10 @@ import PickerItem from "./PickerItem";
 import colors from "../config/colors";
 
 const AppPicker = (props) => {
-  const { icon, items, numberOfColumns, onSelectItem, PickerItemComponent, placeholder, selectedItem } = props;
+  const { icon, items, numberOfColumns, onSelectItem, PickerItemComponent=PickerItem, placeholder, selectedItem } = props;
   const [modalVisible, setModalVisible] = useState(false);
   const [value, setValue] = useState('');
-  console.log("app picker", props);
+  //console.log("app picker", items);
   return (
     <>
       <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
@@ -65,12 +65,18 @@ const AppPicker = (props) => {
                         //     itemData.item.sub_category.map((item) => console.log("item in map", item));
                         //     console.log("itemData", itemData.item.sub_category);
                         // }
+
+                        // item={itemData.item.category}
+                        //                                 onPress={() => {
+                        //                                     onSelectItem(itemData.item.category)
+                        //                                     setModalVisible(false);
+                        //                                 }}
                         return(
                             <PickerItemComponent
                                 item={
                                     itemData.item.sub_category === undefined ? itemData.item.category
                                         :
-                                    itemData.item.sub_category.map((item) => item)
+                                        itemData.item.sub_category.map((item) => item)
                                 }
                                 onPress={() => {
                                     setModalVisible(false);

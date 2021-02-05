@@ -75,3 +75,26 @@ export const filter = (query) => {
         );
     })
 }
+
+export const fetchOtherUser = (userId) => {
+    return new Promise((resolve, reject) => {
+        let user = {};
+        AsyncStorage.getItem("userData")
+            .then((res) => {
+                if(res !== null) {
+                    user = JSON.parse(res)
+                    return(
+                        axios.get(`${uri}/users/owner/`+userId,
+                            {
+                                headers:{
+                                    Accept: 'application/json',
+                                    'Content-Type': 'application/json',
+                                    Authorization: 'Bearer ' + user.token,
+                                },
+                            }).then(res => resolve(res))
+                            .catch(error => reject(error))
+                    );
+                }
+            })
+    })
+}

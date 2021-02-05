@@ -1,4 +1,4 @@
-import React , {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { FlatList, StyleSheet, View} from 'react-native';
 
 import ListItem from '../components/lists/ListItem';
@@ -23,9 +23,15 @@ const initialMessages =[
     }
 ]
 
-function MessagesScreen(props){
+const MessagesScreen = (props) => {
     const [messages, setMessages] = useState(initialMessages);
     const [refreshing, setRefreshing] = useState(false);
+
+    useEffect(() => {
+        props.navigation.setOptions({
+            title: "Messages"
+        })
+    })
 
     const handleDelete = message => {
         //Delete the message from message

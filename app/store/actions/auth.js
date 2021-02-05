@@ -12,8 +12,9 @@ const uri = `http://${manifest.debuggerHost
     .shift()
     .concat(`:3000`)}`;
 
-export const signup = (username, email, password) => {
+export const signup = (username, phone, password) => {
     return async (dispatch) => {
+        //console.log("in action...");
         try{
             const response = await fetch(`${uri}/users/signup`,
                 {
@@ -23,15 +24,19 @@ export const signup = (username, email, password) => {
                     },
                     body: JSON.stringify({
                         username: username,
-                        email: email,
+                        phone,
                         password,
                     }),
                 });
-            console.log("response",response);
             if(!response.ok){
                 const resData = await response.json();
                 if (resData.name === 'MongoError' && resData.code === 11000) {
-                    throw new Error('User already Exists');
+                    if(resData.keyPattern.phone === 1){
+                        console.log("error 1");
+                        throw new Error('User already Exists with this Phone Number');
+                    }else {
+                        throw new Error('User already Exists with this Email');
+                    }
                 } else {
                     throw new Error('Sign up failed');
                 }
@@ -49,7 +54,7 @@ export const signup = (username, email, password) => {
     }
 }
 
-export const login = (email, password) => {
+export const login = (phone, password) => {
     return async (dispatch) => {
         try{
             const response = await fetch(`${uri}/users/login`,
@@ -59,17 +64,14 @@ export const login = (email, password) => {
                         'Content-Type' : "application/json"
                     },
                     body: JSON.stringify({
-                        email,
+                        phone,
                         password,
                     }),
                 });
-            console.log("response.. login",response)
+            //console.log("response.. login",await response.json())
             if (!response.ok) {
                 const resData = await response.json();
-                if (resData.e === 'Invalid username or password') {
-                    throw new Error(resData.e);
-                }
-                throw new Error('Login Failed');
+                throw new Error(resData.e);
             }
             const resData =  await response.json();
             const {userData} = resDataHandler(resData);
@@ -93,7 +95,7 @@ const resDataHandler = (resData) => {
     const userData = {
         userId: resData.user._id,
         username: resData.user.username,
-        userEmail: resData.user.email
+        userPhone: resData.user.phone
     }
 
     saveDataToStorage(resData.token, userData);

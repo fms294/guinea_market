@@ -3,7 +3,6 @@ import { TouchableOpacity, StyleSheet } from 'react-native';
 
 import AppText from './Text';
 
-
 const PickerItem = (props) => {
     console.log("Picket item", props);
     return (

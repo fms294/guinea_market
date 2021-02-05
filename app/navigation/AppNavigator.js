@@ -30,10 +30,10 @@ const AppNavigator = () => {
                 }}
                 />
             <Tab.Screen
-                name="ListingEdit"
+                name="ListingEditScreen"
                 component={ListingEditScreen}
                 options={({ navigation })=>({
-                    tabBarButton: () => <NewListingButton onPress={() => navigation.navigate(routes.LISTING_EDIT) } />,
+                    tabBarButton: () => <NewListingButton onPress={() => navigation.navigate("ListingEditScreen") } />,
                 })}
 
                 />

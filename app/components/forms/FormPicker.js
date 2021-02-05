@@ -8,7 +8,7 @@ import PickerItem from "../PickerItem";
 const AppFormPicker = (props) => {
     const { items, name, numberOfColumns, PickerItemComponent=PickerItem, placeholder } = props;
     const { errors, setFieldValue, touched, values } = useFormikContext();
-    console.log("props in form picker");
+    //console.log("props in form picker", items);
     useEffect(() => {
         //console.log("props", props);
     })

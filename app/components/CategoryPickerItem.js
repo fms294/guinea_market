@@ -1,18 +1,14 @@
 import React, {useState} from 'react';
 import {View, StyleSheet, Text, TouchableOpacity } from "react-native";
 
-import Icon from "./Icon";
 import AppText from "./Text";
 
 const CategoryPickerItem = (props) => {
-    const [value, setValue] = useState(null);
     //console.log("props...", props);
     return(
-        <View>
             <View style={styles.container}>
-                <AppText tyle={styles.label} onPress={props.onPress}>{props.item}</AppText>
+                <AppText style={styles.label} onPress={props.onPress}>{props.item}</AppText>
             </View>
-        </View>
         // <View style={styles.container}>
         //     <Icon backgroundColor={props.item.backgroundColor} name={props.item.icon} size={80}/>
         //     <AppText style={styles.label} onPress={props.onPress}>{props.item.label}</AppText>

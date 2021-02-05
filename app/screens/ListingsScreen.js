@@ -1,26 +1,28 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import {FlatList, StyleSheet, View, Text, RefreshControl, TouchableOpacity, Alert} from 'react-native';
+import {FlatList, StyleSheet, View, Text, RefreshControl, TouchableOpacity, Alert, ActivityIndicator} from 'react-native';
 import {HeaderButtons, Item} from 'react-navigation-header-buttons';
 import {Button, Searchbar} from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import {useDispatch, useSelector} from "react-redux";
 
 import HeaderButton from "../components/UI/HeaderButton";
 import ProductItem from "../components/UI/ProductItem";
 import colors from '../config/colors';
+import {categories, regions} from "../data/data";
 
 import * as listingActions from "../store/actions/listing";
-import {useDispatch, useSelector} from "react-redux";
-import CategoryPickerItem from "../components/CategoryPickerItem";
 
 const ListingsScreen = (props) => {
     const dispatch = useDispatch();
-    const data = useSelector((state) => state.listing);
+    const data = useSelector((state) => state.listing.listing_data);
     const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [searchVisible, setSearchVisible] = useState(false);
     const [iconSet, setIconSet] = useState("magnify");
     const [filterVisible, setFilterVisible] = useState("Home");
     const [activeFilter, setActiveFilter] = useState("");
+    const [category, setCategory] = useState([]);
+    const [region, setRegion] = useState([]);
 
     const onChangeSearch = (query) => {
         console.log("search", query);
@@ -43,6 +45,14 @@ const ListingsScreen = (props) => {
         } else {
             setActiveFilter("Home");
         }
+    }
+
+    const applyFilter = () => {
+        let filterObject = {
+            category: category,
+            region: region
+        }
+        console.log("Filters : ", filterObject);
     }
 
     const loadFeed = useCallback(async () => {
@@ -88,6 +98,22 @@ const ListingsScreen = (props) => {
             ),
         });
     });
+
+    // if(loading) {
+    //     return(
+    //         <View style={styles.centered}>
+    //             <ActivityIndicator size={'large'} color={colors.primary}/>
+    //         </View>
+    //     );
+    // }
+    //
+    // if(!loading && data.listing_data === [] ) {
+    //     return(
+    //         <View style={styles.centered}>
+    //             <Text>No feeds</Text>
+    //         </View>
+    //     );
+    // }
 
     return (
         <View style={styles.screen}>
@@ -136,58 +162,156 @@ const ListingsScreen = (props) => {
                 <>
                     {activeFilter === "Category" ?
                         <View style={styles.filterDisplay}>
-                            <Text>All Category soon</Text>
-                            <Button
-                                color={colors.medium}
-                                uppercase={false}
-                                mode={"outlined"}
-                                onPress={() => {
-                                    setFilterVisible("Home");
-                                    setActiveFilter('');
-                                }}>Apply</Button>
+                            <Text style={styles.filterTitle}>Filter Your Category</Text>
+                            <FlatList
+                                data={categories}
+                                keyExtractor={(item) => item.category.toString()}
+                                renderItem={(itemData) => {
+                                    if (itemData.item.sub_category === undefined) {
+                                        return (
+                                            <TouchableOpacity onPress={() => {
+                                                if (!category.includes(itemData.item.category)) {
+                                                    setCategory([...category, itemData.item.category]);
+                                                } else {
+                                                    setCategory(category.filter((item) => (item !== itemData.item.category)))
+                                                }
+                                            }}>
+                                                <Text
+                                                    style={category.includes(itemData.item.category) ? [styles.main_category, {color: colors.primary}] : styles.main_category}>
+                                                    {itemData.item.category}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        );
+                                    } else {
+                                        return (
+                                            <>
+                                                <Text style={styles.main_category}>{itemData.item.category} : </Text>
+                                                {itemData.item.sub_category.map((item, index) =>
+                                                    <TouchableOpacity key={index} onPress={() => {
+                                                        if (!category.includes(item)) {
+                                                            setCategory([...category, item]);
+                                                        } else {
+                                                            setCategory(category.filter((item) => (item !== item)))
+                                                        }
+                                                    }}>
+                                                        <Text
+                                                            style={category.includes(item) ? [styles.sub_category, {color: colors.primary}] : styles.sub_category}>{item}</Text>
+                                                    </TouchableOpacity>
+                                                )}
+                                            </>
+                                        );
+                                    }
+                                }}
+                            />
+                            <View style={styles.filterButton}>
+                                <Button
+                                    style={{flex: 2}}
+                                    color={colors.medium}
+                                    uppercase={false}
+                                    mode={"outlined"}
+                                    onPress={() => {
+                                        setFilterVisible("Home");
+                                        setActiveFilter('');
+                                        if(category.length !== 0){
+                                            applyFilter()
+                                        }
+                                    }}>{category.length === 0 ? "Close" : "Apply"}</Button>
+                                <Button
+                                    style={{flex: 2}}
+                                    color={colors.medium}
+                                    uppercase={false}
+                                    mode={"outlined"}
+                                    onPress={() => {
+                                        setCategory([]);
+                                    }}>Clear</Button>
+                            </View>
                         </View>
                         :
                         <View style={styles.filterDisplay}>
-                            <Text>All Region soon</Text>
+                            <Text style={styles.filterTitle}>Filter Your Region</Text>
+                            <FlatList
+                                data={regions}
+                                keyExtractor={(item) => item.toString()}
+                                renderItem={(itemData) => {
+                                    return (
+                                        <TouchableOpacity onPress={() => {
+                                            if (!region.includes(itemData.item)) {
+                                                setRegion([...region, itemData.item]);
+                                            } else {
+                                                setRegion(region.filter((item) => (item !== itemData.item)))
+                                            }
+                                        }}>
+                                            <Text
+                                                style={region.includes(itemData.item) ? [styles.main_category, {color: colors.primary}] : styles.main_category}>
+                                                {itemData.item}
+                                            </Text>
+                                        </TouchableOpacity>)
+                                }}
+                            />
+                            <View style={styles.filterButton}>
                             <Button
+                                style={{flex: 2}}
                                 color={colors.medium}
                                 uppercase={false}
                                 mode={"outlined"}
                                 onPress={() => {
                                     setFilterVisible("Home");
                                     setActiveFilter('');
-                                }}>Apply</Button>
+                                    if(region.length !== 0){
+                                        applyFilter()
+                                    }
+                                }}>{region.length === 0 ? "Close" : "Apply"}</Button>
+                            <Button
+                                style={{flex: 2}}
+                                color={colors.medium}
+                                uppercase={false}
+                                mode={"outlined"}
+                                onPress={() => {
+                                    setRegion([]);
+                                }}>Clear</Button>
+                            </View>
                         </View>
                     }
                 </> : <>
-                    {data.listing_data ?
+                    {data.length === 0 ? (<><View style={styles.centered}><Text>Currently No Feed</Text></View></>) :
                         (
                             <FlatList
                                 refreshControl={
                                     <RefreshControl refreshing={loading} onRefresh={loadFeed}/>
                                 }
-                                data={data.listing_data}
+                                data={data}
                                 renderItem={(itemData) => {
-                                    //console.log("Itemdata", itemData.item);
+                                    //console.log("listings", itemData.item);
                                     return (
                                         <ProductItem
                                             image={itemData.item.images[0].url}
                                             title={itemData.item.title}
                                             price={itemData.item.price}
-                                            phone={itemData.item.phone}
-                                            onSelect={() => props.navigation.navigate("ListingDetailsScreen", {
-                                                listing: itemData.item
-                                            })}
+                                            phone={itemData.item.contact_phone}
+                                            onSelect={() => {
+                                                let images = itemData.item.images.map((item) => {
+                                                    return item.url;
+                                                })
+                                                props.navigation.navigate("ListingDetailsScreen", {
+                                                    listing: itemData.item,
+                                                    images: images
+                                                })
+                                            }}
                                         >
                                             <Button
                                                 icon="more"
                                                 color={colors.medium}
                                                 uppercase={false}
                                                 mode={"outlined"}
-                                                onPress={() =>
+                                                onPress={() => {
+                                                    let images = itemData.item.images.map((item) => {
+                                                        return item.url;
+                                                    })
                                                     props.navigation.navigate("ListingDetailsScreen", {
-                                                        listing: itemData.item
-                                                    })}
+                                                        listing: itemData.item,
+                                                        images: images
+                                                    })
+                                                }}
                                             >
                                                 More Detail
                                             </Button>
@@ -195,11 +319,11 @@ const ListingsScreen = (props) => {
                                     );
                                 }}
                             />
-                        ) : (<><View style={styles.centered}><Text>Currently No Feed</Text></View></>)}
+                        )}
                 </>}
         </View>
     )
-}
+};
 
 const styles = StyleSheet.create({
     screen:{
@@ -223,6 +347,9 @@ const styles = StyleSheet.create({
     filterText:{
         fontSize: 15
     },
+    filterButton:{
+        flexDirection: "row",
+    },
     centered:{
         flex: 1,
         justifyContent: 'center',
@@ -231,44 +358,24 @@ const styles = StyleSheet.create({
     filterDisplay:{
         flex: 1
     },
+    filterTitle:{
+        fontSize: 25,
+        fontWeight: "bold",
+        marginVertical: 10,
+        textAlign: "center"
+    },
+    main_category:{
+        fontSize: 15,
+        fontWeight: "bold",
+        marginVertical: 10,
+        marginHorizontal: 30
+    },
+    sub_category:{
+        fontSize: 15,
+        fontWeight: "bold",
+        marginVertical: 7,
+        marginHorizontal: 50
+    }
 })
 
 export default ListingsScreen;
-
-//const [modalVisible, setModalVisible] = useState(false);
-
-// headerLeft: () => (
-//     <HeaderButtons HeaderButtonComponent={HeaderButton}>
-//         <Item
-//             //title={"Search"}
-//             iconName={"filter"}
-//             onPress={() => {
-//                 //console.log("filter")
-//                 setModalVisible(true);
-//             }}
-//         />
-//     </HeaderButtons>
-// ),
-
-// <Modal
-//     animationType="slide"
-//     transparent={true}
-//     visible={modalVisible}
-//     onRequestClose={() => {
-//         setModalVisible(!modalVisible)
-//     }}
-// >
-//     <View style={styles.centeredView}>
-//         <View style={styles.modalView}>
-//             <Text style={styles.modalText}>Demo Filter</Text>
-//             <TouchableOpacity
-//                 style={styles.openButton}
-//                 onPress={() => {
-//                     setModalVisible(!modalVisible)
-//                 }}
-//             >
-//                 <Text>Cancel</Text>
-//             </TouchableOpacity>
-//         </View>
-//     </View>
-// </Modal>
