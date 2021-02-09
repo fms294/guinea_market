@@ -15,6 +15,8 @@ import UploadScreen from "./UploadScreen";
 import {categories, regions} from "../data/data";
 import * as listingAction from "../store/actions/listing";
 import { useDispatch } from "react-redux";
+import {translate} from "react-i18next";
+import colors from "../config/colors";
 
 const phoneRegEx = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
@@ -28,6 +30,7 @@ const validationSchema = Yup.object().shape({
 });
 
 const ListingEditScreen = (props) => {
+    const {t} = props;
     const dispatch = useDispatch();
 
     //const location = useLocation();
@@ -38,7 +41,7 @@ const ListingEditScreen = (props) => {
     //categories.map((item) => console.log(item));
 
     const handleSubmission = async (values) => {
-       // console.log("values.....", values);
+       //console.log("values.....", values);
         const finalData = {
             "title": values.title,
             "images": [
@@ -55,6 +58,7 @@ const ListingEditScreen = (props) => {
         console.log("FinalData", finalData);
         await dispatch(listingAction.add_item(finalData));
     }
+
     return (
           <ScrollView>
               <Screen style={styles.container}>
@@ -86,35 +90,35 @@ const ListingEditScreen = (props) => {
                       <FormField
                           maxLength={255}
                           name="title"
-                          placeholder="Title"
+                          placeholder={t("listing_add:title")}
                       />
                       <FormField
                           keyboardType="numeric"
                           maxLength={8}
                           name="price"
-                          placeholder="Price"
+                          placeholder={t("listing_add:price")}
                       />
                       <FormField
                           maxLength={255}
                           multiline
                           name="description"
                           numberOfLines={3}
-                          placeholder="Description"
+                          placeholder={t("listing_add:desc")}
                       />
                       <FormPicker
                           items={categories}
                           //numberOfColumns={1}
                           name="category"
                           PickerItemComponent={CategoryPickerItem}
-                          placeholder="Category"
+                          placeholder={t("listing_add:category")}
                       />
                       <FormField
                           keyboardType="numeric"
                           maxLength={10}
                           name="phone"
-                          placeholder="Contact Number"
+                          placeholder={t("listing_add:contact")}
                       />
-                      <Text style={styles.text}>Select Region</Text>
+                      <Text style={styles.text}>{t("listing_add:select")}</Text>
                       <View style={styles.pickerContainer}>
                           <Picker
                               name={regions}
@@ -128,7 +132,7 @@ const ListingEditScreen = (props) => {
                               })}
                           </Picker>
                       </View>
-                      <SubmitButton title="Post"/>
+                      <SubmitButton title={t("listing_add:btn")}/>
                   </Form>
               </Screen>
           </ScrollView>
@@ -149,9 +153,10 @@ const styles = StyleSheet.create({
         marginLeft: 20,
         //marginVertical: 5,
         fontSize: 20,
+        color: colors.medium
     },
     picker: {
         width: '70%',
     },
 });
-export default ListingEditScreen;
+export default translate(["listing_add"], {wait: true})(ListingEditScreen);

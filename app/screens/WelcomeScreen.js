@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     ImageBackground,
     StyleSheet,
@@ -9,7 +9,6 @@ import {
     Alert
 } from 'react-native';
 import Modal from "react-native-modal";
-import AppButton from '../components/Button';
 import colors from "../config/colors";
 import {
     AppForm as Form,
@@ -19,42 +18,13 @@ import {
 } from "../components/forms";
 import {Formik} from 'formik';
 import * as Yup from "yup";
-import Screen from "../components/Screen";
 import * as authActions from "../store/actions/auth";
-import routes from "../navigation/routes";
-import {useFormikContext} from "formik";
 import {useDispatch} from "react-redux";
 import {forgetPassword, updatePassword} from "../api/apiCall";
-import {ActivityIndicator} from "react-native-web";
+import {translate} from "react-i18next";
 
-const validationSchemaLogin = Yup.object().shape({
-    //email: Yup.string().required().email().label("Email"),
-    phone: Yup.string().required().matches(/^\d{9}$/, {message: "Enter Valid Phone Number"}),
-    password: Yup.string().required().min(6).label("Password"),
-});
-
-const validationSchemaRegister = Yup.object().shape({
-    name: Yup.string().required().label("Name"),
-    //email: Yup.string().required().email().label("Email"),
-    phone: Yup.string().required().matches(/^\d{9}$/, {message: "Enter Valid Phone Number"}),
-    password: Yup.string().required().min(6).label("Password"),
-    confirmPassword: Yup.string().label("Password Confirm").required()
-        .oneOf([Yup.ref('password')], 'Confirm Password must matched Password'),
-});
-
-const validationSchemaHandleOtp = Yup.object().shape({
-    email: Yup.string().required().email().label("Registered Email"),
-});
-
-const validationSchemaConfirmOtp = Yup.object().shape({
-    otp : Yup.number().required().min(4).label("OTP"),
-});
-
-const validateSchemaPasswordChange = Yup.object().shape({
-    password : Yup.string().required().min(6).label("Password"),
-})
-
-const WelcomeScreen = ({navigation}) => {
+const WelcomeScreen = (props) => {
+    const {t} = props;
     const [title, setTitle] = useState();
     const [modalVisible, setModalVisible] = useState(false);
     const [loginFailed, setLoginFailed] = useState(false);
@@ -68,10 +38,31 @@ const WelcomeScreen = ({navigation}) => {
     const dispatch = useDispatch();
     let serverOtptemp;
 
-    useEffect(() => {
-        navigation.setOptions({
-            title: "Welcome"
-        })
+    const validationSchemaLogin = Yup.object().shape({
+        //email: Yup.string().required().email().label("Email"),
+        phone: Yup.string().required().matches(/^\d{9}$/, {message: t("welcome_screen:error_phone_msg")}),
+        password: Yup.string().required().min(6).label("Password"),
+    });
+
+    const validationSchemaRegister = Yup.object().shape({
+        name: Yup.string().required().label("Name"),
+        //email: Yup.string().required().email().label("Email"),
+        phone: Yup.string().required().matches(/^\d{9}$/, {message: t("welcome_screen:error_phone_msg")}),
+        password: Yup.string().required().min(6).label("Password"),
+        confirmPassword: Yup.string().label("Password Confirm").required()
+            .oneOf([Yup.ref('password')], 'Confirm Password must matched Password'),
+    });
+
+    const validationSchemaHandleOtp = Yup.object().shape({
+        email: Yup.string().required().email().label("Registered Email"),
+    });
+
+    const validationSchemaConfirmOtp = Yup.object().shape({
+        otp : Yup.number().required().min(4).label("OTP"),
+    });
+
+    const validateSchemaPasswordChange = Yup.object().shape({
+        password : Yup.string().required().min(6).label("Password"),
     });
 
     const handleOTP = async (values) => {
@@ -93,7 +84,7 @@ const WelcomeScreen = ({navigation}) => {
                         text : 'Create Account',
                         style: 'destructive',
                         onPress: () =>{
-                            setTitle("Register");
+                            setTitle(t("welcome_screen:register"))
                         }},
                         {
                             text: 'Try Again',
@@ -131,7 +122,7 @@ const WelcomeScreen = ({navigation}) => {
             await updatePassword(serverId, finalPass)
                 .then((res) => {
                     //console.log("response in updatePassword", res);
-                    setTitle("Login");
+                    setTitle(t("welcome_screen:login"))
                     setErrorMessage("");
                     setForgetView(false);
                     setOtpView(false);
@@ -150,7 +141,7 @@ const WelcomeScreen = ({navigation}) => {
     const handleSubmission = async (values) => {
         //console.log("events...", values);
         try {
-            if(title === "Register"){
+            if(title === t("welcome_screen:register")){
                 await dispatch(authActions.signup(values.name, values.phone, values.password));
             }else {
                 await dispatch(authActions.login(values.phone, values.password));
@@ -179,7 +170,7 @@ const WelcomeScreen = ({navigation}) => {
             >
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                        {title === "Login" ? (
+                        {title === t("welcome_screen:login") ? (
                             <>
                                 {forgetView ? (<>
                                     {otpView ? (
@@ -270,25 +261,18 @@ const WelcomeScreen = ({navigation}) => {
                                                 icon={"phone"}
                                                 keyboardType={"decimal-pad"}
                                                 name={"phone"}
-                                                placeholder={"Phone No."}
-                                                // autoCapitalize="none"
-                                                // autoCorrect={false}
-                                                // icon="email"
-                                                // keyboardType="email-address"
-                                                // name='email'
-                                                // placeholder="Email"
-                                                // textContentType="emailAddress"
+                                                placeholder={t("welcome_screen:phone")}
                                             />
                                             <FormField
                                                 autoCapitalize="none"
                                                 autoCorrect={false}
                                                 icon="lock"
                                                 name="password"
-                                                placeholder="Password"
+                                                placeholder={t("welcome_screen:pass")}
                                                 secureTextEntry
                                                 textContentType="password"
                                             />
-                                            <SubmitButton title="Login"/>
+                                            <SubmitButton title={t("welcome_screen:login")}/>
                                         </Form>
                                         <TouchableOpacity
                                             style={styles.openButtonForget}
@@ -297,16 +281,16 @@ const WelcomeScreen = ({navigation}) => {
                                                 setOtpView(false);
                                             }}
                                         >
-                                            <Text style={styles.textStyleForget}>Forget Password ?</Text>
+                                            <Text style={styles.textStyleForget}>{t("welcome_screen:forget_pass")}</Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity
                                             style={styles.openButton}
                                             onPress={() => {
-                                                setTitle("Register");
+                                                setTitle(t("welcome_screen:register"))
                                                 setErrorMessage("");
                                             }}
                                         >
-                                            <Text style={styles.textStyle}>Register New Account</Text>
+                                            <Text style={styles.textStyle}>{t("welcome_screen:new_acc")}</Text>
                                         </TouchableOpacity>
                                     </>
                                 )}
@@ -334,13 +318,13 @@ const WelcomeScreen = ({navigation}) => {
                                         autoCorrect={false}
                                         icon="account"
                                         name="name"
-                                        placeholder="Name"
+                                        placeholder={t("welcome_screen:name")}
                                     />
                                     <FormField
                                         icon={"phone"}
                                         keyboardType={"decimal-pad"}
                                         name={"phone"}
-                                        placeholder={"Phone No."}
+                                        placeholder={t("welcome_screen:phone")}
                                         //textContentType={""}
                                     />
                                     <FormField
@@ -348,7 +332,7 @@ const WelcomeScreen = ({navigation}) => {
                                         autoCorrect={false}
                                         icon="lock"
                                         name="password"
-                                        placeholder="Password"
+                                        placeholder={t("welcome_screen:pass")}
                                         secureTextEntry
                                         textContentType="password"
                                     />
@@ -356,23 +340,23 @@ const WelcomeScreen = ({navigation}) => {
                                         name="password"
                                         value={values.confirmPassword}
                                         onChangeText={handleChange("confirmPassword")}
-                                        placeholder="Confirm password"
+                                        placeholder={t("welcome_screen:conf_pass")}
                                         secureTextEntry
                                         icon="lock"
                                         onBlur={handleBlur("confirmPassword")}
                                         textContentType="password"
                                     />
-                                    <SubmitButton title="Register"/>
+                                    <SubmitButton title={t("welcome_screen:register")} />
                                     <TouchableOpacity
                                         style={styles.openButton}
                                         onPress={() => {
-                                            setTitle("Login");
+                                            setTitle(t("welcome_screen:login"))
                                             setErrorMessage("");
                                             setForgetView(false);
                                             setOtpView(false);
                                         }}
                                     >
-                                        <Text style={styles.textStyle}>Already Registered</Text>
+                                        <Text style={styles.textStyle}>{t("welcome_screen:already")}</Text>
                                     </TouchableOpacity>
                                 </>
                             )}
@@ -389,7 +373,7 @@ const WelcomeScreen = ({navigation}) => {
                                 setUpdatePasswordView(false);
                             }}
                         >
-                            <Text style={styles.textStyle}>Cancel</Text>
+                            <Text style={styles.textStyle}>{t("welcome_screen:cancel")}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -399,7 +383,7 @@ const WelcomeScreen = ({navigation}) => {
                 {modalVisible ? <></> :
                     <>
                        <Image style={styles.logo} source={require("../assets/logo.png")}/>
-                        <Text style={styles.textDescription}>Guinea Market </Text>
+                        <Text style={styles.textDescription}>Dibida</Text>
                     </>
                 }
             </View>
@@ -407,18 +391,18 @@ const WelcomeScreen = ({navigation}) => {
                 {modalVisible ? <></> : <><TouchableOpacity style={[styles.button,
                     {backgroundColor: colors.primary}]}
                                    onPress={() => {
-                                       setTitle("Login")
+                                       setTitle(t("welcome_screen:login"))
                                        setModalVisible(true)
                                    }}>
-                    <Text style={styles.text}>Login</Text>
+                    <Text style={styles.text}>{t("welcome_screen:login")}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[styles.button,
                     { backgroundColor: colors.primary} ]}
                                   onPress={() => {
-                                      setTitle("Register")
+                                      setTitle(t("welcome_screen:register"))
                                       setModalVisible(true)
                                   }}>
-                    <Text style={styles.text}>Register</Text>
+                    <Text style={styles.text}>{t("welcome_screen:register")}</Text>
                 </TouchableOpacity></>}
             </View>
         </ImageBackground>
@@ -448,9 +432,11 @@ const styles = StyleSheet.create({
 
     },
     textDescription:{
-        fontSize:25,
+        fontSize:50,
         fontWeight:"bold",
-        fontStyle: "italic"
+        marginTop: 10,
+        color: colors.medium,
+        //fontStyle: "italic"
     },
     button:{
         backgroundColor: colors.primary,
@@ -523,4 +509,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default WelcomeScreen;
+export default translate(["welcome_screen"], {wait: true})(WelcomeScreen);

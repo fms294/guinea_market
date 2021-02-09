@@ -4,6 +4,7 @@ import {HeaderButtons, Item} from 'react-navigation-header-buttons';
 import {Button, Searchbar} from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {useDispatch, useSelector} from "react-redux";
+import { translate } from "react-i18next";
 
 import HeaderButton from "../components/UI/HeaderButton";
 import ProductItem from "../components/UI/ProductItem";
@@ -13,6 +14,7 @@ import {categories, regions} from "../data/data";
 import * as listingActions from "../store/actions/listing";
 
 const ListingsScreen = (props) => {
+    const {t} = props;
     const dispatch = useDispatch();
     const data = useSelector((state) => state.listing.listing_data);
     const [loading, setLoading] = useState(false);
@@ -23,6 +25,7 @@ const ListingsScreen = (props) => {
     const [activeFilter, setActiveFilter] = useState("");
     const [category, setCategory] = useState([]);
     const [region, setRegion] = useState([]);
+    const [sortedData,setSortedData] = useState([]);
 
     const onChangeSearch = (query) => {
         console.log("search", query);
@@ -82,7 +85,7 @@ const ListingsScreen = (props) => {
 
     useEffect(() => {
         props.navigation.setOptions({
-            title: "Feed",
+            title: props.t("listing_screen:feed"),
             headerRight: () => (
                 <HeaderButtons HeaderButtonComponent={HeaderButton}>
                     <Item
@@ -99,21 +102,14 @@ const ListingsScreen = (props) => {
         });
     });
 
-    // if(loading) {
-    //     return(
-    //         <View style={styles.centered}>
-    //             <ActivityIndicator size={'large'} color={colors.primary}/>
-    //         </View>
-    //     );
-    // }
-    //
-    // if(!loading && data.listing_data === [] ) {
-    //     return(
-    //         <View style={styles.centered}>
-    //             <Text>No feeds</Text>
-    //         </View>
-    //     );
-    // }
+    useEffect(() => {
+        const sortBy = (item) => {
+            return item.sort(function (a, b) {
+                return new Date(b.updatedAt) - new Date(a.updatedAt);
+            });
+        }
+        setSortedData(sortBy(data));
+    });
 
     return (
         <View style={styles.screen}>
@@ -121,7 +117,7 @@ const ListingsScreen = (props) => {
                 <></> :
                 <>
                     {filterVisible === "Home" ? <Searchbar
-                        placeholder="Search"
+                        placeholder={t("listing_screen:search")}
                         icon={iconSet}
                         onChangeText={onChangeSearch}
                         value={searchQuery}
@@ -142,7 +138,7 @@ const ListingsScreen = (props) => {
                         filterView("Category");
                     }}
                 >
-                    <Text style={styles.filterText}>Category</Text>
+                    <Text style={styles.filterText}>{t("listing_screen:category")}</Text>
                     <Ionicons
                         size={15}
                         name={activeFilter === "Category" ? "chevron-up" : "chevron-down"}
@@ -154,7 +150,7 @@ const ListingsScreen = (props) => {
                         filterView("Region")
                     }}
                 >
-                    <Text style={styles.filterText}>Region</Text>
+                    <Text style={styles.filterText}>{t("listing_screen:region")}</Text>
                     <Ionicons size={15} name={activeFilter === "Region" ? "chevron-up" : "chevron-down"}/>
                 </TouchableOpacity>
             </View>
@@ -162,7 +158,7 @@ const ListingsScreen = (props) => {
                 <>
                     {activeFilter === "Category" ?
                         <View style={styles.filterDisplay}>
-                            <Text style={styles.filterTitle}>Filter Your Category</Text>
+                            <Text style={styles.filterTitle}>{t("listing_screen:f_category")}</Text>
                             <FlatList
                                 data={categories}
                                 keyExtractor={(item) => item.category.toString()}
@@ -215,7 +211,7 @@ const ListingsScreen = (props) => {
                                         if(category.length !== 0){
                                             applyFilter()
                                         }
-                                    }}>{category.length === 0 ? "Close" : "Apply"}</Button>
+                                    }}>{category.length === 0 ? t("listing_screen:close") : t("listing_screen:apply")}</Button>
                                 <Button
                                     style={{flex: 2}}
                                     color={colors.medium}
@@ -223,12 +219,12 @@ const ListingsScreen = (props) => {
                                     mode={"outlined"}
                                     onPress={() => {
                                         setCategory([]);
-                                    }}>Clear</Button>
+                                    }}>{t("listing_screen:clear")}</Button>
                             </View>
                         </View>
                         :
                         <View style={styles.filterDisplay}>
-                            <Text style={styles.filterTitle}>Filter Your Region</Text>
+                            <Text style={styles.filterTitle}>{t("listing_screen:f_region")}</Text>
                             <FlatList
                                 data={regions}
                                 keyExtractor={(item) => item.toString()}
@@ -260,7 +256,7 @@ const ListingsScreen = (props) => {
                                     if(region.length !== 0){
                                         applyFilter()
                                     }
-                                }}>{region.length === 0 ? "Close" : "Apply"}</Button>
+                                }}>{region.length === 0 ? t("listing_screen:close") : t("listing_screen:apply") }</Button>
                             <Button
                                 style={{flex: 2}}
                                 color={colors.medium}
@@ -268,18 +264,19 @@ const ListingsScreen = (props) => {
                                 mode={"outlined"}
                                 onPress={() => {
                                     setRegion([]);
-                                }}>Clear</Button>
+                                }}>{t("listing_screen:clear")}</Button>
                             </View>
                         </View>
                     }
                 </> : <>
-                    {data.length === 0 ? (<><View style={styles.centered}><Text>Currently No Feed</Text></View></>) :
+                    {data.length === 0 ? (<><View style={styles.centered}><Text>{t("listing_screen:no_feed")}</Text></View></>) :
                         (
                             <FlatList
                                 refreshControl={
                                     <RefreshControl refreshing={loading} onRefresh={loadFeed}/>
                                 }
-                                data={data}
+                                //inverted
+                                data={sortedData}
                                 renderItem={(itemData) => {
                                     //console.log("listings", itemData.item);
                                     return (
@@ -288,6 +285,7 @@ const ListingsScreen = (props) => {
                                             title={itemData.item.title}
                                             price={itemData.item.price}
                                             phone={itemData.item.contact_phone}
+                                            posted={itemData.item.updatedAt}
                                             onSelect={() => {
                                                 let images = itemData.item.images.map((item) => {
                                                     return item.url;
@@ -313,7 +311,7 @@ const ListingsScreen = (props) => {
                                                     })
                                                 }}
                                             >
-                                                More Detail
+                                                {t("listing_screen:btn")}
                                             </Button>
                                         </ProductItem>
                                     );
@@ -378,4 +376,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default ListingsScreen;
+export default translate(["listing_screen"],{wait: true})(ListingsScreen);

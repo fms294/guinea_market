@@ -8,47 +8,63 @@ import ListItemSeparator from '../components/lists/ListItemSeparator';
 import {useDispatch, useSelector} from "react-redux";
 import * as authActions from "../store/actions/auth";
 import {Button} from "react-native-paper";
-import {Ionicons} from "@expo/vector-icons";
-
-const menuItems = [
-    {
-        title: "My Listings",
-        icon: {
-            name: "format-list-bulleted",
-            backgroundColor: colors.primary
-        },
-        targetScreen: "MyListingsScreen"
-    },
-    {
-        title: "My Message",
-        icon: {
-            name: "email",
-            backgroundColor: colors.secondary,
-        },
-        targetScreen:"MessagesScreen",
-    }
-]
+import { translate } from 'react-i18next';
 
 const AccountScreen = (props) => {
+    const {t} = props;
     const dispatch = useDispatch();
     const userData = useSelector((state) => state.auth.userData);
     //console.log("userData", userData);
 
+    const menuItems = [
+        {
+            title: t("account_screen:listing"),
+            icon: {
+                name: "format-list-bulleted",
+                backgroundColor: colors.primary
+            },
+            targetScreen: "MyListingsScreen"
+        },
+        {
+            title: t("account_screen:message"),
+            icon: {
+                name: "email",
+                backgroundColor: colors.secondary,
+            },
+            targetScreen:"MessagesScreen",
+        },
+        {
+            title: t("account_screen:settings"),
+            icon: {
+                name: "cog",
+                backgroundColor: colors.black,
+            },
+            targetScreen: "SettingScreen",
+        },
+        {
+            title: t("account_screen:about"),
+            icon: {
+                name: "information-variant",
+                backgroundColor: colors.backgroundImage,
+            },
+            targetScreen: "AboutScreen",
+        },
+    ];
+
     useEffect(() => {
         props.navigation.setOptions({
-            title: "Account"
+            title: props.t("account_screen:account")
         })
     })
 
     const logoutHandler = () => {
-        Alert.alert('Are you sure ?', 'Do you really want to logout ?', [
-            { text: 'No', style: 'default' },
+        Alert.alert(t("account_screen:alert_title"), t("account_screen:alert_msg"), [
+            { text: t("account_screen:no"), style: 'default' },
             {
-                text: 'Yes',
+                text: t("account_screen:yes"),
                 style: 'destructive',
                 onPress: async () => {
                     await dispatch(authActions.logout());
-                    //props.navigation.navigate("AuthNavigator");
                 },
             },
         ]);
@@ -93,7 +109,7 @@ const AccountScreen = (props) => {
                     color={colors.dark}
                     uppercase={false}
                     mode={"outline"}
-                    onPress={() => logoutHandler()}>Logout</Button>
+                    onPress={() => logoutHandler()}>{t("account_screen:logout")}</Button>
             </View>
         </View>
     )
@@ -114,4 +130,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default AccountScreen;
+export default translate(['account_screen'],{wait: true})(AccountScreen);

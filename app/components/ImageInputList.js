@@ -3,7 +3,9 @@ import {View, StyleSheet, ScrollView} from 'react-native';
 import ImageInput from './ImageInput';
 
 
-const ImageInputList = ({ imageUris = [], onRemoveImage, onAddImage }) => {
+const ImageInputList = (props) => {
+    //console.log("props......", props);
+    const { imageUris = [], onRemoveImage, onAddImage } = props;
     const scrollVIew = useRef();
 
     return (

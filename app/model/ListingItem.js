@@ -9,7 +9,8 @@ class ListingItem {
         owner,
         region,
         contact_phone,
-        images
+        images,
+        updatedAt
     ) {
         this.id = id;
         this.title = title;
@@ -21,6 +22,7 @@ class ListingItem {
         this.region = region;
         this.contact_phone = contact_phone;
         this.images = images;
+        this.updatedAt = updatedAt;
     }
 }
 

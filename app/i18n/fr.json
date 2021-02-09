@@ -1,0 +1,79 @@
+{
+  "tab_nav": {
+    "feed": "Alimentation",
+    "account": "Compte"
+  },
+  "category": {
+  },
+  "welcome_screen": {
+    "login": "S'identifier",
+    "phone": "Pas de téléphone.",
+    "pass": "Mot de passe",
+    "forget_pass": "Mot de passe oublié ?",
+    "new_acc": "Enregistrer un nouveau compte",
+    "cancel": "Annuler",
+    "register" : "S'inscrire",
+    "name": "Nom",
+    "conf_pass": "Confirmez le mot de passe",
+    "already": "Déjà enregistré",
+    "error_phone_msg": "Entrez un numéro de téléphone valide"
+  },
+  "listing_screen": {
+    "feed": "Alimentation",
+    "category": "Catégorie",
+    "region": "Région",
+    "search": "Chercher",
+    "no_feed" : "Actuellement aucun flux",
+    "btn": "Plus de détails",
+    "f_category" : "Filtrez votre catégorie",
+    "f_region" : "Filtrez votre région",
+    "clear": "Clair",
+    "close": "Proche",
+    "apply": "Appliquer",
+    "contact": "Contact : "
+  },
+  "listing_add": {
+    "title": "Titre",
+    "price": "Prix",
+    "desc" : "La description",
+    "category" : "Catégorie",
+    "contact": "Numéro de contact",
+    "select": "Choisissez une région",
+    "btn": "Publier"
+  },
+  "account_screen": {
+    "account" : "Compte",
+    "listing" : "Mes annonces",
+    "message": "Mon message",
+    "about": "À propos de l'application",
+    "settings" : "Réglages",
+    "logout": "Se déconnecter",
+    "alert_title": "Êtes-vous sûr ?",
+    "alert_msg": "Voulez-vous vraiment vous déconnecter?",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "my_listings": {
+    "listings": "Annonces",
+    "start": " Commencer à vendre",
+    "btn": "Effacer l'article"
+  },
+  "about_screen": {
+    "about": "À propos de",
+    "alert": "Je ne sais pas comment ouvrir cette URL:",
+    "contact": "Contactez-nous",
+    "terms" : "Conditions d'utilisation",
+    "privacy": "Politique de confidentialité",
+    "rules": "Règles de publication",
+    "advice": "Conseils aux utilisateurs",
+    "okay": "d'accord"
+  },
+  "setting_screen" : {
+    "settings": "Réglages",
+    "lang_setting" : "Paramètres de langue : ",
+    "alert_title": "Sélection de la langue",
+    "alert_msg": "Sélectionnez votre langue préférée pour utiliser cette application",
+    "french": "Français",
+    "english": "Anglais"
+  }
+}

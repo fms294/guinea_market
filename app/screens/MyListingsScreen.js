@@ -4,22 +4,23 @@ import ProductItem from "../components/UI/ProductItem";
 import {Button} from "react-native-paper";
 import colors from "../config/colors";
 import {useDispatch, useSelector} from "react-redux";
+import { translate } from "react-i18next";
 
 import * as listingActions from "../store/actions/listing";
 import {Ionicons} from "@expo/vector-icons";
 
 const MyListingsScreen = (props) => {
+    const {t} = props;
     const dispatch = useDispatch();
+    const data = useSelector((state) => state.listing.listing_userData);
     const [loading, setLoading] = useState(false);
+    const [sortedData, setSortedData] = useState([]);
 
     useEffect(() => {
         props.navigation.setOptions({
-            title: "Listings"
+            title: props.t("my_listings:listings")
         })
     })
-
-    const data = useSelector((state) => state.listing.listing_userData);
-    //console.log("data...", data.listing_userData.length);
 
     const loadFeed = useCallback(async () => {
         setLoading(true);
@@ -67,6 +68,15 @@ const MyListingsScreen = (props) => {
         });
     }, [dispatch, loadFeed]);
 
+    useEffect(() => {
+        const sortBy = (item) => {
+            return item.sort(function (a, b) {
+                return new Date(b.updatedAt) - new Date(a.updatedAt);
+            });
+        }
+        setSortedData(sortBy(data));
+    });
+
     return(
         <View style={styles.screen}>
             {data.length === 0 ? (
@@ -80,7 +90,7 @@ const MyListingsScreen = (props) => {
                                 props.navigation.navigate("ListingEditScreen")
                             }}>
                             <Ionicons name={"add-circle-outline"} size={24}/>
-                            <Text style={styles.buttonText}> Start Selling</Text>
+                            <Text style={styles.buttonText}>{t("my_listings:start")}</Text>
                         </Button>
                     </View>
                 </>
@@ -89,7 +99,7 @@ const MyListingsScreen = (props) => {
                         refreshControl={
                             <RefreshControl refreshing={loading} onRefresh={loadFeed}/>
                         }
-                        data={data}
+                        data={sortedData}
                         renderItem={(itemData) => {
                             //console.log("listings", itemData.item);
                             return (
@@ -98,6 +108,7 @@ const MyListingsScreen = (props) => {
                                     title={itemData.item.title}
                                     price={itemData.item.price}
                                     phone={itemData.item.contact_phone}
+                                    posted={itemData.item.updatedAt}
                                     onSelect={() => props.navigation.navigate("ListingDetailsScreen", {
                                         listing: itemData.item
                                     })}
@@ -109,7 +120,7 @@ const MyListingsScreen = (props) => {
                                         mode={"outlined"}
                                         onPress={deleteFeedHandler.bind(this, itemData.item.id)}
                                     >
-                                        Delete Item
+                                        {t("my_listings:btn")}
                                     </Button>
                                 </ProductItem>
                             );
@@ -136,7 +147,7 @@ const styles = StyleSheet.create({
     }
 })
 
-export default MyListingsScreen;
+export default translate(["my_listings"], {wait: true})(MyListingsScreen);
 
 // props.navigation.navigate("ListingDetailsScreen", {
 //     listing: itemData.item

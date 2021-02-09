@@ -7,13 +7,14 @@ import AccountNavigator from './AccountNavigator';
 import FeedNavigator from './FeedNavigator';
 import ListingEditScreen from '../screens/ListingEditScreen';
 import NewListingButton from './NewListingButton';
-import routes from './routes';
 import colors from "../config/colors";
+import { translate } from 'react-i18next';
 //import useNotifications from '../hooks/useNotifications';
 
 const Tab = createBottomTabNavigator();
 
-const AppNavigator = () => {
+const AppNavigator = (props) => {
+    const {t} = props;
     //useNotifications();
     return (
         <Tab.Navigator
@@ -22,7 +23,7 @@ const AppNavigator = () => {
             }}
         >
             <Tab.Screen
-                name="Feed"
+                name={t("tab_nav:feed")}
                 component={FeedNavigator}
                 options={{
                     tabBarIcon: ({ color, size}) =>
@@ -38,7 +39,7 @@ const AppNavigator = () => {
 
                 />
             <Tab.Screen
-                name="Account"
+                name={t("tab_nav:account")}
                 component={AccountNavigator}
                 options={{
                     tabBarIcon: ({ color, size}) =>
@@ -49,4 +50,4 @@ const AppNavigator = () => {
     );
 }
 
-export default AppNavigator;
+export default translate(["tab_nav"], {wait: true})(AppNavigator);

@@ -6,33 +6,37 @@ import * as ImagePicker from 'expo-image-picker';
 import colors from '../config/colors';
 import { TouchableWithoutFeedback } from 'react-native';
 
-function ImageInput({ imageUri, onChangeImage }) {
+const ImageInput = (props) => {
+    //console.log("imageInput", props);
+    const { imageUri, onChangeImage } = props;
     useEffect(() => {
         requestPermission();
-    }, []); 
+    }, []);
 
     const requestPermission = async() =>{
         const { granted }= await ImagePicker.requestCameraRollPermissionsAsync();
         if(!granted){
             alert("You need to enable permission to access the libray")
         }
-    
+
     };
-    const handlePress = () =>{
+    const handlePress = () => {
         if(!imageUri) selectImage();
         else Alert.alert('Delete', 'Are you sure you want to delete this image ?', [
             {text: "Yes", onPress:() => onChangeImage(null) },
             {text: "No"}
         ])
     }
+
     const selectImage = async () =>{
         try {
           const result = await ImagePicker.launchImageLibraryAsync({
               mediaTypes: ImagePicker.MediaTypeOptions.Images,
               quality:0.5
           });
-          if (!result.cancelled) onChangeImage(result.uri);
-           
+            console.log("result", result);
+          //if (!result.cancelled) onChangeImage(result);
+
         } catch (error) {
           console.log("Error reading an image", error);
         }

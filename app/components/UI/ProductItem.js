@@ -6,11 +6,13 @@ import {
     TouchableOpacity,
     Image,
     Dimensions,
+    Platform
 } from 'react-native';
-import Colors from '../../config/colors';
 import colors from "../../config/colors";
+import { translate } from "react-i18next";
 
 const ProductItem = (props) => {
+    const {t} = props;
     return (
         <View style={styles.cardContainer}>
             <TouchableOpacity onPress={props.onSelect}>
@@ -27,7 +29,8 @@ const ProductItem = (props) => {
                             {props.title}
                         </Text>
                         <Text style={styles.detail} numberOfLines={1}>GNF {props.price.toLocaleString()}</Text>
-                        <Text style={styles.detail}>Contact : {props.phone}</Text>
+                        <Text style={styles.detail}>{t("listing_screen:contact")}{props.phone}</Text>
+                        <Text style={styles.posted}>{props.posted}</Text>
                         <View style={styles.actions}>{props.children}</View>
                     </View>
                 </View>
@@ -75,7 +78,12 @@ const styles = StyleSheet.create({
     detail: {
         marginTop: 10,
         fontSize: Dimensions.get('window').width > 400 ? 16 : 12,
-        color: Colors.medium,
+        color: colors.medium,
+    },
+    posted: {
+        marginTop: 10,
+        fontSize: Dimensions.get('window').width > 400 ? 12 : 8,
+        color: colors.medium,
     },
     actions: {
         //paddingHorizontal: Dimensions.get('window').width > 400 ? 15 : 5,
@@ -85,4 +93,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ProductItem;
+export default translate(["listing_screen"],{wait: true})(ProductItem);

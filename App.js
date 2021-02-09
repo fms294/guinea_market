@@ -14,14 +14,18 @@ import AsyncStorage from "@react-native-community/async-storage";
 import {createStore, combineReducers, compose, applyMiddleware} from "redux";
 import {Provider} from "react-redux";
 import ReduxThunk from "redux-thunk";
+import { translate } from "react-i18next";
+import i18n from "./app/i18n";
 
 import authReducers from "./app/store/reducers/auth";
 import listingReducers from "./app/store/reducers/listing";
+import localizationReducers from "./app/store/reducers/localization";
 import MainNavigator from "./app/navigation/MainNavigator";
 
 const rootReducer = combineReducers({
     auth: authReducers,
-    listing: listingReducers
+    listing: listingReducers,
+    localization: localizationReducers,
 });
 
 let composeEnhancers = compose;
@@ -35,10 +39,19 @@ const store = createStore(
     composeEnhancers(applyMiddleware(ReduxThunk))
 )
 
+const WrappedStack = ({t}) => {
+    return <MainNavigator screenProps={{t}} />;
+}
+
+const ReloadApp = translate('common', {
+    bindI18n: 'languageChanged',
+    bindStore: false,
+})(WrappedStack);
+
 export default function App() {
         return(
             <Provider store={store}>
-                <MainNavigator/>
+                <ReloadApp />
             </Provider>
         );
 }

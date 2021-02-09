@@ -1,0 +1,101 @@
+{
+  "tab_nav": {
+    "feed": "Feed",
+    "account": "Account"
+  },
+  "category": {
+    "1" : "Appliances",
+    "2" : "Arts & Crafts",
+    "3" : "Auto Parts",
+    "4" : "Bicycle Parts",
+    "5" : "Bicycle",
+    "6" : "Books & Magazines",
+    "7" : "Cars & Trucks",
+    "8" : "Cell Phones",
+    "9" : "Clothing & Accessories",
+    "10" : "Construction",
+    "11" : "Education",
+    "12" : "Electronics",
+    "13" : "Furniture",
+    "14" : "Grocery",
+    "15" : "Job",
+    "16" : "Health & Beauty",
+    "17" : "Heavy Equipment",
+    "18" : "Housing",
+    "19" : "Jewellery",
+    "20" : "Motorcycle parts",
+    "21" : "Motorcycle",
+    "22" : "Services"
+  },
+  "welcome_screen": {
+    "login": "Login",
+    "phone": "Phone No.",
+    "pass": "Password",
+    "forget_pass": "Forget Password ?",
+    "new_acc": "Register New Account",
+    "cancel": "Cancel",
+    "register" : "Register",
+    "name": "Name",
+    "conf_pass": "Confirm Password",
+    "already": "Already Registered",
+    "error_phone_msg": "Enter Valid Phone Number"
+  },
+  "listing_screen": {
+    "feed": "Feed",
+    "category": "Category",
+    "region": "Region",
+    "search": "Search",
+    "no_feed" : "Currently No Feed",
+    "btn": "More Detail",
+    "f_category" : "Filter Your Category",
+    "f_region" : "Filter Your Region",
+    "clear": "Clear",
+    "close": "Close",
+    "apply": "Apply",
+    "contact": "Contact : "
+  },
+  "listing_add": {
+    "title": "Title",
+    "price": "Price",
+    "desc" : "Description",
+    "category" : "Category",
+    "contact": "Contact Number",
+    "select": "Select Region",
+    "btn": "Post"
+  },
+  "account_screen": {
+    "account" : "Account",
+    "listing" : "My Listings",
+    "message": "My Message",
+    "about": "About App",
+    "settings" : "Settings",
+    "logout" : "Logout",
+    "alert_title": "Are you sure ?",
+    "alert_msg": "Do you really want to logout ?",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "my_listings": {
+    "listings": "Listings",
+    "start": " Start Selling",
+    "btn": "Delete Item"
+  },
+  "about_screen": {
+    "about": "About",
+    "alert": "Don't know how to open this URL:",
+    "contact": "Contact us",
+    "terms" : "Terms of use",
+    "privacy": "Privacy Policy",
+    "rules": "Publication rules",
+    "advice": "Advice to users",
+    "okay": "Okay"
+  },
+  "setting_screen" : {
+    "settings" : "Settings",
+    "lang_setting" : "Language Settings : ",
+    "alert_title": "Language Selection",
+    "alert_msg": "Select your preferred language for using this application",
+    "french": "French",
+    "english": "English"
+  }
+}
