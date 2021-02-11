@@ -8,11 +8,11 @@ const uri = `http://${manifest.debuggerHost
     .shift()
     .concat(`:3000`)}`;
 
-export function forgetPassword(email) {
-    console.log("ForgetPassword...", email);
+export function forgetPassword(phone) {
+    //console.log("ForgetPassword... api call", phone);
     return new Promise((resolve, reject) => {
         return (
-            axios.post(`${uri}/users/forgetPass`,email,
+            axios.post(`${uri}/users/forgetPass`,phone,
                 {
                     headers: {
                         Accept: 'application/json',

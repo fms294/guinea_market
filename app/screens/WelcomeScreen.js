@@ -36,7 +36,6 @@ const WelcomeScreen = (props) => {
     const [loading, setLoading] = useState(false);
     const [updatePasswordView, setUpdatePasswordView] = useState(false);
     const dispatch = useDispatch();
-    let serverOtptemp;
 
     const validationSchemaLogin = Yup.object().shape({
         //email: Yup.string().required().email().label("Email"),
@@ -54,7 +53,7 @@ const WelcomeScreen = (props) => {
     });
 
     const validationSchemaHandleOtp = Yup.object().shape({
-        email: Yup.string().required().email().label("Registered Email"),
+        phone: Yup.string().required().matches(/^\d{9}$/, {message: t("welcome_screen:error_phone_msg")})
     });
 
     const validationSchemaConfirmOtp = Yup.object().shape({
@@ -70,24 +69,23 @@ const WelcomeScreen = (props) => {
             setLoading(true);
             await forgetPassword(values)
                 .then((res) => {
-                serverOtptemp = res.data.otp;
-                setServerOtp(serverOtptemp);
+                setServerOtp(res.data.otp);
                 setServerId(res.data.user._id);
                 setOtpView(true);
                     setLoading(false);
-                console.log("Forget..res", serverOtptemp);
-                console.log("Forget..res...", serverOtp);
+                // console.log("Forget..res", res.data.otp);
+                // console.log("Forget..res...", serverOtp);
             }).catch((err) => {
                 console.log("Forget..err", err);
-                Alert.alert("User doesn't Exists", "Please register yourself first..!!",
+                Alert.alert(t("welcome_screen:handle_alert"), t("welcome_screen:handle_alert_msg"),
                     [{
-                        text : 'Create Account',
+                        text : t("welcome_screen:create_acc"),
                         style: 'destructive',
                         onPress: () =>{
                             setTitle(t("welcome_screen:register"))
                         }},
                         {
-                            text: 'Try Again',
+                            text: t("welcome_screen:try_again"),
                             style: 'cancel'
                         }
                     ])
@@ -100,14 +98,14 @@ const WelcomeScreen = (props) => {
     }
 
     const handleConfirmOTP = async (values) => {
-        console.log("confirm otp",values.otp);
-        console.log("confirm otp...",serverOtp);
+        //console.log("confirm otp",values.otp);
+        //console.log("confirm otp...",serverOtp);
         if(parseInt(serverOtp) === parseInt(values.otp)){
-            console.log("Matched");
+            //console.log("Matched");
             setUpdatePasswordView(true);
         }else{
             console.log("Wrong Otp");
-            Alert.alert("Wrong OTP", "You entered the incorrect OTP", [{text: "Retry"}]);
+            Alert.alert(t("welcome_screen:confirmOtp_alert"), t("welcome_screen:confirmOtp_alert_msg"), [{text: t("welcome_screen:retry")}]);
         }
     }
 
@@ -172,79 +170,78 @@ const WelcomeScreen = (props) => {
                     <View style={styles.modalView}>
                         {title === t("welcome_screen:login") ? (
                             <>
-                                {forgetView ? (<>
-                                    {otpView ? (
-                                        <>
-                                            {updatePasswordView ? (
-                                                <>
-                                                    <Text style={styles.modalText}>Update Your Password</Text>
-                                                    <Form
-                                                        initialValues={{password: ""}}
-                                                        onSubmit={(values) => handlePasswordChange(values)}
-                                                        validationSchema={validateSchemaPasswordChange}
-                                                    >
-                                                        <FormField
-                                                            autoCapitalize="none"
-                                                            autoCorrect={false}
-                                                            icon="lock"
-                                                            name="password"
-                                                            placeholder="New Password"
-                                                            secureTextEntry
-                                                            textContentType="password"
-                                                        />
-                                                        {loading ? (
-                                                            <SubmitButton title="Loading..."/>
-                                                        ) : (
-                                                            <SubmitButton title="Update Password"/>
-                                                        )}
-                                                    </Form>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Text style={styles.modalText}>OTP</Text>
-                                                    <Form
-                                                        initialValues={{otp: ""}}
-                                                        onSubmit={(values) => handleConfirmOTP(values)}
-                                                        validationSchema={validationSchemaConfirmOtp}
-                                                    >
-                                                        <FormField
-                                                            icon="phone"
-                                                            keyboardType="decimal-pad"
-                                                            name='otp'
-                                                            placeholder="Enter OTP"
-                                                            textContentType="oneTimeCode"
-                                                        />
-                                                        <SubmitButton title="Confirm OTP"/>
-                                                    </Form>
-                                                </>
-                                            )}
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Text style={styles.modalText}>Forget Password</Text>
-                                            <Form
-                                                initialValues={{email: ""}}
-                                                onSubmit={(values) => handleOTP(values)}
-                                                validationSchema={validationSchemaHandleOtp}
-                                            >
-                                            <FormField
-                                                autoCapitalize="none"
-                                                autoCorrect={false}
-                                                icon="email"
-                                                keyboardType="email-address"
-                                                name='email'
-                                                placeholder="Email"
-                                                textContentType="emailAddress"
-                                            />
-                                                {loading ? (
-                                                    <SubmitButton title="Loading..."/>
+                                {forgetView ? (
+                                    <>
+                                        {otpView ? (
+                                            <>
+                                                {updatePasswordView ? (
+                                                    <>
+                                                        <Text style={styles.modalText}>{t("welcome_screen:update_pass_title")}</Text>
+                                                        <Form
+                                                            initialValues={{password: ""}}
+                                                            onSubmit={(values) => handlePasswordChange(values)}
+                                                            validationSchema={validateSchemaPasswordChange}
+                                                        >
+                                                            <FormField
+                                                                autoCapitalize="none"
+                                                                autoCorrect={false}
+                                                                icon="lock"
+                                                                name="password"
+                                                                placeholder={t("welcome_screen:new_pass")}
+                                                                secureTextEntry
+                                                                textContentType="password"
+                                                            />
+                                                            {loading ? (
+                                                                <SubmitButton title={t("welcome_screen:loading")} />
+                                                            ) : (
+                                                                <SubmitButton title={t("welcome_screen:update_pass")}/>
+                                                            )}
+                                                        </Form>
+                                                    </>
                                                 ) : (
-                                                    <SubmitButton title="Request OTP"/>
+                                                    <>
+                                                        <Text style={styles.modalText}>OTP</Text>
+                                                        <Form
+                                                            initialValues={{otp: ""}}
+                                                            onSubmit={(values) => handleConfirmOTP(values)}
+                                                            validationSchema={validationSchemaConfirmOtp}
+                                                        >
+                                                            <FormField
+                                                                icon="phone"
+                                                                keyboardType="decimal-pad"
+                                                                name='otp'
+                                                                placeholder={t("welcome_screen:enter_otp")}
+                                                                textContentType="oneTimeCode"
+                                                            />
+                                                            <SubmitButton title={t("welcome_screen:confirm_otp")}/>
+                                                        </Form>
+                                                    </>
                                                 )}
-                                            </Form>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Text style={styles.modalText}>{t("welcome_screen:forget_title")}</Text>
+                                                <Form
+                                                    initialValues={{ phone : ""}}
+                                                    onSubmit={(values) => handleOTP(values)}
+                                                    validationSchema={validationSchemaHandleOtp}
+                                                >
+                                                    <FormField
+                                                        icon={"phone"}
+                                                        keyboardType={"decimal-pad"}
+                                                        name={"phone"}
+                                                        placeholder={t("welcome_screen:phone")}
+                                                    />
+                                                    {loading ? (
+                                                        <SubmitButton title={t("welcome_screen:loading")} />
+                                                    ) : (
+                                                        <SubmitButton title={t("welcome_screen:req_otp")}/>
+                                                    )}
+                                                </Form>
+                                            </>
+                                        )}
                                         </>
-                                    )}
-                                </>) : (
+                                ) : (
                                     <>
                                         <Text style={styles.modalText}>{title}</Text>
                                         <Image
@@ -277,6 +274,7 @@ const WelcomeScreen = (props) => {
                                         <TouchableOpacity
                                             style={styles.openButtonForget}
                                             onPress={() => {
+                                                //Alert.alert("Warning", "Feature Yet to be Implemented", [{text: "Okay"}])
                                                 setForgetView(true);
                                                 setOtpView(false);
                                             }}
@@ -295,7 +293,8 @@ const WelcomeScreen = (props) => {
                                     </>
                                 )}
                             </>
-                        ) : (<>
+                        ) : (
+                            <>
                             <Text style={styles.modalText}>{title}</Text>
                             <Formik
                                 initialValues={{ name: "", phone: "", password: "", confirmPassword: ""}}
@@ -469,7 +468,7 @@ const styles = StyleSheet.create({
         marginTop: 22
     },
     modalView: {
-        margin: 20,
+        //margin: 20,
         backgroundColor: "white",
         borderRadius: 20,
         padding: 35,

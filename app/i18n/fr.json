@@ -1,15 +1,30 @@
 {
   "tab_nav": {
-    "feed": "Alimentation",
+    "feed": "Page d'accueil",
     "account": "Compte"
   },
   "category": {
   },
   "welcome_screen": {
     "login": "S'identifier",
-    "phone": "Pas de téléphone.",
+    "phone": "Votre numéro de téléphone",
     "pass": "Mot de passe",
     "forget_pass": "Mot de passe oublié ?",
+    "forget_title": "Mot de passe oublié",
+    "loading": "Chargement...",
+    "req_otp": "Demander OTP",
+    "handle_alert" : "L'utilisateur n'existe pas",
+    "handle_alert_msg" : "Veuillez vous inscrire d'abord..!!",
+    "create_acc" : "Créer un compte",
+    "try_again" : "Réessayer",
+    "update_pass_title" : "Mettez à jour votre mot de passe",
+    "new_pass" : "Nouveau mot de passe",
+    "update_pass" : "Mettre à jour le mot de passe",
+    "enter_otp": "Entrez OTP",
+    "confirm_otp": "Confirmer OTP",
+    "confirmOtp_alert" : "Mauvais OTP",
+    "confirmOtp_alert_msg": "Vous avez entré le mauvais OTP",
+    "retry": "Retenter",
     "new_acc": "Enregistrer un nouveau compte",
     "cancel": "Annuler",
     "register" : "S'inscrire",
@@ -19,7 +34,7 @@
     "error_phone_msg": "Entrez un numéro de téléphone valide"
   },
   "listing_screen": {
-    "feed": "Alimentation",
+    "feed": "Page d'accueil",
     "category": "Catégorie",
     "region": "Région",
     "search": "Chercher",
@@ -30,7 +45,9 @@
     "clear": "Clair",
     "close": "Proche",
     "apply": "Appliquer",
-    "contact": "Contact : "
+    "contact": "Contact : ",
+    "search_empty" : "Aucun résultat trouvé",
+    "filter_empty" : "Aucun résultat de filtre"
   },
   "listing_add": {
     "title": "Titre",

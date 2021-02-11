@@ -1,11 +1,12 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import colors from '../config/colors';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-function NewListingButton({ onPress}) {
+const NewListingButton = (props) => {
+    const {onPress} = props;
     return (
         <TouchableOpacity onPress={onPress} style={styles.container}>
             <Ionicons

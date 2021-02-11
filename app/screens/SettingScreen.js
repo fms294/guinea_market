@@ -54,7 +54,6 @@ const SettingScreen = (props) => {
                                 setModalVisible(!modalVisible);
                                 onChangeLang('fr')
                                     .then((res) =>{
-                                        //this.setState({language:'fr'});
                                         setLanguage("fr");
                                     })
                             }}
@@ -67,7 +66,6 @@ const SettingScreen = (props) => {
                                 setModalVisible(!modalVisible);
                                 onChangeLang('en')
                                     .then((res) =>{
-                                        //this.setState({language:'en'});
                                         setLanguage("er");
                                     })
                             }}
