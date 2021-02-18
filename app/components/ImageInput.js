@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
-import {View, StyleSheet, Alert} from 'react-native';
+import {View, StyleSheet, Alert, Image} from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { ImageBrowser } from 'expo-image-picker-multiple';
 
 import colors from '../config/colors';
 import { TouchableWithoutFeedback } from 'react-native';
+import {AppForm as Form} from "./forms";
 
 const ImageInput = (props) => {
     //console.log("imageInput", props);
@@ -16,7 +18,7 @@ const ImageInput = (props) => {
     const requestPermission = async() =>{
         const { granted }= await ImagePicker.requestCameraRollPermissionsAsync();
         if(!granted){
-            alert("You need to enable permission to access the libray")
+            alert("You need to enable permission to access the library")
         }
 
     };
@@ -34,8 +36,8 @@ const ImageInput = (props) => {
               mediaTypes: ImagePicker.MediaTypeOptions.Images,
               quality:0.5
           });
-            console.log("result", result);
-          //if (!result.cancelled) onChangeImage(result);
+            console.log("result", result.uri);
+          //if (!result.cancelled) onChangeImage(result.uri);
 
         } catch (error) {
           console.log("Error reading an image", error);

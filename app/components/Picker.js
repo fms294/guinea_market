@@ -7,6 +7,7 @@ import {
   FlatList, Text, TouchableOpacity,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { translate } from "react-i18next"
 
 import AppText from "./Text";
 import Screen from "./Screen";
@@ -15,24 +16,37 @@ import PickerItem from "./PickerItem";
 import colors from "../config/colors";
 
 const AppPicker = (props) => {
+    const {t} = props;
   const { icon, items, numberOfColumns, onSelectItem, PickerItemComponent=PickerItem, placeholder, selectedItem } = props;
   const [modalVisible, setModalVisible] = useState(false);
   const [value, setValue] = useState('');
-  //console.log("app picker", items);
+  let obj ;
+  if( props.i18n.language === 'fr' ) {
+      obj = props.i18n.logger.options.resources.en.category;
+  }else {
+      obj = ""
+  }
+
+  //console.log("app picker" ,Object.keys(obj).find(key => obj[key] === selectedItem ));
   return (
     <>
       <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
         <View style={styles.container}>
-          {icon && (
-            <MaterialCommunityIcons
-              name={icon}
-              size={20}
-              color={defaultStyles.colors.medium}
-              style={styles.icon}
-            />
-          )}
+          {/*{icon && (*/}
+          {/*  <MaterialCommunityIcons*/}
+          {/*    name={icon}*/}
+          {/*    size={20}*/}
+          {/*    color={defaultStyles.colors.medium}*/}
+          {/*    style={styles.icon}*/}
+          {/*  />*/}
+          {/*)}*/}
           {selectedItem ?
-              (<AppText style={styles.text}>{selectedItem}</AppText>) : (
+              (<AppText style={styles.text}>
+                  {Object.keys(obj).find(key => obj[key] === selectedItem) !== undefined ?
+                      t("category:"+Object.keys(obj).find(key => obj[key] === selectedItem)) :
+                      selectedItem
+                  }
+              </AppText>) : (
             <AppText style={styles.placeholder}>{placeholder}</AppText>
           )}
           <MaterialCommunityIcons
@@ -74,9 +88,9 @@ const AppPicker = (props) => {
                         return(
                             <PickerItemComponent
                                 item={
-                                    itemData.item.sub_category === undefined ? itemData.item.category
+                                    itemData.item.sub_category === undefined ? t("category:"+itemData.index)
                                         :
-                                        itemData.item.sub_category.map((item) => item)
+                                        itemData.item.sub_category.map((item, index) => t("category:"+itemData.index+index))
                                 }
                                 onPress={() => {
                                     setModalVisible(false);
@@ -155,4 +169,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppPicker;
+export default translate(["category"], {wait: true})(AppPicker);

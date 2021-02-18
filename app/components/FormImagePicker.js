@@ -5,9 +5,9 @@ import ErrorMessage from './forms/ErrorMessage';
 import ImageInputList from './ImageInputList';
 
 const FormImagePicker = (props) => {
-    //console.log("props...", props);
     const { errors, setFieldValue, touched, values } = useFormikContext();
     const imageUris = values[props.name]
+    console.log("props...", values);
 
     const handleAdd = (uri) => {
         console.log("add", uri);

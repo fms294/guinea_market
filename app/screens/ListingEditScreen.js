@@ -1,7 +1,9 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Picker, Text , ScrollView} from "react-native";
+import React, { useState, useEffect } from "react";
+import {View, StyleSheet, Picker, Text, ScrollView, Image, TouchableOpacity, Alert} from "react-native";
 import * as Yup from "yup";
-
+import * as ImagePicker from 'expo-image-picker';
+import {Button} from "react-native-paper";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import {
   AppForm as Form,
   AppFormField as FormField,
@@ -36,28 +38,82 @@ const ListingEditScreen = (props) => {
     //const location = useLocation();
     //console.log("location", location);
     const [uploadVisible, setUploadVisible] = useState(false);
+    const [image, setImage] = useState(null);
+    const [imageData, setImageData] = useState(null);
     const [progress, setProgress] = useState(0);
+    const [category, setCategory] = useState();
     const [region, setRegion] = useState("Conakry");
-    //categories.map((item) => console.log(item));
+
+    // useEffect(() => {
+    //     const params = props.route.params;
+    //     if(params) {
+    //         const photos = params.photos;
+    //         if(photos) {
+    //             setImage(photos);
+    //         }
+    //         delete params.photos;
+    //     }
+    // })
+
+    useEffect(() => {
+        props.navigation.setOptions({
+            headerShown: false
+        })
+    })
+
+    useEffect(() => {
+        (async () => {
+                const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
+                if (status !== 'granted') {
+                    alert('Sorry, we need camera roll permissions to make this work!');
+                }
+        })();
+    }, []);
+
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            // allowsMultipleSelection: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        if (!result.cancelled) {
+            setImage(result.uri);
+            setImageData(result);
+        }
+    };
 
     const handleSubmission = async (values) => {
        //console.log("values.....", values);
         const finalData = {
             "title": values.title,
-            "images": [
-                { "url": "https://usabilitygeek.com/wp-content/uploads/2016/08/usability-testing-prototype.jpg" },
-                { "url" : "https://homepages.cae.wisc.edu/~ece533/images/monarch.png" }
-            ],
             "price": values.price,
             "description": values.description,
             "main_category": values.category,
             "sub_category" : "",
             "region": region,
-            "contact_phone": values.phone
+            "contact_phone": values.phone,
+            "images" : [{imageData},{imageData}]
         }
         console.log("FinalData", finalData);
-        await dispatch(listingAction.add_item(finalData));
+        if(imageData === null){
+            Alert.alert(t("listing_add:alert_title"),t("listing_add:alert_msg"), [{text: t("listing_add:okay")}])
+        }else{
+            await dispatch(listingAction.add_item(finalData));
+        }
     }
+
+    // const renderImage = (item, i) => {
+    //     return (
+    //         <Image
+    //             style={{ height: 100, width: 100 }}
+    //             source={{ uri: item.uri }}
+    //             key={i}
+    //         />
+    //     )
+    // }
 
     return (
           <ScrollView>
@@ -78,15 +134,35 @@ const ListingEditScreen = (props) => {
                       }}
                       onSubmit={(values, {resetForm}) => {
                           handleSubmission(values).then(() => {
-                              resetForm({values : ''})
-                              setRegion("Conakry");
+                              if(image !== null){
+                                  resetForm({values : ''})
+                                  setRegion("Conakry");
+                                  setImage(null);
+                              }
                           })
                       }}
                       validationSchema={validationSchema}
                   >
-                      <FormImagePicker
-                          name="Images"
-                      />
+                      {/*<FormImagePicker*/}
+                      {/*    name="Images"*/}
+                      {/*/>*/}
+
+                      <TouchableOpacity style={styles.imageContainer} onPress={pickImage} >
+                          {!image && <MaterialCommunityIcons color={colors.medium} name="camera" size={40} />}
+                          {image && <Image source={{ uri: image }} style={styles.image} />}
+                      </TouchableOpacity>
+
+                      {/*<TouchableOpacity*/}
+                      {/*    style={styles.imageContainer}*/}
+                      {/*    onPress={() => props.navigation.navigate("ImageBrowserScreen")}*/}
+                      {/*>*/}
+                      {/*    <MaterialCommunityIcons color={colors.medium} name="camera" size={40} />*/}
+                      {/*</TouchableOpacity>*/}
+                      {/*<ScrollView>*/}
+                      {/*    {image.map((item, i) => {*/}
+                      {/*        renderImage(item, i)*/}
+                      {/*    })}*/}
+                      {/*</ScrollView>*/}
                       <FormField
                           maxLength={255}
                           name="title"
@@ -105,6 +181,12 @@ const ListingEditScreen = (props) => {
                           numberOfLines={3}
                           placeholder={t("listing_add:desc")}
                       />
+                      <FormField
+                          keyboardType="numeric"
+                          maxLength={10}
+                          name="phone"
+                          placeholder={t("listing_add:contact")}
+                      />
                       <FormPicker
                           items={categories}
                           //numberOfColumns={1}
@@ -112,12 +194,28 @@ const ListingEditScreen = (props) => {
                           PickerItemComponent={CategoryPickerItem}
                           placeholder={t("listing_add:category")}
                       />
-                      <FormField
-                          keyboardType="numeric"
-                          maxLength={10}
-                          name="phone"
-                          placeholder={t("listing_add:contact")}
-                      />
+                      {/*<Text style={styles.text}>Select Category</Text>*/}
+                      {/*<Picker*/}
+                      {/*    name={categories}*/}
+                      {/*    selectedValue={category}*/}
+                      {/*    style={styles.picker}*/}
+                      {/*    mode={"modal"}*/}
+                      {/*    onValueChange={(itemValue) => setCategory(itemValue)}*/}
+                      {/*>*/}
+                      {/*      {categories.map((item, index) => {*/}
+                      {/*          //console.log("cat", item);*/}
+                      {/*          if(item.sub_category === undefined) {*/}
+                      {/*              //console.log("main", item.category);*/}
+                      {/*              //return <Picker.Item value={item.category} label={item.category} key={index}/>*/}
+                      {/*          }else {*/}
+                      {/*              //console.log("sub main", item.category);*/}
+                      {/*              item.sub_category.map((itemInner, indexInner) => {*/}
+                      {/*                  //console.log("sub", item);*/}
+                      {/*                  return <Picker.Item value={itemInner} label={item.category + itemInner} key={indexInner}/>*/}
+                      {/*              })*/}
+                      {/*          }*/}
+                      {/*      })}*/}
+                      {/*</Picker>*/}
                       <Text style={styles.text}>{t("listing_add:select")}</Text>
                       <View style={styles.pickerContainer}>
                           <Picker
@@ -139,7 +237,6 @@ const ListingEditScreen = (props) => {
     );
 };
 
-
 const styles = StyleSheet.create({
     container: {
         padding: 10,
@@ -158,5 +255,20 @@ const styles = StyleSheet.create({
     picker: {
         width: '70%',
     },
+    imageContainer:{
+        alignItems:'center',
+        backgroundColor: colors.light,
+        borderRadius:15,
+        height:100,
+        justifyContent:'center',
+        overflow:'hidden',
+        width:100
+
+    },
+    image:{
+        height:100,
+        width:100
+    }
 });
+
 export default translate(["listing_add"], {wait: true})(ListingEditScreen);

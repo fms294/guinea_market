@@ -10,7 +10,7 @@ import * as listingActions from "../store/actions/listing";
 import {Ionicons} from "@expo/vector-icons";
 
 const MyListingsScreen = (props) => {
-    const {t} = props;
+    const {t, i18n} = props;
     const dispatch = useDispatch();
     const data = useSelector((state) => state.listing.listing_userData);
     const [loading, setLoading] = useState(false);
@@ -25,7 +25,7 @@ const MyListingsScreen = (props) => {
     const loadFeed = useCallback(async () => {
         setLoading(true);
         try {
-            await dispatch(listingActions.fetchUserFeed());
+            await dispatch(listingActions.fetchUserFeed(i18n.language));
         } catch (err) {
             console.log("Error in ListingScreen", err);
             setLoading(false);
@@ -34,10 +34,10 @@ const MyListingsScreen = (props) => {
     }, [dispatch]);
 
     const deleteFeedHandler = (id) => {
-        Alert.alert('Are you sure ?', 'Do you really want to Delete this item?', [
-            {text: 'No', style: 'default'},
+        Alert.alert(t("my_listings:alert_title"), t("my_listings:alert_msg"), [
+            {text: t("my_listings:no"), style: 'default'},
             {
-                text: 'Yes',
+                text: t("my_listings:yes"),
                 style: 'destructive',
                 onPress: async () => {
                     try {
@@ -70,9 +70,7 @@ const MyListingsScreen = (props) => {
 
     useEffect(() => {
         const sortBy = (item) => {
-            return item.sort(function (a, b) {
-                return new Date(b.updatedAt) - new Date(a.updatedAt);
-            });
+            return item.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt) );
         }
         setSortedData(sortBy(data));
     });

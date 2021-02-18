@@ -1,5 +1,8 @@
 import Constants from "expo-constants";
 import { Platform } from "react-native";
+import moment from "moment";
+import frMoment from "moment/locale/fr";
+import enMoment from "moment/locale/en-ca"
 const { manifest } = Constants;
 
 import ListingItem from "../../model/ListingItem";
@@ -17,30 +20,45 @@ const uri = `http://${manifest.debuggerHost
 export const add_item = (finalData) => {
     return async (dispatch, getState) => {
         const token = getState().auth.token;
+        // console.log("images..", images)
+        const formData = new FormData();
+        formData.append("contact_phone", finalData.contact_phone);
+        formData.append("description", finalData.description);
+        formData.append("main_category", finalData.main_category);
+        formData.append("price", finalData.price);
+        formData.append("region", finalData.region);
+        formData.append("sub_category", finalData.sub_category);
+        formData.append("title", finalData.title);
+        finalData.images.map((item) => {
+            formData.append("images", {uri: item.imageData.uri, type: item.imageData.type, name: "image.jpg"});
+        })
+        //console.log("formData", formData);
         try{
+            console.log("resData... in action add item");
             const response = await fetch(`${uri}/listing/add`,
                 {
                     method: "POST",
                     headers: {
-                        "Content-Type" : "application/json",
+                        "Content-Type" : "multipart/form-data;",
                         Authorization: "Bearer " + token,
                     },
-                    body: JSON.stringify(finalData)
+                    body: formData
                 });
             if(!response.ok){
                 const resData = await response.json();
                 throw new Error(resData.e);
             }
-            const resData =  await response.json();
-            //console.log("resData... in action add item", resData);
+            // console.log("resData... in action add item", response);
+            const resData = await response.json();
+            console.log("resData... in action add item", resData);
         }catch (err) {
-            throw new Error(err);
+            throw new Error("catch "+err);
         }
     }
 }
 
 //Fetch all items from DB
-export const fetchFeed = () => {
+export const fetchFeed = (i18n) => {
     return async (dispatch, getState) => {
         const token = getState().auth.token;
         //console.log("in action", token);
@@ -61,8 +79,8 @@ export const fetchFeed = () => {
             let listingData = [];
             resData.map((item,index) => {
                 //console.log("items...", resData[0]);
-                const time = formatDate(resData[index].updatedAt);
-                //console.log("time", time);
+                const time = formatDate(resData[index].updatedAt, i18n);
+                //console.log(t("listing_screen:time"), time);
                 listingData.push(
                     new ListingItem(
                         resData[index]._id,
@@ -86,7 +104,7 @@ export const fetchFeed = () => {
 }
 
 //Fetch user listings product
-export const fetchUserFeed = () => {
+export const fetchUserFeed = (i18n) => {
     return async (dispatch, getState) => {
         const token = getState().auth.token;
         try{
@@ -106,7 +124,7 @@ export const fetchUserFeed = () => {
             let listingData = [];
             resData.map((item,index) => {
                 //console.log("items...", resData[index]._id);
-                const time = formatDate(resData[index].updatedAt);
+                const time = formatDate(resData[index].updatedAt, i18n);
                 listingData.push(
                     new ListingItem(
                         resData[index]._id,
@@ -159,24 +177,11 @@ export const deleteUserFeed = (feedId) => {
 
 
 //Format date according to human readable
-const formatDate = (dateString) => {
-    //"fr-GQ"
-    //weekday, year, month, day, hour, minute, second
-    if (Platform.OS === 'ios'){
-        const options = { weekday:"short" ,year: "numeric", month: "short", day: "numeric" , hour: "numeric", minute: "numeric"};
-        return new Date(dateString).toLocaleDateString(undefined, options);
+const formatDate = (dateString, i18n) => {
+    if(i18n === 'fr'){
+        moment.updateLocale('fr', frMoment);
+    }else {
+        moment.updateLocale('en', enMoment);
     }
-    else {
-        let
-            //dayOfWeek = ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"],
-            monthName = ["January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December"],
-            utc = new Date(dateString).getTime() + new Date(dateString).getTimezoneOffset() * 60000,
-            US_time = utc + (3600000 * -4),
-            US_date = new Date(US_time);
-
-        // return monthName[US_date.getMonth()] + " " +
-        //     US_date.getDate() + ", " + US_date.getFullYear() + ", " + US_date.toLocaleTimeString();
-        return US_date.toDateString() + ", " + US_date.toLocaleTimeString("en-US", {hour12: false});
-    }
+    return moment(dateString).format('llll');
 }

@@ -5,6 +5,9 @@ import {Button, Searchbar, List} from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {useDispatch, useSelector} from "react-redux";
 import { translate } from "react-i18next";
+import moment from "moment";
+import frMoment from "moment/locale/fr";
+import enMoment from "moment/locale/en-ca"
 
 import HeaderButton from "../components/UI/HeaderButton";
 import ProductItem from "../components/UI/ProductItem";
@@ -14,7 +17,7 @@ import {categories, regions} from "../data/data";
 import * as listingActions from "../store/actions/listing";
 
 const ListingsScreen = (props) => {
-    const {t} = props;
+    const {t, i18n} = props;
     const dispatch = useDispatch();
     const data = useSelector((state) => state.listing.listing_data);
     const [loading, setLoading] = useState(false);
@@ -139,7 +142,7 @@ const ListingsScreen = (props) => {
     const loadFeed = useCallback(async () => {
         setLoading(true);
         try {
-            await dispatch(listingActions.fetchFeed());
+            await dispatch(listingActions.fetchFeed(i18n.language));
         } catch (err) {
             console.log("Error in ListingScreen", err);
             setLoading(false);
@@ -181,9 +184,15 @@ const ListingsScreen = (props) => {
     });
 
     const sortBy = (item) => {
-        return item.sort(function (a, b) {
-            return new Date(b.updatedAt) - new Date(a.updatedAt);
-        });
+        // if(i18n.language === 'fr'){
+        //     moment.updateLocale('fr', frMoment);
+        //     console.log("value", moment.locale());
+        //     let date = moment("Lun. 8 Févr. 2021 09:53").format('MM/DD/YYYY');
+        //     let dateV = moment(new Date(date));
+        //     console.log("dateV",date,dateV.format('llll'));
+        //     //console.log("curr difffff...", item.sort((a, b) => moment(new Date(b.updatedAt)) - moment(new Date(a.updatedAt)) ));
+        // }
+        return item.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt) );
     }
 
     useEffect(() => {
@@ -317,14 +326,15 @@ const ListingsScreen = (props) => {
                                                         }}>
                                                             <Text
                                                                 style={category.includes(itemData.item.category) ? [styles.main_category, {color: colors.primary}] : styles.main_category}>
-                                                                {itemData.item.category}
+                                                                {/*{itemData.item.category + itemData.index }*/}
+                                                                {t("category:" + itemData.index)}
                                                             </Text>
                                                         </TouchableOpacity>
                                                     );
                                                 } else {
                                                     return (
                                                         <>
-                                                            <Text style={styles.main_category}>{itemData.item.category} : </Text>
+                                                            <Text style={styles.main_category}>{t("category:" + itemData.index)} : </Text>
                                                             {itemData.item.sub_category.map((item, index) =>
                                                                 <TouchableOpacity key={index} onPress={() => {
                                                                     if (!category.includes(item)) {
@@ -333,8 +343,10 @@ const ListingsScreen = (props) => {
                                                                         setCategory(category.filter((item) => (item !== item)))
                                                                     }
                                                                 }}>
-                                                                    <Text
-                                                                        style={category.includes(item) ? [styles.sub_category, {color: colors.primary}] : styles.sub_category}>{item}</Text>
+                                                                    <Text style={category.includes(item) ? [styles.sub_category, {color: colors.primary}] : styles.sub_category}>
+                                                                        {/*{item + itemData.index + index}*/}
+                                                                        {t("category:"+itemData.index+index)}
+                                                                    </Text>
                                                                 </TouchableOpacity>
                                                             )}
                                                         </>
@@ -578,5 +590,5 @@ const styles = StyleSheet.create({
     }
 })
 
-export default translate(["listing_screen"],{wait: true})(ListingsScreen);
+export default translate(["listing_screen", "category"],{wait: true})(ListingsScreen);
 

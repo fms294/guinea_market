@@ -4,7 +4,7 @@ import ImageInput from './ImageInput';
 
 
 const ImageInputList = (props) => {
-    //console.log("props......", props);
+    console.log("props......", props);
     const { imageUris = [], onRemoveImage, onAddImage } = props;
     const scrollVIew = useRef();
 
