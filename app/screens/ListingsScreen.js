@@ -7,7 +7,7 @@ import {useDispatch, useSelector} from "react-redux";
 import { translate } from "react-i18next";
 import moment from "moment";
 import frMoment from "moment/locale/fr";
-import enMoment from "moment/locale/en-ca"
+import enMoment from "moment/locale/en-ca";
 
 import HeaderButton from "../components/UI/HeaderButton";
 import ProductItem from "../components/UI/ProductItem";
@@ -142,7 +142,7 @@ const ListingsScreen = (props) => {
     const loadFeed = useCallback(async () => {
         setLoading(true);
         try {
-            await dispatch(listingActions.fetchFeed(i18n.language));
+            await dispatch(listingActions.fetchFeed());
         } catch (err) {
             console.log("Error in ListingScreen", err);
             setLoading(false);
@@ -435,13 +435,21 @@ const ListingsScreen = (props) => {
                                                     keyExtractor={(item, index) => index.toString()}
                                                     renderItem={(itemData) => {
                                                         //console.log("listings", itemData.item);
+                                                        let posted;
+                                                        if(i18n.language === 'fr'){
+                                                            moment.updateLocale('fr', frMoment)
+                                                            posted = moment(itemData.item.updatedAt).fromNow(true)
+                                                        }else {
+                                                            moment.updateLocale('en', enMoment)
+                                                            posted = moment(itemData.item.updatedAt).fromNow(true)
+                                                        }
                                                         return (
                                                             <ProductItem
                                                                 image={itemData.item.images[0].url}
                                                                 title={itemData.item.title}
                                                                 price={itemData.item.price}
                                                                 phone={itemData.item.contact_phone}
-                                                                posted={itemData.item.updatedAt}
+                                                                posted={posted}
                                                                 onSelect={() => {
                                                                     let images = itemData.item.images.map((item) => {
                                                                         return item.url;
@@ -487,13 +495,21 @@ const ListingsScreen = (props) => {
                                                     data={sortedData}
                                                     renderItem={(itemData) => {
                                                         //console.log("listings", itemData.item);
+                                                        let posted;
+                                                        if(i18n.language === 'fr'){
+                                                            moment.updateLocale('fr', frMoment)
+                                                            posted = moment(itemData.item.updatedAt).fromNow()
+                                                        }else {
+                                                            moment.updateLocale('en', enMoment)
+                                                            posted = moment(itemData.item.updatedAt).fromNow()
+                                                        }
                                                         return (
                                                             <ProductItem
                                                                 image={itemData.item.images[0].url}
                                                                 title={itemData.item.title}
                                                                 price={itemData.item.price}
                                                                 phone={itemData.item.contact_phone}
-                                                                posted={itemData.item.updatedAt}
+                                                                posted={posted}
                                                                 onSelect={() => {
                                                                     let images = itemData.item.images.map((item) => {
                                                                         return item.url;

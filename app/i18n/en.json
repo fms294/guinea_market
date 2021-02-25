@@ -114,8 +114,7 @@
     "apply": "Apply",
     "contact": "Contact : ",
     "search_empty" : "No Search Results",
-    "filter_empty" : "No Filter Results",
-    "mon": "mon"
+    "filter_empty" : "No Filter Results"
   },
   "listing_add": {
     "title": "Title",
@@ -129,6 +128,15 @@
     "alert_msg": "Select at least one image before posting product",
     "okay": "Okay"
   },
+  "detail_screen": {
+    "posted" : "Listed",
+    "desc": "Description",
+    "listings": "Listings",
+    "input_label": "Send Message to Owner",
+    "input_placeholder": "For example: : Interested in buying your product",
+    "toast_msg": "Message sent to owner.",
+    "type_msg": "Type a message"
+  },
   "account_screen": {
     "account" : "Account",
     "listing" : "My Listings",
@@ -139,7 +147,10 @@
     "alert_title": "Are you sure ?",
     "alert_msg": "Do you really want to logout ?",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "alert_title": "No Messages",
+    "alert_msg": "You don't have any previous message history",
+    "okay": "Okay"
   },
   "my_listings": {
     "listings": "Listings",

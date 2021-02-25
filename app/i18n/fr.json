@@ -114,8 +114,7 @@
     "apply": "Appliquer",
     "contact": "Contact : ",
     "search_empty" : "Aucun résultat trouvé",
-    "filter_empty" : "Aucun résultat de filtre",
-    "mon": "lun"
+    "filter_empty" : "Aucun résultat de filtre"
   },
   "listing_add": {
     "title": "Titre",
@@ -129,6 +128,15 @@
     "alert_msg": "Sélectionnez au moins une image avant de publier le produit",
     "okay": "D'accord"
   },
+  "detail_screen": {
+    "posted" : "Listé",
+    "desc": "Description",
+    "listings": "Annonces",
+    "input_label": "Envoyer un message au propriétaire",
+    "input_placeholder": "Par exemple: Intéressé par l'achat de votre produit",
+    "toast_msg": "Message envoyé au propriétaire.",
+    "type_msg": "Tapez un message"
+  },
   "account_screen": {
     "account" : "Compte",
     "listing" : "Mes annonces",
@@ -139,7 +147,10 @@
     "alert_title": "Êtes-vous sûr ?",
     "alert_msg": "Voulez-vous vraiment vous déconnecter?",
     "yes": "Oui",
-    "no": "Non"
+    "no": "Non",
+    "alert_title": "Pas de messages",
+    "alert_msg": "Vous n'avez aucun historique des messages",
+    "okay": "D'accord"
   },
   "my_listings": {
     "listings": "Annonces",
@@ -158,7 +169,7 @@
     "privacy": "Politique de confidentialité",
     "rules": "Règles de publication",
     "advice": "Conseils aux utilisateurs",
-    "okay": "d'accord"
+    "okay": "D'accord"
   },
   "setting_screen" : {
     "settings": "Réglages",

@@ -1,15 +1,13 @@
 import Constants from "expo-constants";
-import { Platform } from "react-native";
 import moment from "moment";
-import frMoment from "moment/locale/fr";
-import enMoment from "moment/locale/en-ca"
+import enMoment from "moment/locale/en-ca";
 const { manifest } = Constants;
 
 import ListingItem from "../../model/ListingItem";
 
 export const FETCH_ITEM = "FETCH_ITEM";
 export const FETCH_USER_ITEM = "FETCH_USER_ITEM";
-export const FETCH_OTHER_USER_ITEM = "FETCH_OTHER_USER_ITEM";
+export const FETCH_PROFILE_ITEM = "FETCH_PROFILE_ITEM";
 
 const uri = `http://${manifest.debuggerHost
     .split(`:`)
@@ -58,7 +56,7 @@ export const add_item = (finalData) => {
 }
 
 //Fetch all items from DB
-export const fetchFeed = (i18n) => {
+export const fetchFeed = () => {
     return async (dispatch, getState) => {
         const token = getState().auth.token;
         //console.log("in action", token);
@@ -78,9 +76,9 @@ export const fetchFeed = (i18n) => {
             const resData = await response.json();
             let listingData = [];
             resData.map((item,index) => {
-                //console.log("items...", resData[0]);
-                const time = formatDate(resData[index].updatedAt, i18n);
-                //console.log(t("listing_screen:time"), time);
+                // console.log("items...", resData[0]);
+                // console.log("moment", moment.locale());
+                const time = formatDate(resData[index].updatedAt);
                 listingData.push(
                     new ListingItem(
                         resData[index]._id,
@@ -104,7 +102,7 @@ export const fetchFeed = (i18n) => {
 }
 
 //Fetch user listings product
-export const fetchUserFeed = (i18n) => {
+export const fetchUserFeed = () => {
     return async (dispatch, getState) => {
         const token = getState().auth.token;
         try{
@@ -124,7 +122,7 @@ export const fetchUserFeed = (i18n) => {
             let listingData = [];
             resData.map((item,index) => {
                 //console.log("items...", resData[index]._id);
-                const time = formatDate(resData[index].updatedAt, i18n);
+                const time = formatDate(resData[index].updatedAt);
                 listingData.push(
                     new ListingItem(
                         resData[index]._id,
@@ -175,13 +173,54 @@ export const deleteUserFeed = (feedId) => {
     }
 }
 
+//Fetch profile user listing
+export const fetchProfileListing = (id) => {
+    return async (dispatch, getState) => {
+        // console.log("data...", id)
+        const token = getState().auth.token;
+        try{
+            const response = await fetch(`${uri}/users/owner/${id}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: "Bearer " + token,
+                    }
+                });
+            if(!response.ok){
+                const resData = await response.json();
+                throw new Error(resData.e);
+            }
+            const resData = await response.json();
+            // console.log("resData...",resData.user);
+            let listingData = [];
+            resData.feed.map((item,index) => {
+                //console.log("items...", resData[index]._id);
+                const time = formatDate(resData.feed[index].updatedAt);
+                listingData.push(
+                    new ListingItem(
+                        resData.feed[index]._id,
+                        resData.feed[index].title,
+                        resData.feed[index].description,
+                        resData.feed[index].price,
+                        resData.feed[index].main_category,
+                        resData.feed[index].sub_category,
+                        resData.feed[index].owner,
+                        resData.feed[index].region,
+                        resData.feed[index].contact_phone,
+                        resData.feed[index].images,
+                        time
+                    ));
+            })
+            dispatch({type: FETCH_PROFILE_ITEM, listing_profileData : listingData, user_profileData: resData.user})
+        }catch (err) {
+            throw new Error(err);
+        }
+    }
+}
 
 //Format date according to human readable
-const formatDate = (dateString, i18n) => {
-    if(i18n === 'fr'){
-        moment.updateLocale('fr', frMoment);
-    }else {
-        moment.updateLocale('en', enMoment);
-    }
+const formatDate = (dateString) => {
+    moment.updateLocale('en', enMoment);
     return moment(dateString).format('llll');
 }

@@ -5,9 +5,12 @@ import {Button} from "react-native-paper";
 import colors from "../config/colors";
 import {useDispatch, useSelector} from "react-redux";
 import { translate } from "react-i18next";
+import frMoment from "moment/locale/fr";
+import enMoment from "moment/locale/en-ca";
 
 import * as listingActions from "../store/actions/listing";
 import {Ionicons} from "@expo/vector-icons";
+import moment from "moment";
 
 const MyListingsScreen = (props) => {
     const {t, i18n} = props;
@@ -75,6 +78,14 @@ const MyListingsScreen = (props) => {
         setSortedData(sortBy(data));
     });
 
+    if(loading){
+        return (
+            <View style={styles.centered}>
+                <ActivityIndicator size={"large"} color={colors.primary}/>
+            </View>
+        );
+    }
+
     return(
         <View style={styles.screen}>
             {data.length === 0 ? (
@@ -85,7 +96,7 @@ const MyListingsScreen = (props) => {
                             uppercase={false}
                             mode={"outlined"}
                             onPress={() => {
-                                props.navigation.navigate("ListingEditScreen")
+                                props.navigation.jumpTo("ListingEditNavigator")
                             }}>
                             <Ionicons name={"add-circle-outline"} size={24}/>
                             <Text style={styles.buttonText}>{t("my_listings:start")}</Text>
@@ -100,13 +111,21 @@ const MyListingsScreen = (props) => {
                         data={sortedData}
                         renderItem={(itemData) => {
                             //console.log("listings", itemData.item);
+                            let posted;
+                            if(i18n.language === 'fr'){
+                                moment.updateLocale('fr', frMoment)
+                                posted = moment(itemData.item.updatedAt).fromNow()
+                            }else {
+                                moment.updateLocale('en', enMoment)
+                                posted = moment(itemData.item.updatedAt).fromNow()
+                            }
                             return (
                                 <ProductItem
                                     image={itemData.item.images[0].url}
                                     title={itemData.item.title}
                                     price={itemData.item.price}
                                     phone={itemData.item.contact_phone}
-                                    posted={itemData.item.updatedAt}
+                                    posted={posted}
                                     onSelect={() => props.navigation.navigate("ListingDetailsScreen", {
                                         listing: itemData.item
                                     })}

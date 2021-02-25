@@ -1,8 +1,10 @@
-import {FETCH_ITEM, FETCH_OTHER_USER_ITEM, FETCH_USER_ITEM} from "../actions/listing";
+import {FETCH_ITEM, FETCH_PROFILE_ITEM, FETCH_USER_ITEM} from "../actions/listing";
 
 const initialState = {
     listing_data: [],
     listing_userData: [],
+    listing_profileData: [],
+    user_profileData : {}
 };
 
 export default (state= initialState, action) => {
@@ -17,6 +19,12 @@ export default (state= initialState, action) => {
             return {
                 ...state,
                 listing_userData: action.listing_userData
+            }
+        case FETCH_PROFILE_ITEM:
+            return{
+                ...state,
+                listing_profileData: action.listing_profileData,
+                user_profileData: action.user_profileData
             }
         default:
             return state;
