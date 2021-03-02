@@ -114,10 +114,10 @@ const MyListingsScreen = (props) => {
                             let posted;
                             if(i18n.language === 'fr'){
                                 moment.updateLocale('fr', frMoment)
-                                posted = moment(itemData.item.updatedAt).fromNow()
+                                posted = moment(new Date(itemData.item.updatedAt)).fromNow()
                             }else {
                                 moment.updateLocale('en', enMoment)
-                                posted = moment(itemData.item.updatedAt).fromNow()
+                                posted = moment(new Date(itemData.item.updatedAt)).fromNow()
                             }
                             return (
                                 <ProductItem
@@ -126,9 +126,11 @@ const MyListingsScreen = (props) => {
                                     price={itemData.item.price}
                                     phone={itemData.item.contact_phone}
                                     posted={posted}
-                                    onSelect={() => props.navigation.navigate("ListingDetailsScreen", {
-                                        listing: itemData.item
-                                    })}
+                                    onSelect={() => {
+                                        props.navigation.navigate("ListingUpdateScreen", {
+                                            initial: itemData.item
+                                        })
+                                    }}
                                 >
                                     <Button
                                         icon="delete"

@@ -7,14 +7,16 @@ export const USER_SIGNUP = "USER_SIGNUP";
 export const USER_LOGOUT = "USER_LOGOUT";
 export const RESTORE_TOKEN = "RESTORE_TOKEN";
 
-const uri = `http://${manifest.debuggerHost
-    .split(`:`)
-    .shift()
-    .concat(`:3000`)}`;
+// const uri = `http://${manifest.debuggerHost
+//     .split(`:`)
+//     .shift()
+//     .concat(`:3000`)}`;
+
+const uri = "https://dibida.herokuapp.com";
 
 export const signup = (username, phone, password) => {
     return async (dispatch) => {
-        //console.log("in action...");
+        console.log("in action...",username, phone, password, `${uri}/users/signup`);
         try{
             const response = await fetch(`${uri}/users/signup`,
                 {
@@ -38,6 +40,7 @@ export const signup = (username, phone, password) => {
                         throw new Error('User already Exists with this Email');
                     }
                 } else {
+                    console.log("Error...",resData);
                     throw new Error('Sign up failed');
                 }
             }

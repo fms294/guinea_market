@@ -1,5 +1,16 @@
 import React, {useEffect, useState, useCallback} from "react";
-import {View, StyleSheet, Text, FlatList, RefreshControl, ActivityIndicator} from "react-native";
+import {
+    View,
+    StyleSheet,
+    Text,
+    FlatList,
+    RefreshControl,
+    ActivityIndicator,
+    TouchableOpacity,
+    Linking,
+    Alert,
+    Platform
+} from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {Button} from "react-native-paper";
 import moment from "moment";
@@ -59,6 +70,28 @@ const UserProfileScreen = (props) => {
         setSortedData(sortBy(data));
     });
 
+    const dialNumber = (phone) => {
+        let number = "";
+        if (Platform.OS === "ios") {
+            number = `telprompt:${phone}`
+        } else {
+            number = `tel:${phone}`
+        }
+        Linking.canOpenURL(number)
+            .then(supported => {
+                console.log("support", supported)
+                if (!supported) {
+                    Alert.alert('Phone number is not available');
+                } else {
+                    return Linking.openURL(number);
+                }
+            })
+    };
+
+    const openWhatsapp = (phone) => {
+        Linking.openURL(`https://api.whatsapp.com/send?phone=${phone}8`)
+    };
+
     if(loading){
         return (
             <View style={styles.profile}>
@@ -77,7 +110,23 @@ const UserProfileScreen = (props) => {
                     onPress={() => props.navigation.goBack()}
                 />
                 <Text style={styles.username}>{userData.username}</Text>
-                <Text style={styles.phone}>Contact : {userData.phone}</Text>
+                <TouchableOpacity
+                    style={{flexDirection: "row"}}
+                    onPress={() => {dialNumber(userData.phone)}}
+                >
+                    <Ionicons
+                        style={{margin: 10}}
+                        name="call-outline"
+                        size={30}
+                        onPress={() => {dialNumber(userData.phone)}}
+                    />
+                    <Ionicons
+                        style={{margin: 10}}
+                        name="logo-whatsapp"
+                        size={30}
+                        onPress={() => {openWhatsapp(userData.phone)}}
+                    />
+                </TouchableOpacity>
             </View>
             <View style={styles.dataView}>
             <FlatList
@@ -90,10 +139,10 @@ const UserProfileScreen = (props) => {
                     let posted;
                     if(i18n.language === 'fr'){
                         moment.updateLocale('fr', frMoment)
-                        posted = moment(itemData.item.updatedAt).fromNow()
+                        posted = moment(new Date(itemData.item.updatedAt)).fromNow()
                     }else {
                         moment.updateLocale('en', enMoment)
-                        posted = moment(itemData.item.updatedAt).fromNow()
+                        posted = moment(new Date(itemData.item.updatedAt)).fromNow()
                     }
                     return (
                         <ProductItem

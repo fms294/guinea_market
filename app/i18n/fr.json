@@ -124,9 +124,11 @@
     "contact": "Numéro de contact",
     "select": "Choisissez une région",
     "btn": "Publier",
+    "btn_update": "Mettre à jour",
     "alert_title": "Pas d'image",
     "alert_msg": "Sélectionnez au moins une image avant de publier le produit",
-    "okay": "D'accord"
+    "okay": "D'accord",
+    "update": "Mettre à jour les détails"
   },
   "detail_screen": {
     "posted" : "Listé",

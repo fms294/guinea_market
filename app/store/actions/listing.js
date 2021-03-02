@@ -9,10 +9,12 @@ export const FETCH_ITEM = "FETCH_ITEM";
 export const FETCH_USER_ITEM = "FETCH_USER_ITEM";
 export const FETCH_PROFILE_ITEM = "FETCH_PROFILE_ITEM";
 
-const uri = `http://${manifest.debuggerHost
-    .split(`:`)
-    .shift()
-    .concat(`:3000`)}`;
+// const uri = `http://${manifest.debuggerHost
+//     .split(`:`)
+//     .shift()
+//     .concat(`:3000`)}`;
+
+const uri = "https://dibida.herokuapp.com";
 
 //Adding item to the DB
 export const add_item = (finalData) => {
@@ -51,6 +53,34 @@ export const add_item = (finalData) => {
             console.log("resData... in action add item", resData);
         }catch (err) {
             throw new Error("catch "+err);
+        }
+    }
+}
+
+//Update items
+export const update_item = (finalData, id) => {
+    return async (dispatch, getState) => {
+        const token = getState().auth.token;
+        try{
+            console.log("resData... in action add item....", id);
+            const response = await fetch(`${uri}/listing/update/${id}`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type" : "application/json",
+                        Authorization: "Bearer " + token,
+                    },
+                    body: JSON.stringify(finalData)
+                });
+            if(!response.ok){
+                const resData = await response.json();
+                throw new Error(resData.e);
+            }
+            // console.log("resData... in action add item", response);
+            const resData = await response.json();
+            console.log("resData... in action add item", resData);
+        }catch (err) {
+            throw new Error("catch in update.."+err);
         }
     }
 }

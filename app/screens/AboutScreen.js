@@ -8,10 +8,12 @@ import {translate} from "react-i18next";
 
 const { manifest } = Constants;
 
-const uri = `http://${manifest.debuggerHost
-    .split(`:`)
-    .shift()
-    .concat(`:3000`)}`;
+// const uri = `http://${manifest.debuggerHost
+//     .split(`:`)
+//     .shift()
+//     .concat(`:3000`)}`;
+
+const uri = "https://dibida.herokuapp.com";
 
 const AboutScreen = (props) => {
     const {t} = props;

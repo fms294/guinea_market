@@ -124,9 +124,11 @@
     "contact": "Contact Number",
     "select": "Select Region",
     "btn": "Post",
+    "btn_update": "Update",
     "alert_title": "No Image",
     "alert_msg": "Select at least one image before posting product",
-    "okay": "Okay"
+    "okay": "Okay",
+    "update": "Update Details"
   },
   "detail_screen": {
     "posted" : "Listed",

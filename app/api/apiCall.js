@@ -3,10 +3,12 @@ import AsyncStorage from "@react-native-community/async-storage";
 import Constants from "expo-constants";
 const { manifest } = Constants;
 
-const uri = `http://${manifest.debuggerHost
-    .split(`:`)
-    .shift()
-    .concat(`:3000`)}`;
+// const uri = `http://${manifest.debuggerHost
+//     .split(`:`)
+//     .shift()
+//     .concat(`:3000`)}`;
+
+const uri = "https://dibida.herokuapp.com";
 
 export const forgetPassword = (phone) => {
     //console.log("ForgetPassword... api call", phone);

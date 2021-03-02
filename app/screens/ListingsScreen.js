@@ -1,5 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import {FlatList, StyleSheet, View, Text, RefreshControl, TouchableOpacity, Alert, ActivityIndicator} from 'react-native';
+import {
+    FlatList,
+    StyleSheet,
+    View,
+    Text,
+    RefreshControl,
+    TouchableOpacity,
+    Alert,
+    ActivityIndicator,
+    Image
+} from 'react-native';
 import {HeaderButtons, Item} from 'react-navigation-header-buttons';
 import {Button, Searchbar, List} from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -241,6 +251,15 @@ const ListingsScreen = (props) => {
         }
     };
 
+    if (loading) {
+        return (
+            <View style={styles.centered}>
+                {/*<ActivityIndicator size={"large"} color={colors.primary}/>*/}
+                <Image style={styles.logo} source={require("../assets/logo.png")}/>
+            </View>
+        );
+    }
+
     return (
         <View style={styles.screen}>
             {searchVisible ?
@@ -434,14 +453,14 @@ const ListingsScreen = (props) => {
                                                     data={filterData}
                                                     keyExtractor={(item, index) => index.toString()}
                                                     renderItem={(itemData) => {
-                                                        //console.log("listings", itemData.item);
+                                                        console.log("listings", itemData.item);
                                                         let posted;
                                                         if(i18n.language === 'fr'){
                                                             moment.updateLocale('fr', frMoment)
-                                                            posted = moment(itemData.item.updatedAt).fromNow(true)
+                                                            posted = moment(new Date(itemData.item.updatedAt)).fromNow()
                                                         }else {
                                                             moment.updateLocale('en', enMoment)
-                                                            posted = moment(itemData.item.updatedAt).fromNow(true)
+                                                            posted = moment(new Date(itemData.item.updatedAt)).fromNow()
                                                         }
                                                         return (
                                                             <ProductItem
@@ -496,12 +515,12 @@ const ListingsScreen = (props) => {
                                                     renderItem={(itemData) => {
                                                         //console.log("listings", itemData.item);
                                                         let posted;
-                                                        if(i18n.language === 'fr'){
+                                                        if (i18n.language === 'fr') {
                                                             moment.updateLocale('fr', frMoment)
-                                                            posted = moment(itemData.item.updatedAt).fromNow()
-                                                        }else {
+                                                            posted = moment(new Date(itemData.item.updatedAt)).fromNow()
+                                                        } else {
                                                             moment.updateLocale('en', enMoment)
-                                                            posted = moment(itemData.item.updatedAt).fromNow()
+                                                            posted = moment(new Date(itemData.item.updatedAt)).fromNow()
                                                         }
                                                         return (
                                                             <ProductItem
@@ -603,7 +622,12 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         marginVertical: 7,
         marginHorizontal: 50
-    }
+    },
+    logo:{
+        width:100,
+        height:100 ,
+        borderRadius:200
+    },
 })
 
 export default translate(["listing_screen", "category"],{wait: true})(ListingsScreen);

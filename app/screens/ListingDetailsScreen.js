@@ -57,7 +57,7 @@ const ListingDetailsScreen = (props) => {
         return(
             <>
                 <Text style={[styles.textNormal, {marginTop:10}]}>
-                    {t("detail_screen:posted")} {moment(listing.updatedAt).fromNow()}{","} {listing.region}
+                    {t("detail_screen:posted")} {moment(new Date(listing.updatedAt)).fromNow()}{","} {listing.region}
                 </Text>
             </>
         );
