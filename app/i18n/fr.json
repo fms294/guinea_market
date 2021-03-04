@@ -146,8 +146,8 @@
     "about": "À propos de l'application",
     "settings" : "Réglages",
     "logout": "Se déconnecter",
-    "alert_title": "Êtes-vous sûr ?",
-    "alert_msg": "Voulez-vous vraiment vous déconnecter?",
+    "alert_title_logout": "Êtes-vous sûr ?",
+    "alert_msg_logout": "Voulez-vous vraiment vous déconnecter?",
     "yes": "Oui",
     "no": "Non",
     "alert_title": "Pas de messages",
@@ -180,5 +180,14 @@
     "alert_msg": "Sélectionnez votre langue préférée pour utiliser cette application",
     "french": "Français",
     "english": "Anglais"
+  },
+  "ownerScreen": {
+    "profile" : "Profil",
+    "username": "Nom d'utilisateur",
+    "update": "Mettre à jour",
+    "change_pass": "Changer le mot de passe",
+    "alert_title": "Aucune mise à jour",
+    "alert_msg": "Modifiez les valeurs pour mettre à jour les détails du profil",
+    "okay": "D'accord"
   }
 }

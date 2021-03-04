@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useCallback} from 'react';
-import {StyleSheet, View, FlatList, Alert, Text} from 'react-native';
+import {StyleSheet, View, FlatList, Alert, TouchableOpacity, Text, Image} from 'react-native';
 
 import ListItem from '../components/lists/ListItem';
 import colors from '../config/colors';
@@ -7,10 +7,9 @@ import Icon from  '../components/Icon';
 import ListItemSeparator from '../components/lists/ListItemSeparator';
 import {useDispatch, useSelector} from "react-redux";
 import * as authActions from "../store/actions/auth";
-import {Button} from "react-native-paper";
+import {Button, Avatar} from "react-native-paper";
 import { translate } from 'react-i18next';
 import {receiveMessage, sentMessage} from "../api/apiCall";
-import * as listingActions from "../store/actions/listing";
 
 const AccountScreen = (props) => {
     const {t} = props;
@@ -19,7 +18,29 @@ const AccountScreen = (props) => {
     const [receiver, setReceiver] = useState([]);
     const [sent, setSent] = useState([]);
     const [loading, setLoading] = useState(false);
-    //console.log("userData", userData);
+    console.log("userData", userData);
+
+    // const [imageName, setImageName] = useState('');
+    //
+    // const nameImageHandler = () => {
+    //     let newName = '';
+    //     let name = userData.username.split(' ');
+    //     for (const x in name) {
+    //         //newName = newName.concat(name[x].charAt(0));
+    //         // if(name[x].charAt[0] === undefined){
+    //             //console.log("name...", name[x]);
+    //         // }
+    //     }
+    //     console.log(name.length);
+    //     // setImageName(newName);
+    // };
+    //
+    // useEffect(() => {
+    //     nameImageHandler();
+    //     // if (error) {
+    //     //     Alert.alert('Error Occurred', error, [{text: 'Okay'}]);
+    //     // }
+    // }, [userData.username]);
 
     Array.prototype.unique = function() {
         let a = this.concat();
@@ -48,7 +69,7 @@ const AccountScreen = (props) => {
                         //console.log("received res...", filtered);
                     }
                 }).catch((err) => {
-                    console.log("err...", err);
+                    console.log("err.....", err);
                 })
         } catch (err) {
             console.log("Error in MessageScreen", err);
@@ -87,7 +108,7 @@ const AccountScreen = (props) => {
                         //console.log("sent res...", filtered)
                     }
                 }).catch((err) => {
-                    console.log("err...", err);
+                    console.log("err", err);
                 })
         } catch (err) {
             console.log("Error in MessageScreen", err);
@@ -178,7 +199,7 @@ const AccountScreen = (props) => {
     })
 
     const logoutHandler = () => {
-        Alert.alert(t("account_screen:alert_title"), t("account_screen:alert_msg"), [
+        Alert.alert(t("account_screen:alert_title_logout"), t("account_screen:alert_msg_logout"), [
             { text: t("account_screen:no"), style: 'default' },
             {
                 text: t("account_screen:yes"),
@@ -193,11 +214,35 @@ const AccountScreen = (props) => {
     return(
         <View style={styles.screen}>
             <View style={styles.container}>
-                <ListItem
-                    title={userData.username}
-                    subTitle={userData.userPhone}
-                    image ={require('../assets/fanta.jpeg')}
-                />
+                {/*<ListItem*/}
+                {/*    title={userData.username}*/}
+                {/*    subTitle={userData.userPhone}*/}
+                {/*    image={{uri:userData.userImage}}*/}
+                {/*    onPress={() => {*/}
+                {/*        props.navigation.navigate("OwnerProfileScreen")*/}
+                {/*    }}*/}
+                {/*/>*/}
+                <TouchableOpacity
+                    style={{flexDirection: "row", backgroundColor: colors.white, padding: 20}}
+                        onPress={() => {
+                            props.navigation.navigate("OwnerProfileScreen")
+                        }}
+                >
+                    {userData.userImage === "" ?
+                        <Avatar.Text style={{backgroundColor: colors.medium}} size={80} label={"N/A"} />
+                        :
+                        <>
+                            <Image
+                                style={{width: 80, height: 80, borderRadius: 200}}
+                                source={{uri: userData.userImage}}
+                            />
+                        </>
+                    }
+                    <View style={{marginHorizontal: 20, justifyContent: "center"}}>
+                        <Text style={{fontSize: 28}}>{userData.username}</Text>
+                        <Text style={{fontSize: 15, color:colors.medium}}>{userData.userPhone}</Text>
+                    </View>
+                </TouchableOpacity>
             </View>
             <View style={styles.container}>
                 <FlatList
@@ -253,6 +298,9 @@ const styles = StyleSheet.create({
     },
     buttonText:{
         fontSize: 24
+    },
+    image:{
+        backgroundColor: colors.medium,
     }
 })
 

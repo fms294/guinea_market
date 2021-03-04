@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useCallback} from 'react';
-import { View,  StyleSheet, KeyboardAvoidingView, Platform, ScrollView ,Dimensions} from 'react-native';
-import {Image} from 'react-native-expo-image-cache';
+import {View, Image, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Dimensions, TouchableOpacity} from 'react-native';
+//import {Image} from 'react-native-expo-image-cache';
 import { SliderBox } from "react-native-image-slider-box";
 import {useSelector} from "react-redux";
 import {fetchOtherUser, sendMessage} from "../api/apiCall";
@@ -13,7 +13,7 @@ import enMoment from "moment/locale/en-ca";
 import ListItem from '../components/lists/ListItem';
 import colors from '../config/colors';
 import Text from '../components/Text';
-import {Button, IconButton, Snackbar, TextInput} from "react-native-paper";
+import {Avatar, IconButton, Snackbar, TextInput} from "react-native-paper";
 
 const ListingDetailsScreen = (props) => {
     const {t, i18n} = props;
@@ -38,7 +38,8 @@ const ListingDetailsScreen = (props) => {
                     .then((res) => {
                         const user = {
                             username: res.data.user.username,
-                            feed_count: res.data.feed.length
+                            feed_count: res.data.feed.length,
+                            userImage: res.data.user.profile_img
                         }
                         setListedUser(user);
                     }).catch((err) => {
@@ -140,23 +141,51 @@ const ListingDetailsScreen = (props) => {
                         />
                     </View>
                 }
-                <View style={styles.userContainer}>
-                    <ListItem
-                        onPress={() => {
-                            if(ownerId === listing.owner){
-                                props.navigation.navigate("AccountNavigator")
-                            }else {
-                                props.navigation.navigate("UserProfileScreen",{
-                                    listing: listing,
-                                    listedUser: listedUser
-                                })
-                            }
-                        }}
-                        image={{uri: listing.images[0].url}}
-                        title={listedUser.username}
-                        subTitle={listedUser.feed_count + " " +t("detail_screen:listings")}
-                    />
-                </View>
+                <TouchableOpacity
+                    style={{flexDirection: "row", backgroundColor: colors.white, paddingHorizontal: 25, paddingVertical: 15,marginTop: 20, borderRadius: 20}}
+                    onPress={() => {
+                        if(ownerId === listing.owner){
+                            props.navigation.navigate("AccountNavigator")
+                        }else {
+                            props.navigation.navigate("UserProfileScreen",{
+                                listing: listing,
+                                listedUser: listedUser
+                            })
+                        }
+                    }}
+                >
+                    {listedUser.userImage === "" ?
+                        <Avatar.Text style={{backgroundColor: colors.medium}} size={80} label={"N/A"} />
+                        :
+                        <>
+                            <Image
+                                style={{width: 80, height: 80, borderRadius: 200}}
+                                source={{uri: listedUser.userImage}}
+                            />
+                        </>
+                    }
+                    <View style={{marginHorizontal: 20, justifyContent: "center"}}>
+                        <Text style={{fontSize: 28}}>{listedUser.username}</Text>
+                        <Text style={{fontSize: 15, color:colors.medium}}>{listedUser.feed_count + " " +t("detail_screen:listings")}</Text>
+                    </View>
+                </TouchableOpacity>
+                {/*<View style={styles.userContainer}>*/}
+                {/*    <ListItem*/}
+                {/*        onPress={() => {*/}
+                {/*            if(ownerId === listing.owner){*/}
+                {/*                props.navigation.navigate("AccountNavigator")*/}
+                {/*            }else {*/}
+                {/*                props.navigation.navigate("UserProfileScreen",{*/}
+                {/*                    listing: listing,*/}
+                {/*                    listedUser: listedUser*/}
+                {/*                })*/}
+                {/*            }*/}
+                {/*        }}*/}
+                {/*        image={{uri: listedUser.userImage}}*/}
+                {/*        title={listedUser.username}*/}
+                {/*        subTitle={listedUser.feed_count + " " +t("detail_screen:listings")}*/}
+                {/*    />*/}
+                {/*</View>*/}
                 {/*<ContactSellerForm listing={listing} />*/}
             </View>
         </ScrollView>

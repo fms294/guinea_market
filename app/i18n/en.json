@@ -146,8 +146,8 @@
     "about": "About App",
     "settings" : "Settings",
     "logout" : "Logout",
-    "alert_title": "Are you sure ?",
-    "alert_msg": "Do you really want to logout ?",
+    "alert_title_logout": "Are you sure ?",
+    "alert_msg_logout": "Do you really want to logout ?",
     "yes": "Yes",
     "no": "No",
     "alert_title": "No Messages",
@@ -180,5 +180,14 @@
     "alert_msg": "Select your preferred language for using this application",
     "french": "French",
     "english": "English"
+  },
+  "ownerScreen": {
+    "profile" : "Profile",
+    "username": "Username",
+    "update": "Update",
+    "change_pass": "Change Password",
+    "alert_title": "No Updates",
+    "alert_msg": "Change the values to update profile details",
+    "okay": "Okay"
   }
 }

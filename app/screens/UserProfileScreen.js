@@ -9,10 +9,10 @@ import {
     TouchableOpacity,
     Linking,
     Alert,
-    Platform
+    Platform, Image
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import {Button} from "react-native-paper";
+import {Avatar, Button} from "react-native-paper";
 import moment from "moment";
 import {useDispatch, useSelector} from "react-redux";
 import {translate} from "react-i18next";
@@ -31,6 +31,7 @@ const UserProfileScreen = (props) => {
     const userData = useSelector((state) => state.listing.user_profileData);
     const [loading, setLoading] = useState(false);
     const [sortedData, setSortedData] = useState([]);
+    console.log(userData);
 
     useEffect(() => {
         props.navigation.setOptions({
@@ -109,6 +110,16 @@ const UserProfileScreen = (props) => {
                     size={35}
                     onPress={() => props.navigation.goBack()}
                 />
+                {userData.profile_img === "" ?
+                    <Avatar.Text style={{marginBottom: 15, backgroundColor: colors.medium}} size={100} label={"N/A"} />
+                    :
+                    <>
+                        <Image
+                            style={{marginBottom: 15 ,width: 100, height: 100, borderRadius: 200}}
+                            source={{uri: userData.profile_img}}
+                        />
+                    </>
+                }
                 <Text style={styles.username}>{userData.username}</Text>
                 <TouchableOpacity
                     style={{flexDirection: "row"}}
@@ -196,7 +207,7 @@ const styles = StyleSheet.create({
     },
     profile:{
         flex: 1,
-        justifyContent:"center",
+        justifyContent:"flex-end",
         alignItems: "center"
     },
     username:{

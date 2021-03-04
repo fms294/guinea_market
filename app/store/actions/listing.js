@@ -1,7 +1,6 @@
-import Constants from "expo-constants";
 import moment from "moment";
 import enMoment from "moment/locale/en-ca";
-const { manifest } = Constants;
+import { uri } from "../../config/app_uri";
 
 import ListingItem from "../../model/ListingItem";
 
@@ -9,18 +8,11 @@ export const FETCH_ITEM = "FETCH_ITEM";
 export const FETCH_USER_ITEM = "FETCH_USER_ITEM";
 export const FETCH_PROFILE_ITEM = "FETCH_PROFILE_ITEM";
 
-// const uri = `http://${manifest.debuggerHost
-//     .split(`:`)
-//     .shift()
-//     .concat(`:3000`)}`;
-
-const uri = "https://dibida.herokuapp.com";
-
 //Adding item to the DB
 export const add_item = (finalData) => {
     return async (dispatch, getState) => {
         const token = getState().auth.token;
-        // console.log("images..", images)
+        console.log("images..", finalData.images)
         const formData = new FormData();
         formData.append("contact_phone", finalData.contact_phone);
         formData.append("description", finalData.description);
@@ -30,7 +22,7 @@ export const add_item = (finalData) => {
         formData.append("sub_category", finalData.sub_category);
         formData.append("title", finalData.title);
         finalData.images.map((item) => {
-            formData.append("images", {uri: item.imageData.uri, type: item.imageData.type, name: "image.jpg"});
+            formData.append("images", {uri: item.imageData.uri, type: item.imageData.type, name: new Date().getTime().toString()+".jpg"});
         })
         //console.log("formData", formData);
         try{

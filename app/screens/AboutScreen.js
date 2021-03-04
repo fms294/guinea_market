@@ -1,19 +1,10 @@
 import React, {useEffect, useCallback} from "react";
 import {View, StyleSheet, Linking, Alert, ImageBackground, Image, Text} from "react-native";
 import {Button} from "react-native-paper";
-import Constants from "expo-constants";
+import { uri } from "../config/app_uri";
 
 import colors from "../config/colors";
 import {translate} from "react-i18next";
-
-const { manifest } = Constants;
-
-// const uri = `http://${manifest.debuggerHost
-//     .split(`:`)
-//     .shift()
-//     .concat(`:3000`)}`;
-
-const uri = "https://dibida.herokuapp.com";
 
 const AboutScreen = (props) => {
     const {t} = props;

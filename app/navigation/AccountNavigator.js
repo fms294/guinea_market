@@ -8,12 +8,14 @@ import ListingUpdateScreen from "../screens/ListingUpdateScreen";
 import AboutScreen from "../screens/AboutScreen";
 import SettingScreen from "../screens/SettingScreen";
 import ChatScreen from "../screens/ChatScreen";
+import OwnerProfileScreen from "../screens/OwnerProfileScreen";
 
 const Stack = createStackNavigator();
 
 const AccountNavigator = () => (
     <Stack.Navigator>
         <Stack.Screen name={"AccountScreen"} component={AccountScreen} />
+        <Stack.Screen name={"OwnerProfileScreen"} component={OwnerProfileScreen} />
         <Stack.Screen name={"MyListingsScreen"} component={MyListingsScreen} />
         <Stack.Screen name={"ListingUpdateScreen"} component={ListingUpdateScreen} />
         <Stack.Screen name={"MessagesScreen"} component={MessagesScreen} />
