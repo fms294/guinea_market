@@ -1,19 +1,24 @@
 import React, {useEffect, useState} from "react";
-import {View, StyleSheet, Text, Alert, TouchableOpacity} from "react-native";
+import {View, StyleSheet,
+    Text,
+    Alert,
+    TouchableOpacity,
+    Image,
+    ActivityIndicator
+} from "react-native";
 import { translate } from "react-i18next";
 import {useDispatch, useSelector} from "react-redux";
 import * as Yup from "yup";
-
 import {
     AppForm as Form,
     AppFormField as FormField, SubmitButton
 } from "../components/forms";
 import colors from "../config/colors";
 import * as authActions from "../store/actions/auth";
-import {Button} from "react-native-paper";
-import {Formik} from "formik";
+import {Avatar, Button, Snackbar} from "react-native-paper";
 import Modal from "react-native-modal";
 import {updatePassword} from "../api/apiCall";
+import * as ImagePicker from "expo-image-picker";
 
 const validateUpdateSchema = Yup.object().shape({
     username: Yup.string().required().min(1).label("username"),
@@ -25,11 +30,26 @@ const validateSchemaPasswordChange = Yup.object().shape({
 
 const OwnerProfileScreen = (props) => {
     const {t} = props;
-    const userData = useSelector((state) => state.auth.userData);
+    //const userData = useSelector((state) => state.auth.userData);
+    const userData = props.route.params.userData;
     const initialValue = userData.username;
     const [modalVisible, setModalVisible] = useState(false);
-    const [loading, setLoading] = useState(false)
+    const [image, setImage] = useState(null);
+    const [imageData, setImageData] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [visible, setVisible] = useState(false);
     const dispatch = useDispatch();
+    const [imageName, setImageName] = useState('');
+
+    const nameImageHandler = () => {
+        let name = initialValue.split(" ");
+        const newName = name.map((name) => name[0]).join('');
+        setImageName(newName.toUpperCase());
+    };
+
+    useEffect(() => {
+        nameImageHandler();
+    }, []);
 
     useEffect(() => {
         props.navigation.setOptions({
@@ -37,13 +57,9 @@ const OwnerProfileScreen = (props) => {
         })
     });
 
-    const updateProfile = async (values) => {
-        try {
-            await dispatch(authActions.updateProfile(values.username));
-        } catch (err) {
-            console.log("Catch in OwnerProfileScreen", err);
-        }
-    };
+    const onToggleSnackBar = () => setVisible(!visible);
+
+    const onDismissSnackBar = () => setVisible(false);
 
     const handlePasswordUpdate = async (values) => {
         const finalPass = {
@@ -51,11 +67,12 @@ const OwnerProfileScreen = (props) => {
         }
         try{
             setLoading(true);
-            await updatePassword(userData.userId, finalPass)
+            await updatePassword(userData._id, finalPass)
                 .then((res) => {
                     //console.log("response in updatePassword", res);
                     setLoading(false);
                     setModalVisible(false);
+                    onToggleSnackBar();
                 }).catch((err) => {
                     console.log("Error in updatePassword", err);
                 })
@@ -63,6 +80,40 @@ const OwnerProfileScreen = (props) => {
         }catch(err){
             console.log("handlePasswordChange catch", err);
             setLoading(false);
+        }
+    };
+
+    const handleProfile = async (values) => {
+        try {
+            setLoading(true);
+            await dispatch(authActions.updateProfile(imageData, values.username));
+            setLoading(false);
+        } catch (err) {
+            setLoading(false);
+            console.log("Catch in OwnerProfileScreen", err);
+        }
+    };
+
+    useEffect(() => {
+        (async () => {
+            const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
+            if (status !== 'granted') {
+                alert('Sorry, we need camera roll permissions to make this work!');
+            }
+        })();
+    }, []);
+
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+        // console.log("results", result.uri)
+        if (!result.cancelled) {
+            setImage(result.uri);
+            setImageData(result);
         }
     };
 
@@ -94,7 +145,13 @@ const OwnerProfileScreen = (props) => {
                                 textContentType="password"
                             />
                             {loading ? (
-                                <SubmitButton title={t("welcome_screen:loading")} />
+                                <>
+                                    <ActivityIndicator
+                                        style={{marginTop: 10}}
+                                        size={"large"}
+                                        color={colors.primary}
+                                    />
+                                </>
                             ) : (
                                 <SubmitButton title={t("welcome_screen:update_pass")}/>
                             )}
@@ -110,13 +167,28 @@ const OwnerProfileScreen = (props) => {
                     </View>
                 </View>
             </Modal>
+            <View style={styles.container}>
+                <TouchableOpacity onPress={pickImage} >
+                    {!image &&
+                        userData.profile_img === "" ?
+                                <Avatar.Text style={{backgroundColor: colors.medium}} size={100} label={imageName} />
+                                :
+                                <>
+                                    <Image
+                                        style={image ? [styles.image, {borderWidth: 3, borderColor: "red"}] : styles.image}
+                                        source={image ? {uri: image} : {uri: userData.profile_img}}
+                                    />
+                                </>
+                    }
+                </TouchableOpacity>
+            </View>
             <Form
                 initialValues={{username: userData.username}}
                 onSubmit={(values) => {
-                    if (values.username === initialValue) {
+                    if (values.username === initialValue && imageData === null) {
                         Alert.alert(t("ownerScreen:alert_title"), t("ownerScreen:alert_msg"), [{text: t("ownerScreen:okay")}]);
                     } else {
-                        updateProfile(values).then(() => {
+                        handleProfile(values).then(() => {
                             props.navigation.navigate("AccountScreen");
                         })
                     }
@@ -130,9 +202,8 @@ const OwnerProfileScreen = (props) => {
                 />
                 <FormField
                     icon={"phone"}
-                    value={userData.userPhone}
+                    value={userData.phone}
                     editable={false}
-                    color={colors.medium}
                 />
                 <Button
                     style={styles.button}
@@ -144,11 +215,33 @@ const OwnerProfileScreen = (props) => {
                         setModalVisible(true);
                     }}
                 >{t("ownerScreen:change_pass")}</Button>
-                <SubmitButton
-                    title={t("ownerScreen:update")}
-                    // disabled={!(Form.isValid && Form.dirty)}
-                />
+                {loading ?
+                    <>
+                        <ActivityIndicator
+                            style={{marginTop: 10}}
+                            size={"large"}
+                            color={colors.primary}
+                        />
+                    </>
+                    :
+                    <SubmitButton
+                        title={t("ownerScreen:update")}
+                        // disabled={!(Form.isValid && Form.dirty)}
+                    />
+                }
             </Form>
+            <Snackbar
+                visible={visible}
+                duration={7000}
+                onDismiss={onDismissSnackBar}
+                theme={{
+                    colors: {
+                        onSurface: "rgb(9,222,9)",
+                    },
+                }}
+            >
+                {t("ownerScreen:toast_msg")}
+            </Snackbar>
         </View>
     );
 };
@@ -197,6 +290,15 @@ const styles = StyleSheet.create({
     },
     button:{
         marginVertical: 10
+    },
+    container:{
+        marginTop: 10,
+        marginBottom: 20
+    },
+    image:{
+        height:100,
+        width:100,
+        borderRadius: 200
     }
 });
 

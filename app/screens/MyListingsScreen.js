@@ -125,6 +125,8 @@ const MyListingsScreen = (props) => {
                                     title={itemData.item.title}
                                     price={itemData.item.price}
                                     phone={itemData.item.contact_phone}
+                                    main_category={itemData.item.main_category}
+                                    sub_category={itemData.item.sub_category}
                                     posted={posted}
                                     onSelect={() => {
                                         props.navigation.navigate("ListingUpdateScreen", {

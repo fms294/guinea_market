@@ -87,10 +87,9 @@ const AppPicker = (props) => {
                         //                                 }}
                         return(
                             <PickerItemComponent
-                                item={
-                                    itemData.item.sub_category === undefined ? t("category:"+itemData.index)
-                                        :
-                                        itemData.item.sub_category.map((item, index) => t("category:"+itemData.index+index))
+                                item={itemData.item.sub_category === undefined ? t("category:" + itemData.index)
+                                    :
+                                    itemData.item.sub_category.map((item, index) => t("category:" + itemData.index + index))
                                 }
                                 onPress={() => {
                                     setModalVisible(false);

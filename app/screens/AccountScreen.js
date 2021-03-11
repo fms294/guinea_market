@@ -9,38 +9,58 @@ import {useDispatch, useSelector} from "react-redux";
 import * as authActions from "../store/actions/auth";
 import {Button, Avatar} from "react-native-paper";
 import { translate } from 'react-i18next';
-import {receiveMessage, sentMessage} from "../api/apiCall";
+import {receiveMessage, sentMessage, fetchOwner} from "../api/apiCall";
 
 const AccountScreen = (props) => {
     const {t} = props;
     const dispatch = useDispatch();
-    const userData = useSelector((state) => state.auth.userData);
+    //const userData = useSelector((state) => state.auth.userData);
     const [receiver, setReceiver] = useState([]);
     const [sent, setSent] = useState([]);
     const [loading, setLoading] = useState(false);
-    console.log("userData", userData);
+    const [imageName, setImageName] = useState('');
+    const [userData, setUserData] = useState([]);
 
-    // const [imageName, setImageName] = useState('');
-    //
-    // const nameImageHandler = () => {
-    //     let newName = '';
-    //     let name = userData.username.split(' ');
-    //     for (const x in name) {
-    //         //newName = newName.concat(name[x].charAt(0));
-    //         // if(name[x].charAt[0] === undefined){
-    //             //console.log("name...", name[x]);
-    //         // }
-    //     }
-    //     console.log(name.length);
-    //     // setImageName(newName);
-    // };
-    //
-    // useEffect(() => {
-    //     nameImageHandler();
-    //     // if (error) {
-    //     //     Alert.alert('Error Occurred', error, [{text: 'Okay'}]);
-    //     // }
-    // }, [userData.username]);
+    const nameImageHandler = (username) => {
+        let name = username.split(" ");
+        const newName = name.map((name) => name[0]).join('');
+        setImageName(newName.toUpperCase());
+    };
+
+    const loadOwner = useCallback(async () => {
+        setLoading(true);
+        try {
+            await fetchOwner()
+                .then(async (res) => {
+                    // console.log("resdata receive", res.data);
+                    setUserData(res.data);
+                    if(res.data.profile_img === ""){
+                        nameImageHandler(res.data.username)
+                    }
+                }).catch((err) => {
+                    console.log("err.....", err);
+                })
+        } catch (err) {
+            console.log("Error in MessageScreen", err);
+            setLoading(false);
+        }
+        setLoading(false);
+    }, [fetchOwner]);
+
+    useEffect(() => {
+        props.navigation.addListener('focus', loadOwner);
+        return () => {
+            props.navigation.removeListener('focus', loadOwner);
+        };
+    }, [loadOwner]);
+
+    useEffect(() => {
+        setLoading(true);
+        loadOwner().then(() => {
+            setLoading(false);
+        });
+    }, [loadOwner]);
+
 
     Array.prototype.unique = function() {
         let a = this.concat();
@@ -225,22 +245,24 @@ const AccountScreen = (props) => {
                 <TouchableOpacity
                     style={{flexDirection: "row", backgroundColor: colors.white, padding: 20}}
                         onPress={() => {
-                            props.navigation.navigate("OwnerProfileScreen")
+                            props.navigation.navigate("OwnerProfileScreen", {
+                                userData: userData
+                            })
                         }}
                 >
-                    {userData.userImage === "" ?
-                        <Avatar.Text style={{backgroundColor: colors.medium}} size={80} label={"N/A"} />
+                    {userData.profile_img === "" ?
+                        <Avatar.Text style={{backgroundColor: colors.medium}} size={80} label={imageName} />
                         :
                         <>
                             <Image
                                 style={{width: 80, height: 80, borderRadius: 200}}
-                                source={{uri: userData.userImage}}
+                                source={{uri: userData.profile_img}}
                             />
                         </>
                     }
                     <View style={{marginHorizontal: 20, justifyContent: "center"}}>
                         <Text style={{fontSize: 28}}>{userData.username}</Text>
-                        <Text style={{fontSize: 15, color:colors.medium}}>{userData.userPhone}</Text>
+                        <Text style={{fontSize: 15, color:colors.medium}}>{userData.phone}</Text>
                     </View>
                 </TouchableOpacity>
             </View>

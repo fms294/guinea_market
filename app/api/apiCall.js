@@ -173,3 +173,28 @@ export const fetchOtherUser = (userId) => {
         })
     })
 };
+
+export const fetchOwner = () => {
+    return new Promise((resolve, reject) => {
+        let user = {};
+        AsyncStorage.getItem("userData")
+            .then((res) => {
+                if(res !== null) {
+                    user = JSON.parse(res);
+                    return(
+                        axios.get(`${uri}/users/owner`,
+                            {
+                                headers:{
+                                    Accept: 'application/json',
+                                    'Content-Type': 'application/json',
+                                    Authorization: 'Bearer ' + user.token,
+                                },
+                            }).then(res => resolve(res))
+                            .catch(error => reject(error))
+                    );
+                }
+            }).catch((err) => {
+            console.log("Error in apiCall", err);
+        })
+    })
+};

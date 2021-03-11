@@ -6,7 +6,7 @@ import {
     Image,
     Text,
     TouchableOpacity,
-    Alert
+    Alert, ActivityIndicator
 } from 'react-native';
 import Modal from "react-native-modal";
 import colors from "../config/colors";
@@ -74,7 +74,7 @@ const WelcomeScreen = (props) => {
                 setOtpView(true);
                     setLoading(false);
                 // console.log("Forget..res", res.data.otp);
-                // console.log("Forget..res...", serverOtp);
+                console.log("OTP...", serverOtp);
             }).catch((err) => {
                 console.log("Forget..err", err);
                 Alert.alert(t("welcome_screen:handle_alert"), t("welcome_screen:handle_alert_msg"),
@@ -99,7 +99,7 @@ const WelcomeScreen = (props) => {
 
     const handleConfirmOTP = async (values) => {
         //console.log("confirm otp",values.otp);
-        //console.log("confirm otp...",serverOtp);
+        console.log("confirm otp...",serverOtp);
         if(parseInt(serverOtp) === parseInt(values.otp)){
             //console.log("Matched");
             setUpdatePasswordView(true);
@@ -179,7 +179,15 @@ const WelcomeScreen = (props) => {
                                                         <Text style={styles.modalText}>{t("welcome_screen:update_pass_title")}</Text>
                                                         <Form
                                                             initialValues={{password: ""}}
-                                                            onSubmit={(values) => handlePasswordChange(values)}
+                                                            onSubmit={(values) => {
+                                                                setLoading(true);
+                                                                handlePasswordChange(values).then((res) => {
+                                                                    setLoading(false);
+                                                                }).catch((err) => {
+                                                                    setLoading(false);
+                                                                    console.log("catch...", err);
+                                                                });
+                                                            }}
                                                             validationSchema={validateSchemaPasswordChange}
                                                         >
                                                             <FormField
@@ -192,7 +200,11 @@ const WelcomeScreen = (props) => {
                                                                 textContentType="password"
                                                             />
                                                             {loading ? (
-                                                                <SubmitButton title={t("welcome_screen:loading")} />
+                                                                <ActivityIndicator
+                                                                    style={{marginTop: 10}}
+                                                                    size={"large"}
+                                                                    color={colors.primary}
+                                                                />
                                                             ) : (
                                                                 <SubmitButton title={t("welcome_screen:update_pass")}/>
                                                             )}
@@ -223,7 +235,15 @@ const WelcomeScreen = (props) => {
                                                 <Text style={styles.modalText}>{t("welcome_screen:forget_title")}</Text>
                                                 <Form
                                                     initialValues={{ phone : ""}}
-                                                    onSubmit={(values) => handleOTP(values)}
+                                                    onSubmit={(values) => {
+                                                        setLoading(true);
+                                                        handleOTP(values).then((res) => {
+                                                            setLoading(false);
+                                                        }).catch((err) => {
+                                                            setLoading(false);
+                                                            console.log("catch...", err);
+                                                        });
+                                                    }}
                                                     validationSchema={validationSchemaHandleOtp}
                                                 >
                                                     <FormField
@@ -233,7 +253,11 @@ const WelcomeScreen = (props) => {
                                                         placeholder={t("welcome_screen:phone")}
                                                     />
                                                     {loading ? (
-                                                        <SubmitButton title={t("welcome_screen:loading")} />
+                                                        <ActivityIndicator
+                                                            style={{marginTop: 10}}
+                                                            size={"large"}
+                                                            color={colors.primary}
+                                                        />
                                                     ) : (
                                                         <SubmitButton title={t("welcome_screen:req_otp")}/>
                                                     )}
@@ -250,7 +274,15 @@ const WelcomeScreen = (props) => {
                                         />
                                         <Form
                                             initialValues={{phone: "", password: ""}}
-                                            onSubmit={(values) => handleSubmission(values)}
+                                            onSubmit={(values) => {
+                                                setLoading(true);
+                                                handleSubmission(values).then((res) => {
+                                                    setLoading(false);
+                                                }).catch((err) => {
+                                                    setLoading(false);
+                                                    console.log("catch...", err);
+                                                });
+                                            }}
                                             validationSchema={validationSchemaLogin}
                                         >
                                             <ErrorMessage error={errorMessage} visible={loginFailed}/>
@@ -269,7 +301,17 @@ const WelcomeScreen = (props) => {
                                                 secureTextEntry
                                                 textContentType="password"
                                             />
-                                            <SubmitButton title={t("welcome_screen:login")}/>
+                                            {loading ?
+                                                <>
+                                                    <ActivityIndicator
+                                                        style={{marginTop: 10}}
+                                                        size={"large"}
+                                                        color={colors.primary}
+                                                    />
+                                                </>
+                                                :
+                                                <SubmitButton title={t("welcome_screen:login")}/>
+                                            }
                                         </Form>
                                         <TouchableOpacity
                                             style={styles.openButtonForget}
@@ -298,7 +340,15 @@ const WelcomeScreen = (props) => {
                             <Text style={styles.modalText}>{title}</Text>
                             <Formik
                                 initialValues={{ name: "", phone: "", password: "", confirmPassword: ""}}
-                                onSubmit={(values) => handleSubmission(values)}
+                                onSubmit={(values) => {
+                                    setLoading(true);
+                                    handleSubmission(values).then((res) => {
+                                        setLoading(false);
+                                    }).catch((err) => {
+                                        setLoading(false);
+                                        console.log("catch...", err);
+                                    });
+                                }}
                                 validationSchema={validationSchemaRegister}
                             >{({
                                 handleChange,
@@ -345,7 +395,17 @@ const WelcomeScreen = (props) => {
                                         onBlur={handleBlur("confirmPassword")}
                                         textContentType="password"
                                     />
-                                    <SubmitButton title={t("welcome_screen:register")} />
+                                    {loading ?
+                                        <>
+                                            <ActivityIndicator
+                                                style={{marginTop: 10}}
+                                                size={"large"}
+                                                color={colors.primary}
+                                            />
+                                        </>
+                                        :
+                                        <SubmitButton title={t("welcome_screen:register")} />
+                                    }
                                     <TouchableOpacity
                                         style={styles.openButton}
                                         onPress={() => {

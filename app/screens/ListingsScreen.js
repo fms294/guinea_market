@@ -42,6 +42,7 @@ const ListingsScreen = (props) => {
     const [region, setRegion] = useState([]);
     const [sortedData,setSortedData] = useState([]);
     const [filterData, setFilterData] = useState([]);
+    //console.log("listing screen",data);
 
     const onIconPress = () => {
         //console.log("pressed");

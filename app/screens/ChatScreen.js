@@ -1,10 +1,10 @@
 import React, {useEffect, useState, useCallback} from "react";
-import {ActivityIndicator, StyleSheet, View, FlatList, Text, KeyboardAvoidingView} from "react-native";
+import {ActivityIndicator, StyleSheet, View, FlatList, Text, KeyboardAvoidingView, Platform} from "react-native";
 import {translate} from "react-i18next";
 
 import {conversation, sendMessage} from "../api/apiCall";
 import colors from "../config/colors";
-import {IconButton, TextInput} from "react-native-paper";
+import {TextInput, IconButton} from "react-native-paper";
 
 const ChatScreen = (props) => {
     const {t} = props;
@@ -12,6 +12,7 @@ const ChatScreen = (props) => {
     const [text, setText] = useState('');
     const [message, setMessage] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [inputHeight, setInputHeight] = useState();
 
     useEffect(() => {
         props.navigation.setOptions({
@@ -96,15 +97,21 @@ const ChatScreen = (props) => {
         );
     }
 
+    // const onContentSizeChange = (event) => {
+    //     let padding = Platform.OS === "ios" ? 20 : 0;
+    //     setInputHeight(event.nativeEvent.contentSize.height + padding)
+    // };
+
     return (
         <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            behavior={Platform.OS === "ios" ? "padding" : ""}
+            keyboardVerticalOffset={90}
             style={{flex:1}}
         >
             {message.length === 0 ?
                 <></>
                 :
-                <>
+                <View style={{flex: 1}}>
                 <FlatList
                     // refreshControl={
                     //     <RefreshControl refreshing={loading} onRefresh={loadConversation()}/>
@@ -124,11 +131,14 @@ const ChatScreen = (props) => {
                 />
             <View style={styles.inputView}>
                 <TextInput
+                    // style={{flex:1, paddingHorizontal: 10, borderWidth: 2, borderColor: colors.medium, fontSize: 18}}
                     style={{flex:1}}
-                    // label={t("detail_screen:input_label")}
                     placeholder={t("detail_screen:type_msg")}
                     value={text}
                     onChangeText={text => setText(text)}
+                    // onContentSizeChange={(event) => {
+                    //     onContentSizeChange(event)
+                    // }}
                 />
                 <IconButton
                     icon="send"
@@ -143,7 +153,7 @@ const ChatScreen = (props) => {
                     }}
                 />
             </View>
-                </>
+                </View>
             }
         </KeyboardAvoidingView>
     );
@@ -170,7 +180,7 @@ const styles = StyleSheet.create({
     inputView:{
         flexDirection: "row",
         marginLeft: 20,
-        marginVertical: 10
+        marginVertical: 10,
     }
 });
 

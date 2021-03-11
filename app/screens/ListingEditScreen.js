@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react";
-import {View, StyleSheet, Picker, Text, ScrollView, Image, TouchableOpacity, Alert} from "react-native";
+import {
+    View,
+    StyleSheet,
+    Picker,
+    Text,
+    ScrollView,
+    Image,
+    TouchableOpacity,
+    Alert,
+    ActivityIndicator
+} from "react-native";
 import * as Yup from "yup";
 import * as ImagePicker from 'expo-image-picker';
 import {Button} from "react-native-paper";
@@ -19,6 +29,8 @@ import * as listingAction from "../store/actions/listing";
 import { useDispatch } from "react-redux";
 import {translate} from "react-i18next";
 import colors from "../config/colors";
+import {useFormik} from "formik";
+import resets from "react-native-web/dist/exports/StyleSheet/initialRules";
 
 const phoneRegEx = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
@@ -41,8 +53,10 @@ const ListingEditScreen = (props) => {
     const [image, setImage] = useState(null);
     const [imageData, setImageData] = useState(null);
     const [progress, setProgress] = useState(0);
-    const [category, setCategory] = useState();
+    const [category, setCategory] = useState("Appliances");
+    const [sub_category, setSub_category] = useState("");
     const [region, setRegion] = useState("Conakry");
+    const [loading, setLoading] = useState(false);
 
     // useEffect(() => {
     //     const params = props.route.params;
@@ -85,23 +99,28 @@ const ListingEditScreen = (props) => {
         }
     };
 
-    const handleSubmission = async (values) => {
-       //console.log("values.....", values);
+    const resDataGenerator = (values) => {
         const finalData = {
             "title": values.title,
             "price": values.price,
             "description": values.description,
-            "main_category": values.category,
-            "sub_category" : "",
+            "main_category": category,
+            "sub_category" : sub_category,
             "region": region,
             "contact_phone": values.phone,
             "images" : [{imageData},{imageData}]
         }
-        console.log("FinalData", finalData);
+        return finalData;
+    };
+
+    const handleSubmission = async (values) => {
+       //console.log("values.....", values);
+        const final = resDataGenerator(values);
+        console.log("FinalData...",final);
         if(imageData === null){
             Alert.alert(t("listing_add:alert_title"),t("listing_add:alert_msg"), [{text: t("listing_add:okay")}])
         }else{
-            await dispatch(listingAction.add_item(finalData));
+            await dispatch(listingAction.add_item(final));
         }
     }
 
@@ -133,13 +152,21 @@ const ListingEditScreen = (props) => {
                           //images:[]
                       }}
                       onSubmit={(values, {resetForm}) => {
+                          setLoading(true);
                           handleSubmission(values).then(() => {
+                              debugger
                               if(image !== null){
                                   resetForm({values : ''})
                                   setRegion("Conakry");
+                                  setCategory("Appliances");
+                                  setSub_category("");
                                   setImage(null);
                               }
-                          })
+                              setLoading(false);
+                          }).catch((err) => {
+                              setLoading(false);
+                              console.log("catch... in onSubmit", err);
+                          });
                       }}
                       validationSchema={validationSchema}
                   >
@@ -187,13 +214,13 @@ const ListingEditScreen = (props) => {
                           name="phone"
                           placeholder={t("listing_add:contact")}
                       />
-                      <FormPicker
-                          items={categories}
-                          //numberOfColumns={1}
-                          name="category"
-                          PickerItemComponent={CategoryPickerItem}
-                          placeholder={t("listing_add:category")}
-                      />
+                      {/*<FormPicker*/}
+                      {/*    items={categories}*/}
+                      {/*    //numberOfColumns={1}*/}
+                      {/*    name="category"*/}
+                      {/*    PickerItemComponent={CategoryPickerItem}*/}
+                      {/*    placeholder={t("listing_add:category")}*/}
+                      {/*/>*/}
                       {/*<Text style={styles.text}>Select Category</Text>*/}
                       {/*<Picker*/}
                       {/*    name={categories}*/}
@@ -216,7 +243,53 @@ const ListingEditScreen = (props) => {
                       {/*          }*/}
                       {/*      })}*/}
                       {/*</Picker>*/}
-                      <Text style={styles.text}>{t("listing_add:select")}</Text>
+                      <Text style={styles.text}>{t("listing_add:select_category")}</Text>
+                      <View style={styles.pickerContainer}>
+                          <Picker
+                              name={categories}
+                              selectedValue={category}
+                              style={styles.picker}
+                              mode={"modal"}
+                              onValueChange={(itemValue) => {
+                                  const array = ["Construction", "Education", "Electronics", "Furniture", "Grocery", "Housing", "Services"];
+                                  if(array.includes(itemValue) === false) {
+                                      setSub_category("")
+                                  }
+                                  setCategory(itemValue)
+                              }}
+                          >
+                              {categories.map( (s,i) => {
+                                  return <Picker.Item value={s.category} label={t("category:" + i)} key={i}/>
+                              })}
+                          </Picker>
+                      </View>
+                      {category ?
+                          <>
+                              {categories.map((item, index) => {
+                                  if(category === item.category && item.sub_category !== undefined) {
+                                      return (
+                                          <>
+                                              <Text style={styles.text}>{t("listing_add:select_sub")}</Text>
+                                              <View style={styles.pickerContainer}>
+                                                  <Picker
+                                                      name={item.sub_category}
+                                                      selectedValue={sub_category}
+                                                      style={styles.picker}
+                                                      mode={"modal"}
+                                                      onValueChange={(itemValue) => setSub_category(itemValue)}
+                                                  >
+                                                      {item.sub_category.map((itemInner, indexInner) => {
+                                                          return <Picker.Item value={itemInner} label={t("category:"+index+indexInner)} key={indexInner.toString()}/>
+                                                      })}
+                                                  </Picker>
+                                              </View>
+                                          </>
+                                      );
+                                  }
+                              })}
+                          </> : <></>
+                      }
+                      <Text style={styles.text}>{t("listing_add:select_region")}</Text>
                       <View style={styles.pickerContainer}>
                           <Picker
                               name={regions}
@@ -230,7 +303,24 @@ const ListingEditScreen = (props) => {
                               })}
                           </Picker>
                       </View>
-                      <SubmitButton title={t("listing_add:btn")}/>
+                      {loading ?
+                          <>
+                              <ActivityIndicator
+                                  style={{marginTop: 10}}
+                                  size={"large"}
+                                  color={colors.primary}
+                              />
+                          </>
+                          :
+                          <SubmitButton title={t("listing_add:btn")}/>
+                      }
+                      {/*<Button*/}
+                      {/*    onPress={() => {*/}
+                      {/*        // useFormik({onSubmit:({values: ''})})*/}
+                      {/*    }}*/}
+                      {/*>*/}
+                      {/*    {t("listing_screen:clear")}*/}
+                      {/*</Button>*/}
                   </Form>
               </Screen>
           </ScrollView>
@@ -271,4 +361,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default translate(["listing_add"], {wait: true})(ListingEditScreen);
+export default translate(["listing_add", "category"], {wait: true})(ListingEditScreen);

@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react";
-import {View, StyleSheet, Picker, Text, ScrollView, Image, TouchableOpacity, Alert} from "react-native";
+import {
+    View,
+    StyleSheet,
+    Picker,
+    Text,
+    ScrollView,
+    Image,
+    TouchableOpacity,
+    Alert,
+    ActivityIndicator
+} from "react-native";
 import * as Yup from "yup";
 import * as ImagePicker from 'expo-image-picker';
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -32,11 +42,24 @@ const ListingUpdateScreen = (props) => {
     const {t} = props;
     const dispatch = useDispatch();
 
-    const initial = props.route.params.initial;
-    console.log("initial", initial);
-    const [image, setImage] = useState(null);
+    const props_initial = props.route.params.initial;
+    const initial = {
+        title: props_initial.title,
+        price: props_initial.price.toString(),
+        description: props_initial.description,
+        phone: props_initial.contact_phone,
+    }
+    let images = [];
+    props_initial.images.map((item, index) => {
+        images.push(item);
+    })
+    console.log("initial", props_initial);
+    const [image, setImage] = useState(props_initial.images[0].url);
     const [imageData, setImageData] = useState(null);
-    const [region, setRegion] = useState(initial.region);
+    const [category, setCategory] = useState(props_initial.main_category);
+    const [sub_category, setSub_category] = useState(props_initial.sub_category);
+    const [region, setRegion] = useState(props_initial.region);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         props.navigation.setOptions({
@@ -69,51 +92,62 @@ const ListingUpdateScreen = (props) => {
 
     const handleSubmission = async (values) => {
         //console.log("values.....", values);
-        const finalData = {
-            "title": values.title,
-            "price": values.price,
-            "description": values.description,
-            "main_category": values.category,
-            "sub_category" : "",
-            "region": region,
-            "contact_phone": values.phone
+        let finalData;
+        if(imageData === null) {
+            finalData = {
+                "title": values.title,
+                "price": values.price,
+                "description": values.description,
+                "main_category": category,
+                "sub_category" : sub_category,
+                "region": region,
+                "contact_phone": values.phone,
+                "images" : images
+            }
+        } else {
+            finalData = {
+                "title": values.title,
+                "price": values.price,
+                "description": values.description,
+                "main_category": category,
+                "sub_category" : sub_category,
+                "region": region,
+                "contact_phone": values.phone,
+                "images" : [{imageData}, {imageData}]
+            }
         }
-        // console.log("FinalData", finalData);
-        await dispatch(listingAction.update_item(finalData, initial.id));
-        // if(imageData === null){
-        //     Alert.alert(t("listing_add:alert_title"),t("listing_add:alert_msg"), [{text: t("listing_add:okay")}])
-        // }else{
-        //     await dispatch(listingAction.update_item(finalData, initial._id));
-        // }
+        console.log("FinalData", finalData);
+        await dispatch(listingAction.update_item(finalData, props_initial.id));
     }
 
     return (
         <ScrollView>
             <Screen style={styles.container}>
                 <Form
-                    initialValues={{
-                        title: initial.title,
-                        price: initial.price.toString(),
-                        description: initial.description,
-                        category: initial.main_category,
-                        phone: initial.contact_phone,
-                    }}
-                    onSubmit={(values, {resetForm}) => {
-                        handleSubmission(values).then(() => {
-                            // resetForm({values : ''})
-                            // setRegion("Conakry");
-                            // if(image !== null){
-                            //     setImage(null);
-                            // }
-                            props.navigation.goBack();
-                        })
+                    initialValues={initial}
+                    onSubmit={(values) => {
+                        if (values === initial && image === props_initial.images[0].url) {
+                            Alert.alert(t("listing_add:alert_update_title"), t("listing_add:alert_update_msg"), [{text: t("listing_add:okay")}]);
+                        } else {
+                            setLoading(true);
+                            handleSubmission(values).then(() => {
+                                setLoading(false);
+                                props.navigation.goBack();
+                            }).catch((err) => {
+                                setLoading(false);
+                                console.log("catch...update screen", err);
+                            });
+                        }
                     }}
                     validationSchema={validationSchema}
                 >
-                    {/*<TouchableOpacity style={styles.imageContainer} onPress={pickImage} >*/}
-                    {/*    {!image && <MaterialCommunityIcons color={colors.medium} name="camera" size={40} />}*/}
-                    {/*    {image && <Image source={{ uri: image }} style={styles.image} />}*/}
-                    {/*</TouchableOpacity>*/}
+                    <TouchableOpacity style={styles.imageContainer} onPress={pickImage}>
+                        {image === props_initial.images[0].url ?
+                            <Image source={{ uri: image }} style={styles.image} />
+                            :
+                            <Image source={{ uri: image }} style={[styles.image, { borderWidth: 3 ,borderColor: "red"}]} />
+                        }
+                    </TouchableOpacity>
                     <FormField
                         maxLength={255}
                         name="title"
@@ -138,13 +172,53 @@ const ListingUpdateScreen = (props) => {
                         name="phone"
                         placeholder={t("listing_add:contact")}
                     />
-                    <FormPicker
-                        items={categories}
-                        name="category"
-                        PickerItemComponent={CategoryPickerItem}
-                        placeholder={t("listing_add:category")}
-                    />
-                    <Text style={styles.text}>{t("listing_add:select")}</Text>
+                    <Text style={styles.text}>{t("listing_add:select_category")}</Text>
+                    <View style={styles.pickerContainer}>
+                        <Picker
+                            name={categories}
+                            selectedValue={category}
+                            style={styles.picker}
+                            mode={"modal"}
+                            onValueChange={(itemValue) => {
+                                const array = ["Construction", "Education", "Electronics", "Furniture", "Grocery", "Housing", "Services"];
+                                if(array.includes(itemValue) === false) {
+                                    setSub_category("")
+                                }
+                                setCategory(itemValue)
+                            }}
+                        >
+                            {categories.map( (s,i) => {
+                                return <Picker.Item value={s.category} label={t("category:" + i)} key={i}/>
+                            })}
+                        </Picker>
+                    </View>
+                    {category ?
+                        <>
+                            {categories.map((item, index) => {
+                                if(category === item.category && item.sub_category !== undefined) {
+                                    return (
+                                        <>
+                                            <Text style={styles.text}>{t("listing_add:select_sub")}</Text>
+                                            <View style={styles.pickerContainer}>
+                                                <Picker
+                                                    name={item.sub_category}
+                                                    selectedValue={sub_category}
+                                                    style={styles.picker}
+                                                    mode={"modal"}
+                                                    onValueChange={(itemValue) => setSub_category(itemValue)}
+                                                >
+                                                    {item.sub_category.map((itemInner, indexInner) => {
+                                                        return <Picker.Item value={itemInner} label={t("category:"+index+indexInner)} key={indexInner.toString()}/>
+                                                    })}
+                                                </Picker>
+                                            </View>
+                                        </>
+                                    );
+                                }
+                            })}
+                        </> : <></>
+                    }
+                    <Text style={styles.text}>{t("listing_add:select_region")}</Text>
                     <View style={styles.pickerContainer}>
                         <Picker
                             name={regions}
@@ -158,7 +232,17 @@ const ListingUpdateScreen = (props) => {
                             })}
                         </Picker>
                     </View>
-                    <SubmitButton title={t("listing_add:btn_update")}/>
+                    {loading ?
+                        <>
+                            <ActivityIndicator
+                                style={{marginTop: 10}}
+                                size={"large"}
+                                color={colors.primary}
+                            />
+                        </>
+                        :
+                        <SubmitButton title={t("listing_add:btn_update")}/>
+                    }
                 </Form>
             </Screen>
         </ScrollView>
@@ -183,7 +267,6 @@ const styles = StyleSheet.create({
     imageContainer:{
         alignItems:'center',
         backgroundColor: colors.light,
-        borderRadius:15,
         height:100,
         justifyContent:'center',
         overflow:'hidden',
@@ -191,7 +274,8 @@ const styles = StyleSheet.create({
     },
     image:{
         height:100,
-        width:100
+        width:100,
+        borderRadius:15,
     }
 });
 

@@ -12,7 +12,7 @@ export const FETCH_PROFILE_ITEM = "FETCH_PROFILE_ITEM";
 export const add_item = (finalData) => {
     return async (dispatch, getState) => {
         const token = getState().auth.token;
-        console.log("images..", finalData.images)
+        //console.log("images..", finalData.images)
         const formData = new FormData();
         formData.append("contact_phone", finalData.contact_phone);
         formData.append("description", finalData.description);
@@ -44,6 +44,7 @@ export const add_item = (finalData) => {
             const resData = await response.json();
             console.log("resData... in action add item", resData);
         }catch (err) {
+            console.log(err);
             throw new Error("catch "+err);
         }
     }
@@ -53,16 +54,36 @@ export const add_item = (finalData) => {
 export const update_item = (finalData, id) => {
     return async (dispatch, getState) => {
         const token = getState().auth.token;
+        const data = [{
+            url: "temp"
+        }];
+        const formData = new FormData();
+        formData.append("contact_phone", finalData.contact_phone);
+        formData.append("description", finalData.description);
+        formData.append("main_category", finalData.main_category);
+        formData.append("price", finalData.price);
+        formData.append("region", finalData.region);
+        formData.append("sub_category", finalData.sub_category);
+        formData.append("title", finalData.title);
+        finalData.images.map((item) => {
+            if(item.url) {
+                console.log("true")
+            } else {
+                formData.append("images", data)
+                formData.append("image", {uri: item.imageData.uri, type: item.imageData.type, name: new Date().getTime().toString()+".jpg"});
+            }
+        });
+        console.log("formdata...",finalData.images);
         try{
             console.log("resData... in action add item....", id);
             const response = await fetch(`${uri}/listing/update/${id}`,
                 {
                     method: "PATCH",
                     headers: {
-                        "Content-Type" : "application/json",
+                        "Content-Type" : "multipart/form-data;",
                         Authorization: "Bearer " + token,
                     },
-                    body: JSON.stringify(finalData)
+                    body: formData
                 });
             if(!response.ok){
                 const resData = await response.json();

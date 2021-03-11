@@ -31,7 +31,20 @@ const UserProfileScreen = (props) => {
     const userData = useSelector((state) => state.listing.user_profileData);
     const [loading, setLoading] = useState(false);
     const [sortedData, setSortedData] = useState([]);
-    console.log(userData);
+    const [imageName, setImageName] = useState('');
+
+    const nameImageHandler = () => {
+        //console.log("userData..", userData.username)
+        let name = userData.username.split(" ");
+        const newName = name.map((name) => name[0]).join('');
+        setImageName(newName.toUpperCase());
+    };
+
+    useEffect(() => {
+        if(userData.profile_img === ""){
+            nameImageHandler()
+        }
+    },[userData]);
 
     useEffect(() => {
         props.navigation.setOptions({
@@ -111,7 +124,7 @@ const UserProfileScreen = (props) => {
                     onPress={() => props.navigation.goBack()}
                 />
                 {userData.profile_img === "" ?
-                    <Avatar.Text style={{marginBottom: 15, backgroundColor: colors.medium}} size={100} label={"N/A"} />
+                    <Avatar.Text style={{marginBottom: 15, backgroundColor: colors.medium}} size={100} label={imageName} />
                     :
                     <>
                         <Image

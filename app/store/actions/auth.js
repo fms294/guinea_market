@@ -79,30 +79,38 @@ export const login = (phone, password) => {
     }
 }
 
-export const updateProfile = (username) => {
+export const updateProfile = (imageData, username) => {
     return async (dispatch , getState) => {
+        console.log("action...", imageData, username)
         const token = getState().auth.token;
+        const formData = new FormData();
+        if(imageData === null) {
+            formData.append("username", username);
+        } else {
+            formData.append("username", username);
+            formData.append("profile_img", "NA");
+            formData.append("images", {uri: imageData.uri, type: imageData.type, name: new Date().getTime().toString()+".jpg"});
+        }
+        console.log(formData);
         try{
             const response = await fetch(`${uri}/users/updateProfile`,
                 {
                     method: 'PATCH',
                     headers: {
-                        "Content-Type" : "application/json",
+                        "Content-Type" : "multipart/form-data;",
                         Authorization: "Bearer " + token,
                     },
-                    body: JSON.stringify({
-                        username
-                    })
+                    body: formData
                 });
             if (!response.ok) {
                 const resData = await response.json();
                 throw new Error(resData.e);
             }
-            const resData =  await response.json();
+            const resData = await response.json();
             const {userData} = resDataHandler(resData);
             dispatch({type: USER_UPDATE, token: resData.token, userData: userData});
         }catch(err) {
-            throw new Error(err);
+            throw new Error("In catch action "+err);
         }
     }
 }

@@ -1,5 +1,15 @@
 import React, {useState, useEffect, useCallback} from 'react';
-import {View, Image, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Dimensions, TouchableOpacity} from 'react-native';
+import {
+    View,
+    Image,
+    StyleSheet,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    Dimensions,
+    TouchableOpacity,
+    AlertIOS, ToastAndroid, ActivityIndicator
+} from 'react-native';
 //import {Image} from 'react-native-expo-image-cache';
 import { SliderBox } from "react-native-image-slider-box";
 import {useSelector} from "react-redux";
@@ -23,6 +33,13 @@ const ListingDetailsScreen = (props) => {
     const [listedUser, setListedUser] = useState({});
     const [text, setText] = useState('');
     const [visible, setVisible] = useState(false);
+    const [imageName, setImageName] = useState('');
+
+    const nameImageHandler = (nameData) => {
+        let name = nameData.split(" ");
+        const newName = name.map((name) => name[0]).join('');
+        setImageName(newName.toUpperCase());
+    };
 
     useEffect(() => {
         props.navigation.setOptions({
@@ -42,6 +59,9 @@ const ListingDetailsScreen = (props) => {
                             userImage: res.data.user.profile_img
                         }
                         setListedUser(user);
+                        if(user.userImage === ""){
+                            nameImageHandler(user.username)
+                        }
                     }).catch((err) => {
                         console.log("err.....", err);
                     })
@@ -105,7 +125,7 @@ const ListingDetailsScreen = (props) => {
                />
             <View style={styles.detailContainer}>
                 <Text style={styles.title}>{listing.title}</Text>
-                <Text style={[styles.textNormal, {marginTop:10}]}>fr {listing.price}</Text>
+                <Text style={[styles.textNormal, {marginTop:10}]}>GNF {listing.price}</Text>
                 {i18n.language === 'fr' ? (
                     printDate("fr", "frMoment")
                 ) : (
@@ -141,34 +161,34 @@ const ListingDetailsScreen = (props) => {
                         />
                     </View>
                 }
-                <TouchableOpacity
-                    style={{flexDirection: "row", backgroundColor: colors.white, paddingHorizontal: 25, paddingVertical: 15,marginTop: 20, borderRadius: 20}}
-                    onPress={() => {
-                        if(ownerId === listing.owner){
-                            props.navigation.navigate("AccountNavigator")
-                        }else {
-                            props.navigation.navigate("UserProfileScreen",{
-                                listing: listing,
-                                listedUser: listedUser
-                            })
+                    <TouchableOpacity
+                        style={{flexDirection: "row", backgroundColor: colors.white, paddingHorizontal: 25, paddingVertical: 15,marginTop: 20, borderRadius: 20}}
+                        onPress={() => {
+                            if(ownerId === listing.owner){
+                                props.navigation.navigate("AccountNavigator")
+                            }else {
+                                props.navigation.navigate("UserProfileScreen",{
+                                    listing: listing,
+                                    listedUser: listedUser
+                                })
+                            }
+                        }}
+                    >
+                        {listedUser.userImage === "" ?
+                            <Avatar.Text style={{backgroundColor: colors.medium}} size={80} label={imageName} />
+                            :
+                            <>
+                                <Image
+                                    style={{width: 80, height: 80, borderRadius: 200}}
+                                    source={{uri: listedUser.userImage}}
+                                />
+                            </>
                         }
-                    }}
-                >
-                    {listedUser.userImage === "" ?
-                        <Avatar.Text style={{backgroundColor: colors.medium}} size={80} label={"N/A"} />
-                        :
-                        <>
-                            <Image
-                                style={{width: 80, height: 80, borderRadius: 200}}
-                                source={{uri: listedUser.userImage}}
-                            />
-                        </>
-                    }
-                    <View style={{marginHorizontal: 20, justifyContent: "center"}}>
-                        <Text style={{fontSize: 28}}>{listedUser.username}</Text>
-                        <Text style={{fontSize: 15, color:colors.medium}}>{listedUser.feed_count + " " +t("detail_screen:listings")}</Text>
-                    </View>
-                </TouchableOpacity>
+                        <View style={{marginHorizontal: 20, justifyContent: "center"}}>
+                            <Text style={{fontSize: 28}}>{listedUser.username}</Text>
+                            <Text style={{fontSize: 15, color:colors.medium}}>{listedUser.feed_count + " " +t("detail_screen:listings")}</Text>
+                        </View>
+                    </TouchableOpacity>
                 {/*<View style={styles.userContainer}>*/}
                 {/*    <ListItem*/}
                 {/*        onPress={() => {*/}
@@ -193,6 +213,11 @@ const ListingDetailsScreen = (props) => {
                 visible={visible}
                 duration={7000}
                 onDismiss={onDismissSnackBar}
+                theme={{
+                    colors: {
+                        onSurface: "rgb(9,222,9)",
+                    },
+                }}
             >
                 {t("detail_screen:toast_msg")}
             </Snackbar>

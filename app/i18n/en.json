@@ -122,13 +122,17 @@
     "desc" : "Description",
     "category" : "Category",
     "contact": "Contact Number",
-    "select": "Select Region",
+    "select_region": "Select Region",
+    "select_category": "Select Category",
+    "select_sub": "Select Subcategory",
     "btn": "Post",
     "btn_update": "Update",
     "alert_title": "No Image",
     "alert_msg": "Select at least one image before posting product",
     "okay": "Okay",
-    "update": "Update Details"
+    "update": "Update Details",
+    "alert_update_title": "No Updates",
+    "alert_update_msg": "Change at-least any one value to get the product updated"
   },
   "detail_screen": {
     "posted" : "Listed",
@@ -188,6 +192,7 @@
     "change_pass": "Change Password",
     "alert_title": "No Updates",
     "alert_msg": "Change the values to update profile details",
-    "okay": "Okay"
+    "okay": "Okay",
+    "toast_msg": "Successfully Updated the Password"
   }
 }

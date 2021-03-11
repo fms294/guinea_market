@@ -110,7 +110,7 @@
     "f_category" : "Filtrez votre catégorie",
     "f_region" : "Filtrez votre région",
     "clear": "Clair",
-    "close": "Proche",
+    "close": "Fermer",
     "apply": "Appliquer",
     "contact": "Contact : ",
     "search_empty" : "Aucun résultat trouvé",
@@ -122,13 +122,17 @@
     "desc" : "La description",
     "category" : "Catégorie",
     "contact": "Numéro de contact",
-    "select": "Choisissez une région",
+    "select_region": "Choisissez une région",
+    "select_category": "Choisir une catégorie",
+    "select_sub": "Sélectionnez une sous-catégorie",
     "btn": "Publier",
     "btn_update": "Mettre à jour",
     "alert_title": "Pas d'image",
     "alert_msg": "Sélectionnez au moins une image avant de publier le produit",
     "okay": "D'accord",
-    "update": "Mettre à jour les détails"
+    "update": "Mettre à jour les détails",
+    "alert_update_title": "Aucune mise à jour",
+    "alert_update_msg": "Modifiez au moins une valeur pour mettre à jour le produit"
   },
   "detail_screen": {
     "posted" : "Listé",
@@ -188,6 +192,7 @@
     "change_pass": "Changer le mot de passe",
     "alert_title": "Aucune mise à jour",
     "alert_msg": "Modifiez les valeurs pour mettre à jour les détails du profil",
-    "okay": "D'accord"
+    "okay": "D'accord",
+    "toast_msg": "Mise à jour réussie du mot de passe"
   }
 }
