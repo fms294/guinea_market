@@ -155,7 +155,7 @@ const ListingUpdateScreen = (props) => {
                     />
                     <FormField
                         keyboardType="numeric"
-                        maxLength={8}
+                        // maxLength={8}
                         name="price"
                         placeholder={t("listing_add:price")}
                     />
@@ -208,7 +208,7 @@ const ListingUpdateScreen = (props) => {
                                                     onValueChange={(itemValue) => setSub_category(itemValue)}
                                                 >
                                                     {item.sub_category.map((itemInner, indexInner) => {
-                                                        return <Picker.Item value={itemInner} label={t("category:"+index+indexInner)} key={indexInner.toString()}/>
+                                                        return <Picker.Item value={itemInner} label={t("category:"+index+"-"+indexInner)} key={indexInner.toString()}/>
                                                     })}
                                                 </Picker>
                                             </View>

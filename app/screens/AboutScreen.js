@@ -49,11 +49,11 @@ const AboutScreen = (props) => {
                 <Text style={styles.textDescription}>Dibida</Text>
             </View>
             <View style={styles.links}>
-                <OpenURLButton url={`${uri}/about/Contact us`}>{t("about_screen:contact")}</OpenURLButton>
-                <OpenURLButton url={`${uri}/about/Terms of use`}>{t("about_screen:terms")}</OpenURLButton>
-                <OpenURLButton url={`${uri}/about/Privacy Policy`}>{t("about_screen:privacy")}</OpenURLButton>
-                <OpenURLButton url={`${uri}/about/Publication rules`}>{t("about_screen:rules")}</OpenURLButton>
-                <OpenURLButton url={`${uri}/about/Advice to users`}>{t("about_screen:advice")}</OpenURLButton>
+                <OpenURLButton url={`${uri}/about/${t("about_screen:contact")}`}>{t("about_screen:contact")}</OpenURLButton>
+                <OpenURLButton url={`${uri}/about/${t("about_screen:terms")}`}>{t("about_screen:terms")}</OpenURLButton>
+                <OpenURLButton url={`${uri}/about/${t("about_screen:privacy")}`}>{t("about_screen:privacy")}</OpenURLButton>
+                <OpenURLButton url={`${uri}/about/${t("about_screen:rules")}`}>{t("about_screen:rules")}</OpenURLButton>
+                <OpenURLButton url={`${uri}/about/${t("about_screen:advice")}`}>{t("about_screen:advice")}</OpenURLButton>
             </View>
             <Button
                 style={styles.button}

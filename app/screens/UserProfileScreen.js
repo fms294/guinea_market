@@ -103,7 +103,8 @@ const UserProfileScreen = (props) => {
     };
 
     const openWhatsapp = (phone) => {
-        Linking.openURL(`https://api.whatsapp.com/send?phone=${phone}8`)
+        Linking.openURL(`https://api.whatsapp.com/send?phone=224${phone}`);
+        // Linking.openURL(`wa.me/224${phone}?text=HI`);
     };
 
     if(loading){

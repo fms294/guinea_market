@@ -53,7 +53,7 @@ const ListingEditScreen = (props) => {
     const [image, setImage] = useState(null);
     const [imageData, setImageData] = useState(null);
     const [progress, setProgress] = useState(0);
-    const [category, setCategory] = useState("Appliances");
+    const [category, setCategory] = useState("Vehicles");
     const [sub_category, setSub_category] = useState("");
     const [region, setRegion] = useState("Conakry");
     const [loading, setLoading] = useState(false);
@@ -197,7 +197,7 @@ const ListingEditScreen = (props) => {
                       />
                       <FormField
                           keyboardType="numeric"
-                          maxLength={8}
+                          // maxLength={8}
                           name="price"
                           placeholder={t("listing_add:price")}
                       />
@@ -279,7 +279,7 @@ const ListingEditScreen = (props) => {
                                                       onValueChange={(itemValue) => setSub_category(itemValue)}
                                                   >
                                                       {item.sub_category.map((itemInner, indexInner) => {
-                                                          return <Picker.Item value={itemInner} label={t("category:"+index+indexInner)} key={indexInner.toString()}/>
+                                                          return <Picker.Item value={itemInner} label={t("category:"+index+"-"+indexInner)} key={indexInner.toString()}/>
                                                       })}
                                                   </Picker>
                                               </View>

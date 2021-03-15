@@ -365,7 +365,7 @@ const ListingsScreen = (props) => {
                                                                 }}>
                                                                     <Text style={category.includes(item) ? [styles.sub_category, {color: colors.primary}] : styles.sub_category}>
                                                                         {/*{item + itemData.index + index}*/}
-                                                                        {t("category:"+itemData.index+index)}
+                                                                        {t("category:"+itemData.index+"-"+index)}
                                                                     </Text>
                                                                 </TouchableOpacity>
                                                             )}
