@@ -2,6 +2,30 @@ import axios from "axios";
 import AsyncStorage from "@react-native-community/async-storage";
 import { uri } from "../config/app_uri";
 
+export const registration_otp = (data) => {
+    //console.log("registration otp... api call", data);
+    return new Promise((resolve, reject) => {
+        return (
+            axios.post(`${uri}/users/register_OTP`, data,
+                {
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                })
+                .then(res => {
+                    console.log(res)
+                    resolve(res)
+                })
+                .catch((error) => {
+                    console.log("reject...",error.e);
+                    reject(error);
+                })
+        );
+    })
+};
+
+
 export const forgetPassword = (phone) => {
     //console.log("ForgetPassword... api call", phone);
     return new Promise((resolve, reject) => {

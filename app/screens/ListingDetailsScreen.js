@@ -106,7 +106,11 @@ const ListingDetailsScreen = (props) => {
     }
 
     return (
-        <View>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : ""}
+            keyboardVerticalOffset={50}
+            style={{flex:1}}
+        >
         <ScrollView>
                 <SliderBox
                     resize={"cover"}
@@ -221,7 +225,7 @@ const ListingDetailsScreen = (props) => {
             >
                 {t("detail_screen:toast_msg")}
             </Snackbar>
-        </View>
+        </KeyboardAvoidingView>
     )
 };
 
@@ -254,7 +258,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         top: 0,
         left: 0,
-        color: colors.medium,
+        color: colors.white,
     }
 })
 

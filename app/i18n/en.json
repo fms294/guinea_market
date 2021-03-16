@@ -105,6 +105,7 @@
     "name": "Name",
     "conf_pass": "Confirm Password",
     "already": "Already Registered",
+    "user_already": "User already registered",
     "error_phone_msg": "Enter Valid Phone Number"
   },
   "listing_screen": {

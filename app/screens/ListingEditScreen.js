@@ -54,7 +54,7 @@ const ListingEditScreen = (props) => {
     const [imageData, setImageData] = useState(null);
     const [progress, setProgress] = useState(0);
     const [category, setCategory] = useState("Vehicles");
-    const [sub_category, setSub_category] = useState("");
+    const [sub_category, setSub_category] = useState("Cars");
     const [region, setRegion] = useState("Conakry");
     const [loading, setLoading] = useState(false);
 
@@ -158,8 +158,8 @@ const ListingEditScreen = (props) => {
                               if(image !== null){
                                   resetForm({values : ''})
                                   setRegion("Conakry");
-                                  setCategory("Appliances");
-                                  setSub_category("");
+                                  setCategory("Vehicles");
+                                  setSub_category("Cars");
                                   setImage(null);
                               }
                               setLoading(false);

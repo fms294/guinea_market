@@ -41,10 +41,10 @@ const UserProfileScreen = (props) => {
     };
 
     useEffect(() => {
-        if(userData.profile_img === ""){
+        if (userData.profile_img === "") {
             nameImageHandler()
         }
-    },[userData]);
+    }, [userData]);
 
     useEffect(() => {
         props.navigation.setOptions({
@@ -79,7 +79,7 @@ const UserProfileScreen = (props) => {
 
     useEffect(() => {
         const sortBy = (item) => {
-            return item.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt) );
+            return item.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
         }
         setSortedData(sortBy(data));
     });
@@ -107,7 +107,7 @@ const UserProfileScreen = (props) => {
         // Linking.openURL(`wa.me/224${phone}?text=HI`);
     };
 
-    if(loading){
+    if (loading) {
         return (
             <View style={styles.profile}>
                 <ActivityIndicator size={"large"} color={colors.primary}/>
@@ -115,7 +115,7 @@ const UserProfileScreen = (props) => {
         );
     }
 
-    return(
+    return (
         <View style={styles.screen}>
             <View style={styles.profile}>
                 <Ionicons
@@ -125,11 +125,12 @@ const UserProfileScreen = (props) => {
                     onPress={() => props.navigation.goBack()}
                 />
                 {userData.profile_img === "" ?
-                    <Avatar.Text style={{marginBottom: 15, backgroundColor: colors.medium}} size={100} label={imageName} />
+                    <Avatar.Text style={{marginBottom: 15, backgroundColor: colors.medium}} size={100}
+                                 label={imageName}/>
                     :
                     <>
                         <Image
-                            style={{marginBottom: 15 ,width: 100, height: 100, borderRadius: 200}}
+                            style={{marginBottom: 15, width: 100, height: 100, borderRadius: 200}}
                             source={{uri: userData.profile_img}}
                         />
                     </>
@@ -137,55 +138,52 @@ const UserProfileScreen = (props) => {
                 <Text style={styles.username}>{userData.username}</Text>
                 <TouchableOpacity
                     style={{flexDirection: "row"}}
-                    onPress={() => {dialNumber(userData.phone)}}
+                    onPress={() => {
+                        dialNumber(userData.phone)
+                    }}
                 >
                     <Ionicons
                         style={{margin: 10}}
                         name="call-outline"
                         size={30}
-                        onPress={() => {dialNumber(userData.phone)}}
+                        onPress={() => {
+                            dialNumber(userData.phone)
+                        }}
                     />
                     <Ionicons
                         style={{margin: 10}}
                         name="logo-whatsapp"
                         size={30}
-                        onPress={() => {openWhatsapp(userData.phone)}}
+                        onPress={() => {
+                            openWhatsapp(userData.phone)
+                        }}
                     />
                 </TouchableOpacity>
             </View>
             <View style={styles.dataView}>
-            <FlatList
-                refreshControl={
-                    <RefreshControl refreshing={loading} onRefresh={loadFeed}/>
-                }
-                data={sortedData}
-                renderItem={(itemData) => {
-                    //console.log("listings", itemData.item);
-                    let posted;
-                    if(i18n.language === 'fr'){
-                        moment.updateLocale('fr', frMoment)
-                        posted = moment(new Date(itemData.item.updatedAt)).fromNow()
-                    }else {
-                        moment.updateLocale('en', enMoment)
-                        posted = moment(new Date(itemData.item.updatedAt)).fromNow()
+                <FlatList
+                    refreshControl={
+                        <RefreshControl refreshing={loading} onRefresh={loadFeed}/>
                     }
-                    return (
-                        <ProductItem
-                            image={itemData.item.images[0].url}
-                            title={itemData.item.title}
-                            price={itemData.item.price}
-                            phone={itemData.item.contact_phone}
-                            posted={posted}
-                            onSelect={() => props.navigation.navigate("ListingDetailsScreen", {
-                                listing: itemData.item
-                            })}
-                        >
-                            <Button
-                                icon="more"
-                                color={colors.medium}
-                                uppercase={false}
-                                mode={"outlined"}
-                                onPress={() => {
+                    data={sortedData}
+                    renderItem={(itemData) => {
+                        //console.log("listings", itemData.item);
+                        let posted;
+                        if (i18n.language === 'fr') {
+                            moment.updateLocale('fr', frMoment)
+                            posted = moment(new Date(itemData.item.updatedAt)).fromNow()
+                        } else {
+                            moment.updateLocale('en', enMoment)
+                            posted = moment(new Date(itemData.item.updatedAt)).fromNow()
+                        }
+                        return (
+                            <ProductItem
+                                image={itemData.item.images[0].url}
+                                title={itemData.item.title}
+                                price={itemData.item.price}
+                                phone={itemData.item.contact_phone}
+                                posted={posted}
+                                onSelect={() => {
                                     let images = itemData.item.images.map((item) => {
                                         return item.url;
                                     })
@@ -195,12 +193,27 @@ const UserProfileScreen = (props) => {
                                     })
                                 }}
                             >
-                                {t("listing_screen:btn")}
-                            </Button>
-                        </ProductItem>
-                    );
-                }}
-            />
+                                <Button
+                                    icon="more"
+                                    color={colors.medium}
+                                    uppercase={false}
+                                    mode={"outlined"}
+                                    onPress={() => {
+                                        let images = itemData.item.images.map((item) => {
+                                            return item.url;
+                                        })
+                                        props.navigation.navigate("ListingDetailsScreen", {
+                                            listing: itemData.item,
+                                            images: images
+                                        })
+                                    }}
+                                >
+                                    {t("listing_screen:btn")}
+                                </Button>
+                            </ProductItem>
+                        );
+                    }}
+                />
             </View>
         </View>
     );

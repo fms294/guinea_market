@@ -20,7 +20,7 @@ import {Formik} from 'formik';
 import * as Yup from "yup";
 import * as authActions from "../store/actions/auth";
 import {useDispatch} from "react-redux";
-import {forgetPassword, updatePassword} from "../api/apiCall";
+import {forgetPassword, updatePassword, registration_otp} from "../api/apiCall";
 import {translate} from "react-i18next";
 
 const WelcomeScreen = (props) => {
@@ -35,6 +35,8 @@ const WelcomeScreen = (props) => {
     const [serverId, setServerId] = useState('');
     const [loading, setLoading] = useState(false);
     const [updatePasswordView, setUpdatePasswordView] = useState(false);
+    const [registerOTPView, setRegisterOTPView] = useState(false);
+    const [registrationValues, setRegistrationValues] = useState();
     const dispatch = useDispatch();
 
     const validationSchemaLogin = Yup.object().shape({
@@ -136,11 +138,40 @@ const WelcomeScreen = (props) => {
         }
     }
 
+    const handleRegistration = async (values) => {
+        console.log("server otp..", serverOtp)
+        if(parseInt(serverOtp) === parseInt(values.otp)){
+            console.log("matched", registrationValues);
+            await dispatch(authActions.signup(registrationValues.name, registrationValues.phone, registrationValues.password));
+        } else {
+            console.log("wrong");
+            Alert.alert(t("welcome_screen:confirmOtp_alert"), t("welcome_screen:confirmOtp_alert_msg"), [{text: t("welcome_screen:retry")}]);
+        }
+
+    };
+
     const handleSubmission = async (values) => {
         //console.log("events...", values);
         try {
             if(title === t("welcome_screen:register")){
-                await dispatch(authActions.signup(values.name, values.phone, values.password));
+                const data = {
+                    username: values.name,
+                    phone: values.phone
+                }
+                setLoading(true);
+                await registration_otp(data)
+                    .then((res) => {
+                        console.log("response...", res.data.otp)
+                        setServerOtp(res.data.otp);
+                        setLoading(false);
+                        setRegisterOTPView(true);
+                        setRegistrationValues(values);
+                    }).catch((err) => {
+                        setLoading(false);
+                        console.log("Catch in registration otp", err);
+                        throw new Error(t("welcome_screen:user_already"));
+                    })
+                //await dispatch(authActions.signup(values.name, values.phone, values.password));
             }else {
                 await dispatch(authActions.login(values.phone, values.password));
             }
@@ -337,90 +368,128 @@ const WelcomeScreen = (props) => {
                             </>
                         ) : (
                             <>
-                            <Text style={styles.modalText}>{title}</Text>
-                            <Formik
-                                initialValues={{ name: "", phone: "", password: "", confirmPassword: ""}}
-                                onSubmit={(values) => {
-                                    setLoading(true);
-                                    handleSubmission(values).then((res) => {
-                                        setLoading(false);
-                                    }).catch((err) => {
-                                        setLoading(false);
-                                        console.log("catch...", err);
-                                    });
-                                }}
-                                validationSchema={validationSchemaRegister}
-                            >{({
-                                handleChange,
-                                values,
-                                errors,
-                                touched,
-                                handleBlur,
-                            }) => (
-                                <>
-                                    <ErrorMessage
-                                        errorValue={touched.confirmPassword && errors.confirmPassword}
-                                        error={errorMessage}
-                                        visible={loginFailed}
-                                    />
-                                    <FormField
-                                        autoCorrect={false}
-                                        icon="account"
-                                        name="name"
-                                        placeholder={t("welcome_screen:name")}
-                                    />
-                                    <FormField
-                                        icon={"phone"}
-                                        keyboardType={"decimal-pad"}
-                                        name={"phone"}
-                                        placeholder={t("welcome_screen:phone")}
-                                        //textContentType={""}
-                                    />
-                                    <FormField
-                                        autoCapitalize="none"
-                                        autoCorrect={false}
-                                        icon="lock"
-                                        name="password"
-                                        placeholder={t("welcome_screen:pass")}
-                                        secureTextEntry
-                                        textContentType="password"
-                                    />
-                                    <FormField
-                                        name="password"
-                                        value={values.confirmPassword}
-                                        onChangeText={handleChange("confirmPassword")}
-                                        placeholder={t("welcome_screen:conf_pass")}
-                                        secureTextEntry
-                                        icon="lock"
-                                        onBlur={handleBlur("confirmPassword")}
-                                        textContentType="password"
-                                    />
-                                    {loading ?
-                                        <>
-                                            <ActivityIndicator
-                                                style={{marginTop: 10}}
-                                                size={"large"}
-                                                color={colors.primary}
+                            {registerOTPView ?
+                                    <>
+                                        <Text style={styles.modalText}>OTP</Text>
+                                        <Form
+                                            initialValues={{otp: ""}}
+                                            onSubmit={(values) => {
+                                                setLoading(true);
+                                                handleRegistration(values).then((res) => {
+                                                    setLoading(false);
+                                                }).catch((err) => {
+                                                    setLoading(false);
+                                                    console.log("catch...", err);
+                                                });
+                                            }}
+                                            validationSchema={validationSchemaConfirmOtp}
+                                        >
+                                            <FormField
+                                                icon="phone"
+                                                keyboardType="decimal-pad"
+                                                name='otp'
+                                                placeholder={t("welcome_screen:enter_otp")}
+                                                textContentType="oneTimeCode"
                                             />
-                                        </>
-                                        :
-                                        <SubmitButton title={t("welcome_screen:register")} />
-                                    }
-                                    <TouchableOpacity
-                                        style={styles.openButton}
-                                        onPress={() => {
-                                            setTitle(t("welcome_screen:login"))
-                                            setErrorMessage("");
-                                            setForgetView(false);
-                                            setOtpView(false);
-                                        }}
-                                    >
-                                        <Text style={styles.textStyle}>{t("welcome_screen:already")}</Text>
-                                    </TouchableOpacity>
-                                </>
+                                            {loading ? (
+                                                <ActivityIndicator
+                                                    style={{marginTop: 10}}
+                                                    size={"large"}
+                                                    color={colors.primary}
+                                                />
+                                            ) : (
+                                                <SubmitButton title={t("welcome_screen:confirm_otp")}/>
+                                            )}
+                                        </Form>
+                                    </>
+                                    :
+                                    <>
+                                <Text style={styles.modalText}>{title}</Text>
+                                <Formik
+                                    initialValues={{ name: "", phone: "", password: "", confirmPassword: ""}}
+                                    onSubmit={(values) => {
+                                        setLoading(true);
+                                        handleSubmission(values).then((res) => {
+                                            setLoading(false);
+                                        }).catch((err) => {
+                                            setLoading(false);
+                                            console.log("catch...", err);
+                                        });
+                                    }}
+                                    validationSchema={validationSchemaRegister}
+                                >{({
+                                    handleChange,
+                                    values,
+                                    errors,
+                                    touched,
+                                    handleBlur,
+                                }) => (
+                                    <>
+                                        <ErrorMessage
+                                            errorValue={touched.confirmPassword && errors.confirmPassword}
+                                            error={errorMessage}
+                                            visible={loginFailed}
+                                        />
+                                        <FormField
+                                            autoCorrect={false}
+                                            icon="account"
+                                            name="name"
+                                            placeholder={t("welcome_screen:name")}
+                                        />
+                                        <FormField
+                                            icon={"phone"}
+                                            keyboardType={"decimal-pad"}
+                                            name={"phone"}
+                                            placeholder={t("welcome_screen:phone")}
+                                            //textContentType={""}
+                                        />
+                                        <FormField
+                                            autoCapitalize="none"
+                                            autoCorrect={false}
+                                            icon="lock"
+                                            name="password"
+                                            placeholder={t("welcome_screen:pass")}
+                                            secureTextEntry
+                                            textContentType="password"
+                                        />
+                                        <FormField
+                                            name="password"
+                                            value={values.confirmPassword}
+                                            onChangeText={handleChange("confirmPassword")}
+                                            placeholder={t("welcome_screen:conf_pass")}
+                                            secureTextEntry
+                                            icon="lock"
+                                            onBlur={handleBlur("confirmPassword")}
+                                            textContentType="password"
+                                        />
+                                        {loading ?
+                                            <>
+                                                <ActivityIndicator
+                                                    style={{marginTop: 10}}
+                                                    size={"large"}
+                                                    color={colors.primary}
+                                                />
+                                            </>
+                                            :
+                                            <SubmitButton title={t("welcome_screen:register")} />
+                                        }
+                                        <TouchableOpacity
+                                            style={styles.openButton}
+                                            onPress={() => {
+                                                setTitle(t("welcome_screen:login"))
+                                                setErrorMessage("");
+                                                setForgetView(false);
+                                                setOtpView(false);
+                                                setRegisterOTPView(false);
+                                            }}
+                                        >
+                                            <Text style={styles.textStyle}>{t("welcome_screen:already")}</Text>
+                                        </TouchableOpacity>
+                                    </>
+                                )}
+                                </Formik>
+                            </>}</>
                             )}
-                            </Formik>
-                        </>)}
 
                         <TouchableOpacity
                             style={styles.openButton}
