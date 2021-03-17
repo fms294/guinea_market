@@ -7,7 +7,7 @@ class ListingItem {
         main_category,
         sub_category,
         owner,
-        region,
+        prefecture,
         contact_phone,
         images,
         updatedAt
@@ -19,7 +19,7 @@ class ListingItem {
         this.main_category = main_category;
         this.sub_category = sub_category;
         this.owner = owner;
-        this.region = region;
+        this.prefecture = prefecture;
         this.contact_phone = contact_phone;
         this.images = images;
         this.updatedAt = updatedAt;

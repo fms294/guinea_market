@@ -12,25 +12,19 @@ import {
 } from "react-native";
 import * as Yup from "yup";
 import * as ImagePicker from 'expo-image-picker';
-import {Button} from "react-native-paper";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import {
   AppForm as Form,
   AppFormField as FormField,
-  AppFormPicker as FormPicker,
   SubmitButton,
 } from "../components/forms";
 import Screen from "../components/Screen";
-import CategoryPickerItem from "../components/CategoryPickerItem";
-import FormImagePicker from "../components/FormImagePicker";
 import UploadScreen from "./UploadScreen";
-import {categories, regions} from "../data/data";
+import {categories, prefectures} from "../data/data";
 import * as listingAction from "../store/actions/listing";
 import { useDispatch } from "react-redux";
 import {translate} from "react-i18next";
 import colors from "../config/colors";
-import {useFormik} from "formik";
-import resets from "react-native-web/dist/exports/StyleSheet/initialRules";
 
 const phoneRegEx = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
@@ -38,7 +32,6 @@ const validationSchema = Yup.object().shape({
     title: Yup.string().required().min(1).label("Title"),
     price: Yup.number().required().min(1).label("Price"),
     description: Yup.string().required().label("Description"),
-    //category: Yup.object().required().nullable().label("Category"),
     phone: Yup.string().required().matches(phoneRegEx, 'Phone number is not valid').label("Phone"),
     //images: Yup.array().min(1,"Please select at list one image").label("Images")
 });
@@ -46,28 +39,14 @@ const validationSchema = Yup.object().shape({
 const ListingEditScreen = (props) => {
     const {t} = props;
     const dispatch = useDispatch();
-
-    //const location = useLocation();
-    //console.log("location", location);
     const [uploadVisible, setUploadVisible] = useState(false);
     const [image, setImage] = useState(null);
     const [imageData, setImageData] = useState(null);
     const [progress, setProgress] = useState(0);
     const [category, setCategory] = useState("Vehicles");
     const [sub_category, setSub_category] = useState("Cars");
-    const [region, setRegion] = useState("Conakry");
+    const [prefecture, setPrefecture] = useState("Conakry");
     const [loading, setLoading] = useState(false);
-
-    // useEffect(() => {
-    //     const params = props.route.params;
-    //     if(params) {
-    //         const photos = params.photos;
-    //         if(photos) {
-    //             setImage(photos);
-    //         }
-    //         delete params.photos;
-    //     }
-    // })
 
     useEffect(() => {
         props.navigation.setOptions({
@@ -106,7 +85,7 @@ const ListingEditScreen = (props) => {
             "description": values.description,
             "main_category": category,
             "sub_category" : sub_category,
-            "region": region,
+            "prefecture": prefecture,
             "contact_phone": values.phone,
             "images" : [{imageData},{imageData}]
         }
@@ -123,16 +102,6 @@ const ListingEditScreen = (props) => {
             await dispatch(listingAction.add_item(final));
         }
     }
-
-    // const renderImage = (item, i) => {
-    //     return (
-    //         <Image
-    //             style={{ height: 100, width: 100 }}
-    //             source={{ uri: item.uri }}
-    //             key={i}
-    //         />
-    //     )
-    // }
 
     return (
           <ScrollView>
@@ -152,44 +121,57 @@ const ListingEditScreen = (props) => {
                           //images:[]
                       }}
                       onSubmit={(values, {resetForm}) => {
-                          setLoading(true);
-                          handleSubmission(values).then(() => {
-                              debugger
-                              if(image !== null){
-                                  resetForm({values : ''})
-                                  setRegion("Conakry");
-                                  setCategory("Vehicles");
-                                  setSub_category("Cars");
-                                  setImage(null);
+                          const array = ["Vehicles", "Immovable", "Electronic", "Construction", "Education", "Furniture", "Food", "Job", "Health", "Services"];
+                          const default_sub = ["Cars", "Trucks"];
+                          if(array.includes(category)) {
+                              if(category !== "Vehicles" && sub_category === "Cars"){
+                                  alert(t("listing_add:alert_sub_category"));
+                              } else if(category === "Vehicles" && default_sub.includes(sub_category) === false) {
+                                  alert(t("listing_add:alert_sub_category"));
+                              } else if(sub_category === "") {
+                                  alert(t("listing_add:alert_sub_category"));
+                              } else {
+                                  setLoading(true);
+                                  handleSubmission(values).then(() => {
+                                      if(image !== null){
+                                          resetForm({values : ''})
+                                          setPrefecture("Conakry");
+                                          setCategory("Vehicles");
+                                          setSub_category("Cars");
+                                          setImage(null);
+                                      }
+                                      setLoading(false);
+                                  }).catch((err) => {
+                                      setLoading(false);
+                                      console.log("catch... in onSubmit", err);
+                                  });
                               }
-                              setLoading(false);
-                          }).catch((err) => {
-                              setLoading(false);
-                              console.log("catch... in onSubmit", err);
-                          });
+                          }else {
+                              setLoading(true);
+                              handleSubmission(values).then(() => {
+                                  if(image !== null){
+                                      resetForm({values : ''})
+                                      setPrefecture("Conakry");
+                                      setCategory("Vehicles");
+                                      setSub_category("Cars");
+                                      setImage(null);
+                                  }
+                                  setLoading(false);
+                              }).catch((err) => {
+                                  setLoading(false);
+                                  console.log("catch... in onSubmit", err);
+                              });
+                          }
                       }}
                       validationSchema={validationSchema}
                   >
                       {/*<FormImagePicker*/}
                       {/*    name="Images"*/}
                       {/*/>*/}
-
                       <TouchableOpacity style={styles.imageContainer} onPress={pickImage} >
                           {!image && <MaterialCommunityIcons color={colors.medium} name="camera" size={40} />}
                           {image && <Image source={{ uri: image }} style={styles.image} />}
                       </TouchableOpacity>
-
-                      {/*<TouchableOpacity*/}
-                      {/*    style={styles.imageContainer}*/}
-                      {/*    onPress={() => props.navigation.navigate("ImageBrowserScreen")}*/}
-                      {/*>*/}
-                      {/*    <MaterialCommunityIcons color={colors.medium} name="camera" size={40} />*/}
-                      {/*</TouchableOpacity>*/}
-                      {/*<ScrollView>*/}
-                      {/*    {image.map((item, i) => {*/}
-                      {/*        renderImage(item, i)*/}
-                      {/*    })}*/}
-                      {/*</ScrollView>*/}
                       <FormField
                           maxLength={255}
                           name="title"
@@ -210,7 +192,7 @@ const ListingEditScreen = (props) => {
                       />
                       <FormField
                           keyboardType="numeric"
-                          maxLength={10}
+                          maxLength={9}
                           name="phone"
                           placeholder={t("listing_add:contact")}
                       />
@@ -251,7 +233,7 @@ const ListingEditScreen = (props) => {
                               style={styles.picker}
                               mode={"modal"}
                               onValueChange={(itemValue) => {
-                                  const array = ["Construction", "Education", "Electronics", "Furniture", "Grocery", "Housing", "Services"];
+                                  const array = ["Vehicles", "Immovable", "Electronic", "Construction", "Education", "Furniture", "Food", "Job", "Health", "Services"];
                                   if(array.includes(itemValue) === false) {
                                       setSub_category("")
                                   }
@@ -289,16 +271,16 @@ const ListingEditScreen = (props) => {
                               })}
                           </> : <></>
                       }
-                      <Text style={styles.text}>{t("listing_add:select_region")}</Text>
+                      <Text style={styles.text}>{t("listing_add:select_prefecture")}</Text>
                       <View style={styles.pickerContainer}>
                           <Picker
-                              name={regions}
-                              selectedValue={region}
+                              name={prefectures}
+                              selectedValue={prefecture}
                               style={styles.picker}
                               mode={"modal"}
-                              onValueChange={(itemValue) => setRegion(itemValue)}
+                              onValueChange={(itemValue) => setPrefecture(itemValue)}
                           >
-                              {regions.map( (s,i) => {
+                              {prefectures.map( (s,i) => {
                                   return <Picker.Item value={s} label={s} key={i}/>
                               })}
                           </Picker>
@@ -314,13 +296,6 @@ const ListingEditScreen = (props) => {
                           :
                           <SubmitButton title={t("listing_add:btn")}/>
                       }
-                      {/*<Button*/}
-                      {/*    onPress={() => {*/}
-                      {/*        // useFormik({onSubmit:({values: ''})})*/}
-                      {/*    }}*/}
-                      {/*>*/}
-                      {/*    {t("listing_screen:clear")}*/}
-                      {/*</Button>*/}
                   </Form>
               </Screen>
           </ScrollView>

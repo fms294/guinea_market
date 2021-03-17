@@ -111,12 +111,12 @@
   "listing_screen": {
     "feed": "Homepage",
     "category": "Category",
-    "region": "Region",
+    "prefecture": "Prefecture",
     "search": "Search",
     "no_feed" : "Currently No Feed",
     "btn": "More Detail",
     "f_category" : "Filter Your Category",
-    "f_region" : "Filter Your Region",
+    "f_prefecture" : "Filter Your prefecture",
     "clear": "Clear",
     "close": "Close",
     "apply": "Apply",
@@ -130,7 +130,7 @@
     "desc" : "Description",
     "category" : "Category",
     "contact": "Contact Number",
-    "select_region": "Select Region",
+    "select_prefecture": "Select Prefecture",
     "select_category": "Select Category",
     "select_sub": "Select Subcategory",
     "btn": "Post",
@@ -140,7 +140,8 @@
     "okay": "Okay",
     "update": "Update Details",
     "alert_update_title": "No Updates",
-    "alert_update_msg": "Change at-least any one value to get the product updated"
+    "alert_update_msg": "Change at-least any one value to get the product updated",
+    "alert_sub_category": "Please select the appropriate subcategory to continue"
   },
   "detail_screen": {
     "posted" : "Listed",

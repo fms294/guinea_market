@@ -1,6 +1,7 @@
 import moment from "moment";
 import enMoment from "moment/locale/en-ca";
 import { uri } from "../../config/app_uri";
+import {Platform} from "react-native";
 
 import ListingItem from "../../model/ListingItem";
 
@@ -18,19 +19,31 @@ export const add_item = (finalData) => {
         formData.append("description", finalData.description);
         formData.append("main_category", finalData.main_category);
         formData.append("price", finalData.price);
-        formData.append("region", finalData.region);
+        formData.append("prefecture", finalData.prefecture);
         formData.append("sub_category", finalData.sub_category);
         formData.append("title", finalData.title);
         finalData.images.map((item) => {
-            formData.append("images", {uri: item.imageData.uri, type: item.imageData.type, name: new Date().getTime().toString()+".jpg"});
+            if(Platform.OS === "android"){
+                const a = item.imageData.uri.substring(4);
+                console.log("content"+a, "android");
+                formData.append("images", {uri: "content"+a, type: item.imageData.type, name: new Date().getTime().toString()+".jpg"});
+            }else {
+                console.log( "ios");
+                formData.append("images", {uri: item.imageData.uri, type: item.imageData.type, name: new Date().getTime().toString()+".jpg"});
+            }
         })
         //console.log("formData", formData);
         try{
-            console.log("resData... in action add item");
+            console.log("resData... in action add item", `${uri}/listing/add`);
             const response = await fetch(`${uri}/listing/add`,
                 {
                     method: "POST",
                     headers: {
+                        // 'Access-Control-Allow-Origin': '*',
+                        // 'Access-Control-Allow-Methods': 'POST, GET, PUT, OPTIONS, DELETE',
+                        // 'Access-Control-Allow-Headers': 'Access-Control-Allow-Methods, Access-Control-Allow-Origin, Origin, Accept, Content-Type',
+                        // 'Accept': 'application/x-www-form-urlencoded',
+                        // 'Content-Type':'application/x-www-form-urlencoded',
                         "Content-Type" : "multipart/form-data;",
                         Authorization: "Bearer " + token,
                     },
@@ -44,8 +57,8 @@ export const add_item = (finalData) => {
             const resData = await response.json();
             console.log("resData... in action add item", resData);
         }catch (err) {
-            console.log(err);
-            throw new Error("catch "+err);
+            console.log("Hello...",err);
+            throw new Error(err);
         }
     }
 }
@@ -62,7 +75,7 @@ export const update_item = (finalData, id) => {
         formData.append("description", finalData.description);
         formData.append("main_category", finalData.main_category);
         formData.append("price", finalData.price);
-        formData.append("region", finalData.region);
+        formData.append("prefecture", finalData.prefecture);
         formData.append("sub_category", finalData.sub_category);
         formData.append("title", finalData.title);
         finalData.images.map((item) => {
@@ -131,7 +144,7 @@ export const fetchFeed = () => {
                         resData[index].main_category,
                         resData[index].sub_category,
                         resData[index].owner,
-                        resData[index].region,
+                        resData[index].prefecture,
                         resData[index].contact_phone,
                         resData[index].images,
                         time
@@ -175,7 +188,7 @@ export const fetchUserFeed = () => {
                         resData[index].main_category,
                         resData[index].sub_category,
                         resData[index].owner,
-                        resData[index].region,
+                        resData[index].prefecture,
                         resData[index].contact_phone,
                         resData[index].images,
                         time
@@ -249,7 +262,7 @@ export const fetchProfileListing = (id) => {
                         resData.feed[index].main_category,
                         resData.feed[index].sub_category,
                         resData.feed[index].owner,
-                        resData.feed[index].region,
+                        resData.feed[index].prefecture,
                         resData.feed[index].contact_phone,
                         resData.feed[index].images,
                         time

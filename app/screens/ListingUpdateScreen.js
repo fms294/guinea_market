@@ -21,7 +21,7 @@ import {
 } from "../components/forms";
 import Screen from "../components/Screen";
 import CategoryPickerItem from "../components/CategoryPickerItem";
-import {categories, regions} from "../data/data";
+import {categories, prefectures} from "../data/data";
 import * as listingAction from "../store/actions/listing";
 import { useDispatch } from "react-redux";
 import {translate} from "react-i18next";
@@ -58,7 +58,7 @@ const ListingUpdateScreen = (props) => {
     const [imageData, setImageData] = useState(null);
     const [category, setCategory] = useState(props_initial.main_category);
     const [sub_category, setSub_category] = useState(props_initial.sub_category);
-    const [region, setRegion] = useState(props_initial.region);
+    const [prefecture, setPrefecture] = useState(props_initial.prefecture);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -100,7 +100,7 @@ const ListingUpdateScreen = (props) => {
                 "description": values.description,
                 "main_category": category,
                 "sub_category" : sub_category,
-                "region": region,
+                "prefecture": prefecture,
                 "contact_phone": values.phone,
                 "images" : images
             }
@@ -111,7 +111,7 @@ const ListingUpdateScreen = (props) => {
                 "description": values.description,
                 "main_category": category,
                 "sub_category" : sub_category,
-                "region": region,
+                "prefecture": prefecture,
                 "contact_phone": values.phone,
                 "images" : [{imageData}, {imageData}]
             }
@@ -168,7 +168,7 @@ const ListingUpdateScreen = (props) => {
                     />
                     <FormField
                         keyboardType="numeric"
-                        maxLength={10}
+                        maxLength={9}
                         name="phone"
                         placeholder={t("listing_add:contact")}
                     />
@@ -218,16 +218,16 @@ const ListingUpdateScreen = (props) => {
                             })}
                         </> : <></>
                     }
-                    <Text style={styles.text}>{t("listing_add:select_region")}</Text>
+                    <Text style={styles.text}>{t("listing_add:select_prefecture")}</Text>
                     <View style={styles.pickerContainer}>
                         <Picker
-                            name={regions}
-                            selectedValue={region}
+                            name={prefectures}
+                            selectedValue={prefecture}
                             style={styles.picker}
                             mode={"modal"}
-                            onValueChange={(itemValue) => setRegion(itemValue)}
+                            onValueChange={(itemValue) => setPrefecture(itemValue)}
                         >
-                            {regions.map( (s,i) => {
+                            {prefectures.map( (s,i) => {
                                 return <Picker.Item value={s} label={s} key={i}/>
                             })}
                         </Picker>

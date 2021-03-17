@@ -22,7 +22,7 @@ import enMoment from "moment/locale/en-ca";
 import HeaderButton from "../components/UI/HeaderButton";
 import ProductItem from "../components/UI/ProductItem";
 import colors from '../config/colors';
-import {categories, regions} from "../data/data";
+import {categories, prefectures} from "../data/data";
 
 import * as listingActions from "../store/actions/listing";
 
@@ -39,7 +39,7 @@ const ListingsScreen = (props) => {
     const [activeFilter, setActiveFilter] = useState("");
     const [filterApplied ,setFilterApplied] = useState(false);
     const [category, setCategory] = useState([]);
-    const [region, setRegion] = useState([]);
+    const [prefecture, setPrefecture] = useState([]);
     const [sortedData,setSortedData] = useState([]);
     const [filterData, setFilterData] = useState([]);
     //console.log("listing screen",data);
@@ -54,8 +54,8 @@ const ListingsScreen = (props) => {
         setFilterVisible("Filter")
         if (active === "Category") {
             setActiveFilter("Category");
-        } else if (active === "Region") {
-            setActiveFilter("Region");
+        } else if (active === "Prefecture") {
+            setActiveFilter("Prefecture");
         } else {
             setActiveFilter("Home");
         }
@@ -79,18 +79,18 @@ const ListingsScreen = (props) => {
     const applyFilter = () => {
         filterObject = {
             category: category,
-            region: region
+            prefecture: prefecture
         }
         //console.log("Filters : ", filterObject);
         setFilterData([]);
-        if(filterObject.category.length === 0 && filterObject.region.length === 0){
+        if(filterObject.category.length === 0 && filterObject.prefecture.length === 0){
             setFilterApplied(false);
-        } else if(filterObject.category.length === 0 && filterObject.region.length !== 0) {
+        } else if(filterObject.category.length === 0 && filterObject.prefecture.length !== 0) {
             setFilterApplied(true);
             let filterDataArray = [];
-            filterObject.region.map(async (item) => {
+            filterObject.prefecture.map(async (item) => {
                 await sortedData.find((value) => {
-                    if(value.region === item){
+                    if(value.prefecture === item){
                         filterDataArray.push(value)
                     }
                 });
@@ -99,7 +99,7 @@ const ListingsScreen = (props) => {
                 const uniqueArray = uniqueData(filterDataArray);
                 setFilterData(sortBy(uniqueArray));
             }
-        } else if(filterObject.category.length !== 0 && filterObject.region.length === 0) {
+        } else if(filterObject.category.length !== 0 && filterObject.prefecture.length === 0) {
             setFilterApplied(true);
             let filterDataArray = [];
             filterObject.category.map(async (item) => {
@@ -120,13 +120,13 @@ const ListingsScreen = (props) => {
                 const uniqueArray = uniqueData(filterDataArray);
                 setFilterData(sortBy(uniqueArray));
             }
-        } else if(filterObject.category.length !== 0 && filterObject.region.length !== 0) {
+        } else if(filterObject.category.length !== 0 && filterObject.prefecture.length !== 0) {
             setFilterApplied(true);
             let filterDataArray = [];
             filterObject.category.map(async (catItem) => {
-                filterObject.region.map(async (regionItem) => {
+                filterObject.prefecture.map(async (prefectureItem) => {
                     await sortedData.find((value) => {
-                        if(value.main_category === catItem && value.region === regionItem) {
+                        if(value.main_category === catItem && value.prefecture === prefectureItem) {
                             //console.log("final", value);
                             filterDataArray.push(value);
                         }
@@ -134,9 +134,9 @@ const ListingsScreen = (props) => {
                 })
             })
             filterObject.category.map(async (catItem) => {
-                filterObject.region.map(async (regionItem) => {
+                filterObject.prefecture.map(async (prefectureItem) => {
                     await sortedData.find((value) => {
-                        if(value.sub_category === catItem && value.region === regionItem) {
+                        if(value.sub_category === catItem && value.prefecture === prefectureItem) {
                             //console.log("final", value);
                             filterDataArray.push(value);
                         }
@@ -317,13 +317,13 @@ const ListingsScreen = (props) => {
                             />
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={activeFilter === "Region" ? [styles.filterObject, {borderColor: colors.primary}] : styles.filterObject}
+                            style={activeFilter === "Prefecture" ? [styles.filterObject, {borderColor: colors.primary}] : styles.filterObject}
                             onPress={() => {
-                                filterView("Region")
+                                filterView("Prefecture")
                             }}
                         >
-                            <Text style={styles.filterText}>{t("listing_screen:region")}</Text>
-                            <Ionicons size={15} name={activeFilter === "Region" ? "chevron-up" : "chevron-down"}/>
+                            <Text style={styles.filterText}>{t("listing_screen:prefecture")}</Text>
+                            <Ionicons size={15} name={activeFilter === "Prefecture" ? "chevron-up" : "chevron-down"}/>
                         </TouchableOpacity>
                     </View>
                         {filterVisible !== "Home" ?
@@ -397,21 +397,21 @@ const ListingsScreen = (props) => {
                                     </View>
                                     :
                                     <View style={styles.filterDisplay}>
-                                        <Text style={styles.filterTitle}>{t("listing_screen:f_region")}</Text>
+                                        <Text style={styles.filterTitle}>{t("listing_screen:f_prefecture")}</Text>
                                         <FlatList
-                                            data={regions}
+                                            data={prefectures}
                                             keyExtractor={(item) => item.toString()}
                                             renderItem={(itemData) => {
                                                 return (
                                                     <TouchableOpacity onPress={() => {
-                                                        if (!region.includes(itemData.item)) {
-                                                            setRegion([...region, itemData.item]);
+                                                        if (!prefecture.includes(itemData.item)) {
+                                                            setPrefecture([...prefecture, itemData.item]);
                                                         } else {
-                                                            setRegion(region.filter((item) => (item !== itemData.item)))
+                                                            setPrefecture(prefecture.filter((item) => (item !== itemData.item)))
                                                         }
                                                     }}>
                                                         <Text
-                                                            style={region.includes(itemData.item) ? [styles.main_category, {color: colors.primary}] : styles.main_category}>
+                                                            style={prefecture.includes(itemData.item) ? [styles.main_category, {color: colors.primary}] : styles.main_category}>
                                                             {itemData.item}
                                                         </Text>
                                                     </TouchableOpacity>)
@@ -427,14 +427,14 @@ const ListingsScreen = (props) => {
                                                     setFilterVisible("Home");
                                                     setActiveFilter('');
                                                     applyFilter()
-                                                }}>{region.length === 0 ? t("listing_screen:close") : t("listing_screen:apply") }</Button>
+                                                }}>{prefecture.length === 0 ? t("listing_screen:close") : t("listing_screen:apply") }</Button>
                                             <Button
                                                 style={{flex: 2}}
                                                 color={colors.medium}
                                                 uppercase={false}
                                                 mode={"outlined"}
                                                 onPress={() => {
-                                                    setRegion([]);
+                                                    setPrefecture([]);
                                                 }}>{t("listing_screen:clear")}</Button>
                                         </View>
                                     </View>

@@ -91,7 +91,7 @@ export const updateProfile = (imageData, username) => {
             formData.append("profile_img", "NA");
             formData.append("images", {uri: imageData.uri, type: imageData.type, name: new Date().getTime().toString()+".jpg"});
         }
-        console.log(formData);
+        console.log(formData, `${uri}/users/updateProfile`);
         try{
             const response = await fetch(`${uri}/users/updateProfile`,
                 {

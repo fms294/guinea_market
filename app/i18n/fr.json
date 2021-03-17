@@ -111,12 +111,12 @@
   "listing_screen": {
     "feed": "Page d'accueil",
     "category": "Catégorie",
-    "region": "Région",
+    "prefecture": "Préfecture",
     "search": "Chercher",
     "no_feed" : "Actuellement aucun flux",
     "btn": "Plus de détails",
     "f_category" : "Filtrez votre catégorie",
-    "f_region" : "Filtrez votre région",
+    "f_prefecture" : "Filtrez votre préfecture",
     "clear": "Clair",
     "close": "Fermer",
     "apply": "Appliquer",
@@ -130,7 +130,7 @@
     "desc" : "La description",
     "category" : "Catégorie",
     "contact": "Numéro de contact",
-    "select_region": "Choisissez une région",
+    "select_prefecture": "Choisissez une Préfecture",
     "select_category": "Choisir une catégorie",
     "select_sub": "Sélectionnez une sous-catégorie",
     "btn": "Publier",
@@ -140,7 +140,8 @@
     "okay": "D'accord",
     "update": "Mettre à jour les détails",
     "alert_update_title": "Aucune mise à jour",
-    "alert_update_msg": "Modifiez au moins une valeur pour mettre à jour le produit"
+    "alert_update_msg": "Modifiez au moins une valeur pour mettre à jour le produit",
+    "alert_sub_category": "Veuillez sélectionner la sous-catégorie appropriée pour continuer"
   },
   "detail_screen": {
     "posted" : "Listé",
