@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-community/async-storage";
 import { uri } from "../../config/app_uri";
+import axios from "axios";
 
 export const USER_LOGIN = "USER_LOGIN";
 export const USER_SIGNUP = "USER_SIGNUP";
@@ -89,24 +90,31 @@ export const updateProfile = (imageData, username) => {
         } else {
             formData.append("username", username);
             formData.append("profile_img", "NA");
-            formData.append("images", {uri: imageData.uri, type: imageData.type, name: new Date().getTime().toString()+".jpg"});
+            formData.append("images", {uri: imageData.uri, type: `image/${imageData.type}`, name: new Date().getTime().toString()+".jpg"});
         }
         console.log(formData, `${uri}/users/updateProfile`);
         try{
-            const response = await fetch(`${uri}/users/updateProfile`,
-                {
-                    method: 'PATCH',
-                    headers: {
-                        "Content-Type" : "multipart/form-data;",
-                        Authorization: "Bearer " + token,
-                    },
-                    body: formData
-                });
-            if (!response.ok) {
-                const resData = await response.json();
-                throw new Error(resData.e);
-            }
-            const resData = await response.json();
+            const resp = await axios.patch(`${uri}/users/updateProfile`, formData, {
+                headers:{
+                    "Content-Type" : "multipart/form-data;",
+                    Authorization: "Bearer " + token,
+                }
+            })
+            const resData = resp.data;
+            // const response = await fetch(`${uri}/users/updateProfile`,
+            //     {
+            //         method: 'PATCH',
+            //         headers: {
+            //             "Content-Type" : "multipart/form-data;",
+            //             Authorization: "Bearer " + token,
+            //         },
+            //         body: formData
+            //     });
+            // if (!response.ok) {
+            //     const resData = await response.json();
+            //     throw new Error(resData.e);
+            // }
+            // const resData = await response.json();
             const {userData} = resDataHandler(resData);
             dispatch({type: USER_UPDATE, token: resData.token, userData: userData});
         }catch(err) {

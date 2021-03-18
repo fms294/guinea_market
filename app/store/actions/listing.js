@@ -4,6 +4,7 @@ import { uri } from "../../config/app_uri";
 import {Platform} from "react-native";
 
 import ListingItem from "../../model/ListingItem";
+import axios from "axios";
 
 export const FETCH_ITEM = "FETCH_ITEM";
 export const FETCH_USER_ITEM = "FETCH_USER_ITEM";
@@ -23,41 +24,39 @@ export const add_item = (finalData) => {
         formData.append("sub_category", finalData.sub_category);
         formData.append("title", finalData.title);
         finalData.images.map((item) => {
-            if(Platform.OS === "android"){
-                const a = item.imageData.uri.substring(4);
-                console.log("content"+a, "android");
-                formData.append("images", {uri: "content"+a, type: item.imageData.type, name: new Date().getTime().toString()+".jpg"});
-            }else {
-                console.log( "ios");
-                formData.append("images", {uri: item.imageData.uri, type: item.imageData.type, name: new Date().getTime().toString()+".jpg"});
-            }
+            formData.append("images", {uri: item.imageData.uri, type: `image/${item.imageData.type}`, name: new Date().getTime().toString()+".jpg"});
         })
-        //console.log("formData", formData);
+        console.log("formData...", formData);
         try{
             console.log("resData... in action add item", `${uri}/listing/add`);
-            const response = await fetch(`${uri}/listing/add`,
-                {
-                    method: "POST",
+            // const response = await fetch(`${uri}/listing/add`,
+            //     {
+            //         method: "POST",
+            //         headers: {
+            //             'Accept': 'application/json',
+            //             "Content-Type" : "multipart/form-data;",
+            //             Authorization: "Bearer " + token,
+            //         },
+            //         body: formData
+            //     });
+            // console.log("resData... in action add item", await response.json());
+            const resp = await axios.post(`${uri}/listing/add`, formData, {
                     headers: {
-                        // 'Access-Control-Allow-Origin': '*',
-                        // 'Access-Control-Allow-Methods': 'POST, GET, PUT, OPTIONS, DELETE',
-                        // 'Access-Control-Allow-Headers': 'Access-Control-Allow-Methods, Access-Control-Allow-Origin, Origin, Accept, Content-Type',
-                        // 'Accept': 'application/x-www-form-urlencoded',
-                        // 'Content-Type':'application/x-www-form-urlencoded',
-                        "Content-Type" : "multipart/form-data;",
+                        "Accept": "application/json",
+                        "Content-Type": "multipart/form-data;",
                         Authorization: "Bearer " + token,
-                    },
-                    body: formData
-                });
-            if(!response.ok){
-                const resData = await response.json();
-                throw new Error(resData.e);
-            }
-            // console.log("resData... in action add item", response);
-            const resData = await response.json();
-            console.log("resData... in action add item", resData);
+                    }
+            })
+            console.log("resp", resp.data);
+
+            // if(!response.ok){
+            //     const resData = await response.json();
+            //     throw new Error(resData.e);
+            // }
+            // const resData = await response.json();
+            // console.log("resData... in action add item", resData);
         }catch (err) {
-            console.log("Hello...",err);
+            console.log("Hello...",err, err.message);
             throw new Error(err);
         }
     }
@@ -67,9 +66,6 @@ export const add_item = (finalData) => {
 export const update_item = (finalData, id) => {
     return async (dispatch, getState) => {
         const token = getState().auth.token;
-        const data = [{
-            url: "temp"
-        }];
         const formData = new FormData();
         formData.append("contact_phone", finalData.contact_phone);
         formData.append("description", finalData.description);
@@ -78,34 +74,45 @@ export const update_item = (finalData, id) => {
         formData.append("prefecture", finalData.prefecture);
         formData.append("sub_category", finalData.sub_category);
         formData.append("title", finalData.title);
+        console.log("formdata...",finalData.images);
         finalData.images.map((item) => {
-            if(item.url) {
-                console.log("true")
+            console.log(item);
+            if(item.url === undefined) {
+                console.log("true", item.url);
+                formData.append("images", "NA");
+                formData.append("image", {uri: item.imageData.uri, type: `image/${item.imageData.type}`, name: new Date().getTime().toString()+".jpg"});
             } else {
-                formData.append("images", data)
-                formData.append("image", {uri: item.imageData.uri, type: item.imageData.type, name: new Date().getTime().toString()+".jpg"});
+                console.log("false", item.url);
             }
         });
-        console.log("formdata...",finalData.images);
         try{
             console.log("resData... in action add item....", id);
-            const response = await fetch(`${uri}/listing/update/${id}`,
-                {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type" : "multipart/form-data;",
-                        Authorization: "Bearer " + token,
-                    },
-                    body: formData
-                });
-            if(!response.ok){
-                const resData = await response.json();
-                throw new Error(resData.e);
-            }
-            // console.log("resData... in action add item", response);
-            const resData = await response.json();
-            console.log("resData... in action add item", resData);
+            // const response = await fetch(`${uri}/listing/update/${id}`,
+            //     {
+            //         method: "PATCH",
+            //         headers: {
+            //             "Content-Type" : "multipart/form-data;",
+            //             Authorization: "Bearer " + token,
+            //         },
+            //         body: formData
+            //     });
+            const resp = await axios.patch(`${uri}/listing/update/${id}`, formData, {
+                headers:{
+                    "Content-Type" : "multipart/form-data;",
+                    "Accept": "application/json",
+                    Authorization: "Bearer " + token,
+                }
+            })
+            console.log("resp", resp.data);
+            // if(!response.ok){
+            //     const resData = await response.json();
+            //     throw new Error(resData.e);
+            // }
+            // // console.log("resData... in action add item", response);
+            // const resData = await response.json();
+            // console.log("resData... in action add item", resData);
         }catch (err) {
+            console.log(err);
             throw new Error("catch in update.."+err);
         }
     }

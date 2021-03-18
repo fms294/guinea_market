@@ -53,7 +53,7 @@ const ListingUpdateScreen = (props) => {
     props_initial.images.map((item, index) => {
         images.push(item);
     })
-    console.log("initial", props_initial);
+    // console.log("initial", props_initial);
     const [image, setImage] = useState(props_initial.images[0].url);
     const [imageData, setImageData] = useState(null);
     const [category, setCategory] = useState(props_initial.main_category);
