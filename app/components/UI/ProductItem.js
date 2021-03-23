@@ -28,7 +28,7 @@ const ProductItem = (props) => {
                         <Text style={styles.title} numberOfLines={2} ellipsizeMode={'middle'}>
                             {props.title}
                         </Text>
-                        <Text style={styles.detail} numberOfLines={1}>GNF {props.price.toLocaleString()}</Text>
+                        <Text style={[styles.detail, {fontWeight: "bold",color: "green"}]} numberOfLines={1}>GNF {Platform.OS === "ios" ? props.price.toLocaleString() : props.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Text>
                         <Text style={styles.detail}>{t("listing_screen:contact")}{props.phone}</Text>
                         <Text style={styles.posted}>{props.posted}</Text>
                         <View style={styles.actions}>{props.children}</View>

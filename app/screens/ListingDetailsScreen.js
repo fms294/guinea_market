@@ -8,7 +8,7 @@ import {
     ScrollView,
     Dimensions,
     TouchableOpacity,
-    AlertIOS, ToastAndroid, ActivityIndicator
+    ActivityIndicator
 } from 'react-native';
 //import {Image} from 'react-native-expo-image-cache';
 import { SliderBox } from "react-native-image-slider-box";
@@ -34,6 +34,7 @@ const ListingDetailsScreen = (props) => {
     const [text, setText] = useState('');
     const [visible, setVisible] = useState(false);
     const [imageName, setImageName] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const nameImageHandler = (nameData) => {
         let name = nameData.split(" ");
@@ -51,21 +52,29 @@ const ListingDetailsScreen = (props) => {
     useEffect(() => {
         const loadOtherUser = async () => {
             try {
+                setLoading(true);
                 await fetchOtherUser(listing.owner)
                     .then((res) => {
-                        const user = {
-                            username: res.data.user.username,
-                            feed_count: res.data.feed.length,
-                            userImage: res.data.user.profile_img
+                        if(res.data.user !== null) {
+                            const user = {
+                                username: res.data.user.username,
+                                feed_count: res.data.feed.length,
+                                userImage: res.data.user.profile_img
+                            }
+                            setListedUser(user);
+                            if (user.userImage === "") {
+                                nameImageHandler(user.username)
+                            }
+                        } else {
+                            setListedUser(null);
                         }
-                        setListedUser(user);
-                        if(user.userImage === ""){
-                            nameImageHandler(user.username)
-                        }
+                        setLoading(false);
                     }).catch((err) => {
+                        setLoading(false);
                         console.log("err.....", err);
                     })
             } catch (err) {
+                setLoading(false);
                 console.log("Error in ListingScreen", err);
             }
         };
@@ -104,6 +113,28 @@ const ListingDetailsScreen = (props) => {
             console.log(err);
         }
     }
+    // <View style={{flexDirection: 'row'}}>
+    //     <Text style={styles.textNormal}>{'\u2022'}</Text>
+    //     <Text style={[styles.textNormal, {paddingLeft: 5}]}>{t("detail_screen:st_1")}</Text>
+    // </View>
+    // <Text style={styles.textNormal}>{t("detail_screen:st_2")}</Text>
+    // <Text style={styles.textNormal}>{t("detail_screen:st_3")}</Text>
+    // <Text style={styles.textNormal}>{t("detail_screen:st_4")}</Text>
+
+    const renderRow = () => {
+        const points = [1,2,3,4];
+        return (
+            <View style={{padding: 10}}>
+                {points.map((item) => (
+                    <View style={{flexDirection: "row"}}>
+                        <Text style={styles.textNormal}>{'\u2022'}</Text>
+                        <Text style={[styles.textNormal, {paddingLeft: 7}]}>{t("detail_screen:st_"+item)}</Text>
+                    </View>
+                    ))
+                }
+            </View>
+        );
+    }
 
     return (
         <KeyboardAvoidingView
@@ -139,78 +170,78 @@ const ListingDetailsScreen = (props) => {
                 <View style={{backgroundColor:colors.white, padding: 10}}>
                     <Text style={styles.textNormal}>{listing.description}</Text>
                 </View>
+                <Text style={[styles.title, {marginTop: 15, marginBottom: 5}]}>{t("detail_screen:st_title")}</Text>
+                {renderRow()}
                 {/*<Text style={styles.contact}>Contact Info : {listing.contact_phone}</Text>*/}
-                {ownerId === listing.owner ? <></> :
-                    <View style={{flexDirection: "row", marginTop: 20}}>
-                        <TextInput
-                            style={{flex:1}}
-                            label={t("detail_screen:input_label")}
-                            mode={"outlined"}
-                            placeholder={t("detail_screen:input_placeholder")}
-                            value={text}
-                            onChangeText={text => setText(text)}
-                        />
-                        <IconButton
-                            icon="send"
-                            color={colors.primary}
-                            size={30}
-                            style={{marginTop:12}}
-                            onPress={() => {
-                                if(text !== ''){
-                                    setText("")
-                                    onToggleSnackBar()
-                                    sendMessageHandler()
-                                }
-                            }}
-                        />
+                {loading ?
+                    <View style={styles.centered}>
+                        <ActivityIndicator size={"large"} color={colors.primary}/>
                     </View>
-                }
-                    <TouchableOpacity
-                        style={{flexDirection: "row", backgroundColor: colors.white, paddingHorizontal: 25, paddingVertical: 15,marginTop: 20, borderRadius: 20}}
-                        onPress={() => {
-                            if(ownerId === listing.owner){
-                                props.navigation.navigate("AccountNavigator")
-                            }else {
-                                props.navigation.navigate("UserProfileScreen",{
-                                    listing: listing,
-                                    listedUser: listedUser
-                                })
-                            }
-                        }}
-                    >
-                        {listedUser.userImage === "" ?
-                            <Avatar.Text style={{backgroundColor: colors.medium}} size={80} label={imageName} />
+                    :
+                    <>
+                        {listedUser === null ?
+                            <>
+                                <><Text style={{fontSize: 24,textAlign: "center", marginTop: 50, color: colors.medium}}>{t("detail_screen:no_owner")}</Text></>
+                            </>
                             :
                             <>
-                                <Image
-                                    style={{width: 80, height: 80, borderRadius: 200}}
-                                    source={{uri: listedUser.userImage}}
-                                />
+                                {ownerId === listing.owner ? <></> :
+                                    <View style={{flexDirection: "row", marginTop: 20}}>
+                                        <TextInput
+                                            style={{flex:1}}
+                                            label={t("detail_screen:input_label")}
+                                            mode={"outlined"}
+                                            placeholder={t("detail_screen:input_placeholder")}
+                                            value={text}
+                                            onChangeText={text => setText(text)}
+                                        />
+                                        <IconButton
+                                            icon="send"
+                                            color={colors.primary}
+                                            size={30}
+                                            style={{marginTop:12}}
+                                            onPress={() => {
+                                                if(text !== ''){
+                                                    setText("")
+                                                    onToggleSnackBar()
+                                                    sendMessageHandler()
+                                                }
+                                            }}
+                                        />
+                                    </View>
+                                }
+                                <TouchableOpacity
+                                    style={{flexDirection: "row", backgroundColor: colors.white, paddingHorizontal: 25, paddingVertical: 15,marginTop: 20, borderRadius: 20}}
+                                    onPress={() => {
+                                        if(ownerId === listing.owner){
+                                            props.navigation.navigate("AccountNavigator")
+                                        }else {
+                                            props.navigation.navigate("UserProfileScreen",{
+                                                listing: listing,
+                                                listedUser: listedUser
+                                            })
+                                        }
+                                    }}
+                                >
+                                    {listedUser.userImage === "" ?
+                                        <Avatar.Text style={{backgroundColor: colors.medium}} size={80} label={imageName} />
+                                        :
+                                        <>
+                                            <Image
+                                                style={{width: 80, height: 80, borderRadius: 200}}
+                                                source={{uri: listedUser.userImage}}
+                                            />
+                                        </>
+                                    }
+                                    <View style={{marginHorizontal: 20, justifyContent: "center"}}>
+                                        <Text style={{fontSize: 28}}>{listedUser.username}</Text>
+                                        <Text style={{fontSize: 15, color:colors.medium}}>{listedUser.feed_count + " " +t("detail_screen:listings")}</Text>
+                                    </View>
+                                </TouchableOpacity>
                             </>
                         }
-                        <View style={{marginHorizontal: 20, justifyContent: "center"}}>
-                            <Text style={{fontSize: 28}}>{listedUser.username}</Text>
-                            <Text style={{fontSize: 15, color:colors.medium}}>{listedUser.feed_count + " " +t("detail_screen:listings")}</Text>
-                        </View>
-                    </TouchableOpacity>
-                {/*<View style={styles.userContainer}>*/}
-                {/*    <ListItem*/}
-                {/*        onPress={() => {*/}
-                {/*            if(ownerId === listing.owner){*/}
-                {/*                props.navigation.navigate("AccountNavigator")*/}
-                {/*            }else {*/}
-                {/*                props.navigation.navigate("UserProfileScreen",{*/}
-                {/*                    listing: listing,*/}
-                {/*                    listedUser: listedUser*/}
-                {/*                })*/}
-                {/*            }*/}
-                {/*        }}*/}
-                {/*        image={{uri: listedUser.userImage}}*/}
-                {/*        title={listedUser.username}*/}
-                {/*        subTitle={listedUser.feed_count + " " +t("detail_screen:listings")}*/}
-                {/*    />*/}
-                {/*</View>*/}
-                {/*<ContactSellerForm listing={listing} />*/}
+                    </>
+                }
             </View>
         </ScrollView>
             <Snackbar
@@ -230,6 +261,9 @@ const ListingDetailsScreen = (props) => {
 };
 
 const styles = StyleSheet.create({
+    centered: {
+        padding: 40
+    },
     detailContainer:{
         margin: 20
     },

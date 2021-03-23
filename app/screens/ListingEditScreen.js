@@ -39,14 +39,24 @@ const validationSchema = Yup.object().shape({
 const ListingEditScreen = (props) => {
     const {t} = props;
     const dispatch = useDispatch();
-    const [uploadVisible, setUploadVisible] = useState(false);
+    // const [uploadVisible, setUploadVisible] = useState(false);
+    // const [progress, setProgress] = useState(0);
     const [image, setImage] = useState(null);
     const [imageData, setImageData] = useState(null);
-    const [progress, setProgress] = useState(0);
     const [category, setCategory] = useState("Vehicles");
     const [sub_category, setSub_category] = useState("Cars");
     const [prefecture, setPrefecture] = useState("Conakry");
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const {params} = props.route;
+        if (params) {
+            const {photos} = params;
+            console.log("photos in edit", photos);
+            if (photos) setImageData(photos);
+            delete params.photos;
+        }
+    })
 
     useEffect(() => {
         props.navigation.setOptions({
@@ -62,6 +72,10 @@ const ListingEditScreen = (props) => {
                 }
         })();
     }, []);
+
+    const handleImage = () => {
+        props.navigation.navigate("ImageBrowserScreen");
+    };
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -87,7 +101,8 @@ const ListingEditScreen = (props) => {
             "sub_category" : sub_category,
             "prefecture": prefecture,
             "contact_phone": values.phone,
-            "images" : [{imageData},{imageData}]
+            "images" : imageData
+            // "images" : [{imageData},{imageData}]
         }
         return finalData;
     };
@@ -106,11 +121,11 @@ const ListingEditScreen = (props) => {
     return (
           <ScrollView>
               <Screen style={styles.container}>
-                  <UploadScreen
-                      onDone={() => setUploadVisible(false)}
-                      progress={progress}
-                      visible={uploadVisible}
-                  />
+                  {/*<UploadScreen*/}
+                  {/*    onDone={() => setUploadVisible(false)}*/}
+                  {/*    progress={progress}*/}
+                  {/*    visible={uploadVisible}*/}
+                  {/*/>*/}
                   <Form
                       initialValues={{
                           title: "",
@@ -133,7 +148,8 @@ const ListingEditScreen = (props) => {
                               } else {
                                   setLoading(true);
                                   handleSubmission(values).then(() => {
-                                      if(image !== null){
+                                      console.log(image)
+                                      if(image === null){
                                           resetForm({values : ''})
                                           setPrefecture("Conakry");
                                           setCategory("Vehicles");
@@ -149,7 +165,7 @@ const ListingEditScreen = (props) => {
                           }else {
                               setLoading(true);
                               handleSubmission(values).then(() => {
-                                  if(image !== null){
+                                  if(image === null){
                                       resetForm({values : ''})
                                       setPrefecture("Conakry");
                                       setCategory("Vehicles");
@@ -168,10 +184,13 @@ const ListingEditScreen = (props) => {
                       {/*<FormImagePicker*/}
                       {/*    name="Images"*/}
                       {/*/>*/}
-                      <TouchableOpacity style={styles.imageContainer} onPress={pickImage} >
-                          {!image && <MaterialCommunityIcons color={colors.medium} name="camera" size={40} />}
-                          {image && <Image source={{ uri: image }} style={styles.image} />}
+                      <TouchableOpacity style={styles.imageContainer} onPress={handleImage} >
+                          <MaterialCommunityIcons color={colors.medium} name="camera" size={40} />
                       </TouchableOpacity>
+                      {/*<TouchableOpacity style={styles.imageContainer} onPress={pickImage} >*/}
+                      {/*    {!image && <MaterialCommunityIcons color={colors.medium} name="camera" size={40} />}*/}
+                      {/*    {image && <Image source={{ uri: image }} style={styles.image} />}*/}
+                      {/*</TouchableOpacity>*/}
                       <FormField
                           maxLength={255}
                           name="title"

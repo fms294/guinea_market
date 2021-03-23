@@ -1,35 +1,50 @@
-import React, { Component } from 'react';
+import React, { useState} from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import * as ImageManipulator from 'expo-image-manipulator';
 import {ImageBrowser} from 'expo-image-picker-multiple';
 
 const ImageBrowserScreen = (props) => {
-    const _getHeaderLoader = () => (
-        <ActivityIndicator size='small' color={'#0580FF'}/>
-    );
+    const [loading, setLoading] = useState(false);
 
-    const imagesCallback = async (callback) => {
+    const _getHeaderLoader = () => {
+        if (loading) {
+            return(
+                <ActivityIndicator size='small' color={'#0580FF'}/>
+            );
+        }
+    };
+
+    const imagesCallback = async (photos) => {
         const { navigation } = props;
         navigation.setOptions({
             headerRight: () => _getHeaderLoader()
         });
-
         console.log("Before callback");
-        callback
-            .then(async (photos) => {
-                console.log("In then callback", photos)
-                const cPhotos = [];
-                for(let photo of photos) {
-                    const pPhoto = await _processImageAsync(photo.uri);
-                    cPhotos.push({
-                        uri: pPhoto.uri,
-                        name: photo.filename,
-                        type: 'image/jpg'
-                    })
-                }
-                navigation.navigate("ListingEditScreen", {photos: cPhotos});
+        setLoading(true);
+        // callback
+        //     .then(async (photos) => {
+        try {
+            console.log("In then callback", photos)
+            const cPhotos = [];
+            for (let photo of photos) {
+                const pPhoto = await _processImageAsync(photo.uri);
+                cPhotos.push({
+                    uri: pPhoto.uri,
+                    name: photo.filename,
+                    type: 'image/jpg'
                 })
-            .catch((err) => console.log("Catch ",err));
+            }
+            console.log("In then", cPhotos);
+            setLoading(false);
+            navigation.navigate("ListingEditScreen", {photos: cPhotos});
+        }catch (e) {
+            console.log("Catch in function....", e)
+        }
+                // })
+            // .catch((err) => {
+            //     setLoading(false);
+            //     console.log("Catch...", err)
+            // });
     };
 
     const _processImageAsync = async (uri) => {
@@ -66,11 +81,12 @@ const ImageBrowserScreen = (props) => {
     return (
         <View style={[styles.flex, styles.container]}>
             <ImageBrowser
-                max={4}
+                max={5}
                 onChange={updateHandler}
                 callback={imagesCallback}
                 renderSelectedComponent={renderSelectedComponent}
                 emptyStayComponent={emptyStayComponent}
+                loadCompleteMetadata={true}
             />
         </View>
     );

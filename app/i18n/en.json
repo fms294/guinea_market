@@ -106,7 +106,9 @@
     "conf_pass": "Confirm Password",
     "already": "Already Registered",
     "user_already": "User already registered",
-    "error_phone_msg": "Enter Valid Phone Number"
+    "error_phone_msg": "Enter Valid Phone Number",
+    "otp_msg_forget": "OTP received on the mobile phone number you registered.",
+    "otp_msg_register": "OTP received on your mobile number."
   },
   "listing_screen": {
     "feed": "Homepage",
@@ -150,7 +152,13 @@
     "input_label": "Send Message to Owner",
     "input_placeholder": "For example: : Interested in buying your product",
     "toast_msg": "Message sent to owner.",
-    "type_msg": "Type a message"
+    "type_msg": "Type a message",
+    "no_owner" : "The owner of this product is no longer available",
+    "st_title" : "Safety Tips:",
+    "st_1": "Don’t send money to anyone before collecting the item",
+    "st_2": "Do not pay in advance even for the delivery",
+    "st_3": "Check your item to make sure it meet the description",
+    "st_4": "Try to meet in a safe place, such as a public place, gas station, school, market."
   },
   "account_screen": {
     "account" : "Account",

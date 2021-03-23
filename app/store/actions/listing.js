@@ -24,7 +24,7 @@ export const add_item = (finalData) => {
         formData.append("sub_category", finalData.sub_category);
         formData.append("title", finalData.title);
         finalData.images.map((item) => {
-            formData.append("images", {uri: item.imageData.uri, type: `image/${item.imageData.type}`, name: new Date().getTime().toString()+".jpg"});
+            formData.append("images", {uri: item.uri, type: `image/${item.type}`, name: new Date().getTime().toString()+item.name+".jpg"});
         })
         console.log("formData...", formData);
         try{

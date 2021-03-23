@@ -71,27 +71,26 @@ const WelcomeScreen = (props) => {
             setLoading(true);
             await forgetPassword(values)
                 .then((res) => {
-                setServerOtp(res.data.otp);
-                setServerId(res.data.user._id);
-                setOtpView(true);
+                    console.log("response...", res.data.otp)
+                    setServerOtp(res.data.otp);
+                    setServerId(res.data.user._id);
+                    setOtpView(true);
                     setLoading(false);
-                // console.log("Forget..res", res.data.otp);
-                console.log("OTP...", serverOtp);
-            }).catch((err) => {
-                console.log("Forget..err", err);
-                Alert.alert(t("welcome_screen:handle_alert"), t("welcome_screen:handle_alert_msg"),
-                    [{
-                        text : t("welcome_screen:create_acc"),
-                        style: 'destructive',
-                        onPress: () =>{
-                            setTitle(t("welcome_screen:register"))
-                        }},
-                        {
-                            text: t("welcome_screen:try_again"),
-                            style: 'cancel'
-                        }
-                    ])
-            })
+                }).catch((err) => {
+                    console.log("Forget..err", err);
+                    Alert.alert(t("welcome_screen:handle_alert"), t("welcome_screen:handle_alert_msg"),
+                        [{
+                            text : t("welcome_screen:create_acc"),
+                            style: 'destructive',
+                            onPress: () =>{
+                                setTitle(t("welcome_screen:register"))
+                            }},
+                            {
+                                text: t("welcome_screen:try_again"),
+                                style: 'cancel'
+                            }
+                        ])
+                })
             setLoading(false);
         }catch(err) {
             console.log("Forget..catch", err);
@@ -243,7 +242,7 @@ const WelcomeScreen = (props) => {
                                                     </>
                                                 ) : (
                                                     <>
-                                                        <Text style={styles.modalText}>OTP</Text>
+                                                        <Text style={styles.modalText}>{t("welcome_screen:otp_msg_forget")}</Text>
                                                         <Form
                                                             initialValues={{otp: ""}}
                                                             onSubmit={(values) => handleConfirmOTP(values)}
@@ -252,6 +251,7 @@ const WelcomeScreen = (props) => {
                                                             <FormField
                                                                 icon="phone"
                                                                 keyboardType="decimal-pad"
+                                                                maxLength={4}
                                                                 name='otp'
                                                                 placeholder={t("welcome_screen:enter_otp")}
                                                                 textContentType="oneTimeCode"
@@ -280,6 +280,7 @@ const WelcomeScreen = (props) => {
                                                     <FormField
                                                         icon={"phone"}
                                                         keyboardType={"decimal-pad"}
+                                                        maxLength={9}
                                                         name={"phone"}
                                                         placeholder={t("welcome_screen:phone")}
                                                     />
@@ -320,6 +321,7 @@ const WelcomeScreen = (props) => {
                                             <FormField
                                                 icon={"phone"}
                                                 keyboardType={"decimal-pad"}
+                                                maxLength={9}
                                                 name={"phone"}
                                                 placeholder={t("welcome_screen:phone")}
                                             />
@@ -370,7 +372,7 @@ const WelcomeScreen = (props) => {
                             <>
                             {registerOTPView ?
                                     <>
-                                        <Text style={styles.modalText}>OTP</Text>
+                                        <Text style={styles.modalText}>{t("welcome_screen:otp_msg_register")}</Text>
                                         <Form
                                             initialValues={{otp: ""}}
                                             onSubmit={(values) => {
@@ -387,6 +389,7 @@ const WelcomeScreen = (props) => {
                                             <FormField
                                                 icon="phone"
                                                 keyboardType="decimal-pad"
+                                                maxLength={4}
                                                 name='otp'
                                                 placeholder={t("welcome_screen:enter_otp")}
                                                 textContentType="oneTimeCode"
@@ -439,9 +442,9 @@ const WelcomeScreen = (props) => {
                                         <FormField
                                             icon={"phone"}
                                             keyboardType={"decimal-pad"}
+                                            maxLength={9}
                                             name={"phone"}
                                             placeholder={t("welcome_screen:phone")}
-                                            //textContentType={""}
                                         />
                                         <FormField
                                             autoCapitalize="none"

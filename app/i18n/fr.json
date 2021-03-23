@@ -106,7 +106,9 @@
     "conf_pass": "Confirmez le mot de passe",
     "already": "Déjà enregistré",
     "user_already": "Utilisateur déjà enregistré",
-    "error_phone_msg": "Entrez un numéro de téléphone valide"
+    "error_phone_msg": "Entrez un numéro de téléphone valide",
+    "otp_msg_forget": "OTP reçu sur le numéro de téléphone mobile que vous avez enregistré.",
+    "otp_msg_register": "OTP reçu sur votre numéro de mobile."
   },
   "listing_screen": {
     "feed": "Page d'accueil",
@@ -150,7 +152,13 @@
     "input_label": "Envoyer un message au propriétaire",
     "input_placeholder": "Par exemple: Intéressé par l'achat de votre produit",
     "toast_msg": "Message envoyé au propriétaire.",
-    "type_msg": "Tapez un message"
+    "type_msg": "Tapez un message",
+    "no_owner" : "Le propriétaire de ce produit n'est plus disponible",
+    "st_title" : "Conseils de sécurité:",
+    "st_1": "N'envoyez d'argent à personne avant de récupérer l'article",
+    "st_2": "Ne payez pas à l'avance même pour la livraison",
+    "st_3": "Vérifiez votre article pour vous assurer qu'il correspond à la description",
+    "st_4": "Essayez de vous réunir dans un endroit sûr, comme un lieu public, une station-service, une école, un marché."
   },
   "account_screen": {
     "account" : "Compte",
