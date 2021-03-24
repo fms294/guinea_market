@@ -52,11 +52,17 @@ const ListingEditScreen = (props) => {
         const {params} = props.route;
         if (params) {
             const {photos} = params;
-            console.log("photos in edit", photos);
-            if (photos) setImageData(photos);
+            if (photos) {
+                let arr = [];
+                photos.map((item) => {
+                    arr.push(item.uri);
+                });
+                setImage(arr);
+                setImageData(photos);
+            }
             delete params.photos;
         }
-    })
+    });
 
     useEffect(() => {
         props.navigation.setOptions({
@@ -68,29 +74,29 @@ const ListingEditScreen = (props) => {
         (async () => {
                 const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
                 if (status !== 'granted') {
-                    alert('Sorry, we need camera roll permissions to make this work!');
+                    Alert.alert(t("listing_add:alert"),'Sorry, we need camera roll permissions to make this work!', [{text: t("listing_add:okay")}]);
                 }
         })();
     }, []);
 
     const handleImage = () => {
-        props.navigation.navigate("ImageBrowserScreen");
+        props.navigation.navigate("ImageBrowserScreen", {from: "Edit"});
     };
 
-    const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            // allowsMultipleSelection: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
-
-        if (!result.cancelled) {
-            setImage(result.uri);
-            setImageData(result);
-        }
-    };
+    // const pickImage = async () => {
+    //     let result = await ImagePicker.launchImageLibraryAsync({
+    //         mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    //         allowsEditing: true,
+    //         // allowsMultipleSelection: true,
+    //         aspect: [4, 3],
+    //         quality: 1,
+    //     });
+    //
+    //     if (!result.cancelled) {
+    //         setImage(result.uri);
+    //         setImageData(result);
+    //     }
+    // };
 
     const resDataGenerator = (values) => {
         const finalData = {
@@ -140,16 +146,16 @@ const ListingEditScreen = (props) => {
                           const default_sub = ["Cars", "Trucks"];
                           if(array.includes(category)) {
                               if(category !== "Vehicles" && sub_category === "Cars"){
-                                  alert(t("listing_add:alert_sub_category"));
+                                  Alert.alert(t("listing_add:alert"),t("listing_add:alert_sub_category"), [{text: t("listing_add:okay")}]);
                               } else if(category === "Vehicles" && default_sub.includes(sub_category) === false) {
-                                  alert(t("listing_add:alert_sub_category"));
+                                  Alert.alert(t("listing_add:alert"),t("listing_add:alert_sub_category"), [{text: t("listing_add:okay")}]);
                               } else if(sub_category === "") {
-                                  alert(t("listing_add:alert_sub_category"));
+                                  Alert.alert(t("listing_add:alert"),t("listing_add:alert_sub_category"), [{text: t("listing_add:okay")}]);
                               } else {
                                   setLoading(true);
                                   handleSubmission(values).then(() => {
                                       console.log(image)
-                                      if(image === null){
+                                      if(image !== null){
                                           resetForm({values : ''})
                                           setPrefecture("Conakry");
                                           setCategory("Vehicles");
@@ -165,7 +171,7 @@ const ListingEditScreen = (props) => {
                           }else {
                               setLoading(true);
                               handleSubmission(values).then(() => {
-                                  if(image === null){
+                                  if(image !== null){
                                       resetForm({values : ''})
                                       setPrefecture("Conakry");
                                       setCategory("Vehicles");
@@ -185,7 +191,8 @@ const ListingEditScreen = (props) => {
                       {/*    name="Images"*/}
                       {/*/>*/}
                       <TouchableOpacity style={styles.imageContainer} onPress={handleImage} >
-                          <MaterialCommunityIcons color={colors.medium} name="camera" size={40} />
+                          {!image && <MaterialCommunityIcons color={colors.medium} name="camera" size={40}/>}
+                          {image && image.map((item) => <Image source={{ uri: item }} style={styles.image} />)}
                       </TouchableOpacity>
                       {/*<TouchableOpacity style={styles.imageContainer} onPress={pickImage} >*/}
                       {/*    {!image && <MaterialCommunityIcons color={colors.medium} name="camera" size={40} />}*/}
@@ -346,12 +353,14 @@ const styles = StyleSheet.create({
         height:100,
         justifyContent:'center',
         overflow:'hidden',
-        width:100
-
+        // width:"100%",
+        flexDirection: "row"
     },
     image:{
         height:100,
-        width:100
+        width:100,
+        borderRadius:15,
+        marginHorizontal: 2
     }
 });
 

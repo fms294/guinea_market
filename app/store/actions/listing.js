@@ -24,7 +24,7 @@ export const add_item = (finalData) => {
         formData.append("sub_category", finalData.sub_category);
         formData.append("title", finalData.title);
         finalData.images.map((item) => {
-            formData.append("images", {uri: item.uri, type: `image/${item.type}`, name: new Date().getTime().toString()+item.name+".jpg"});
+            formData.append("images", {uri: item.uri, type: item.type, name: item.name+new Date().getTime().toString()+".jpg"});
         })
         console.log("formData...", formData);
         try{
@@ -74,15 +74,15 @@ export const update_item = (finalData, id) => {
         formData.append("prefecture", finalData.prefecture);
         formData.append("sub_category", finalData.sub_category);
         formData.append("title", finalData.title);
-        console.log("formdata...",finalData.images);
+        // console.log("formdata...",finalData.images);
         finalData.images.map((item) => {
-            console.log(item);
-            if(item.url === undefined) {
-                console.log("true", item.url);
+            console.log("Itemss.....",item.name);
+            if(item.name !== undefined) {
+                console.log("true", item);
                 formData.append("images", "NA");
-                formData.append("image", {uri: item.imageData.uri, type: `image/${item.imageData.type}`, name: new Date().getTime().toString()+".jpg"});
+                formData.append("image", {uri: item.uri, type: item.type, name: item.name+new Date().getTime().toString()+".jpg"});
             } else {
-                console.log("false", item.url);
+                console.log("false", item.name);
             }
         });
         try{

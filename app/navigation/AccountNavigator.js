@@ -9,6 +9,7 @@ import AboutScreen from "../screens/AboutScreen";
 import SettingScreen from "../screens/SettingScreen";
 import ChatScreen from "../screens/ChatScreen";
 import OwnerProfileScreen from "../screens/OwnerProfileScreen";
+import ImageBrowserScreen from "../components/UI/ImageBrowserScreen";
 
 const Stack = createStackNavigator();
 
@@ -18,6 +19,7 @@ const AccountNavigator = () => (
         <Stack.Screen name={"OwnerProfileScreen"} component={OwnerProfileScreen} />
         <Stack.Screen name={"MyListingsScreen"} component={MyListingsScreen} />
         <Stack.Screen name={"ListingUpdateScreen"} component={ListingUpdateScreen} />
+        <Stack.Screen name={"ImageBrowserScreen"} component={ImageBrowserScreen} />
         <Stack.Screen name={"MessagesScreen"} component={MessagesScreen} />
         <Stack.Screen name={"ChatScreen"} component={ChatScreen} />
         <Stack.Screen name={"AboutScreen"} component={AboutScreen} />

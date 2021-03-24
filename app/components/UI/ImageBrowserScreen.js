@@ -5,6 +5,7 @@ import {ImageBrowser} from 'expo-image-picker-multiple';
 
 const ImageBrowserScreen = (props) => {
     const [loading, setLoading] = useState(false);
+    console.log(props.route.params.from);
 
     const _getHeaderLoader = () => {
         if (loading) {
@@ -36,7 +37,11 @@ const ImageBrowserScreen = (props) => {
             }
             console.log("In then", cPhotos);
             setLoading(false);
-            navigation.navigate("ListingEditScreen", {photos: cPhotos});
+            if(props.route.params.from === "Edit") {
+                navigation.navigate("ListingEditScreen", {photos: cPhotos});
+            } else {
+                navigation.navigate("ListingUpdateScreen", {photos: cPhotos});
+            }
         }catch (e) {
             console.log("Catch in function....", e)
         }

@@ -54,6 +54,7 @@
     "react-redux": "^7.2.2",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
+    "undefined": "https://github.com/smartsuhani/expo-image-picker-multiple",
     "yup": "^0.29.3"
   },
   "devDependencies": {

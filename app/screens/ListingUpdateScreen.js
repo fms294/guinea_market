@@ -51,10 +51,10 @@ const ListingUpdateScreen = (props) => {
     }
     let images = [];
     props_initial.images.map((item, index) => {
-        images.push(item);
+        images.push(item.url);
     })
-    // console.log("initial", props_initial);
-    const [image, setImage] = useState(props_initial.images[0].url);
+    console.log("initial", images);
+    const [image, setImage] = useState(images);
     const [imageData, setImageData] = useState(null);
     const [category, setCategory] = useState(props_initial.main_category);
     const [sub_category, setSub_category] = useState(props_initial.sub_category);
@@ -65,30 +65,46 @@ const ListingUpdateScreen = (props) => {
         props.navigation.setOptions({
             title: t("listing_add:update")
         })
-    })
+    });
+
+    useEffect(() => {
+        const {params} = props.route;
+        if (params) {
+            const {photos} = params;
+            if (photos) {
+                let arr = [];
+                photos.map((item) => {
+                    arr.push(item.uri);
+                });
+                setImage(arr);
+                setImageData(photos);
+            }
+            delete params.photos;
+        }
+    });
 
     useEffect(() => {
         (async () => {
             const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
             if (status !== 'granted') {
-                alert('Sorry, we need camera roll permissions to make this work!');
+                Alert.alert(t("listing_add:alert"),'Sorry, we need camera roll permissions to make this work!', [{text: t("listing_add:okay")}]);
             }
         })();
     }, []);
 
-    const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
-
-        if (!result.cancelled) {
-            setImage(result.uri);
-            setImageData(result);
-        }
-    };
+    // const pickImage = async () => {
+    //     let result = await ImagePicker.launchImageLibraryAsync({
+    //         mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    //         allowsEditing: true,
+    //         aspect: [4, 3],
+    //         quality: 1,
+    //     });
+    //
+    //     if (!result.cancelled) {
+    //         setImage(result.uri);
+    //         setImageData(result);
+    //     }
+    // };
 
     const handleSubmission = async (values) => {
         //console.log("values.....", values);
@@ -113,7 +129,7 @@ const ListingUpdateScreen = (props) => {
                 "sub_category" : sub_category,
                 "prefecture": prefecture,
                 "contact_phone": values.phone,
-                "images" : [{imageData}, {imageData}]
+                "images" : imageData
             }
         }
         console.log("FinalData", finalData);
@@ -126,27 +142,49 @@ const ListingUpdateScreen = (props) => {
                 <Form
                     initialValues={initial}
                     onSubmit={(values) => {
-                        if (values === initial && image === props_initial.images[0].url) {
+                        if (values === initial && image === images) {
                             Alert.alert(t("listing_add:alert_update_title"), t("listing_add:alert_update_msg"), [{text: t("listing_add:okay")}]);
                         } else {
-                            setLoading(true);
-                            handleSubmission(values).then(() => {
-                                setLoading(false);
-                                props.navigation.goBack();
-                            }).catch((err) => {
-                                setLoading(false);
-                                console.log("catch...update screen", err);
-                            });
+                            const array = ["Vehicles", "Immovable", "Electronic", "Construction", "Education", "Furniture", "Food", "Job", "Health", "Services"];
+                            const default_sub = ["Cars", "Trucks"];
+                            if(array.includes(category)) {
+                                if(category !== "Vehicles" && sub_category === "Cars"){
+                                    Alert.alert(t("listing_add:alert"),t("listing_add:alert_sub_category"), [{text: t("listing_add:okay")}]);
+                                } else if(category === "Vehicles" && default_sub.includes(sub_category) === false) {
+                                    Alert.alert(t("listing_add:alert"),t("listing_add:alert_sub_category"), [{text: t("listing_add:okay")}]);
+                                } else if(sub_category === "") {
+                                    Alert.alert(t("listing_add:alert"),t("listing_add:alert_sub_category"), [{text: t("listing_add:okay")}]);
+                                } else {
+                                    setLoading(true);
+                                    handleSubmission(values).then(() => {
+                                        setLoading(false);
+                                        props.navigation.goBack();
+                                    }).catch((err) => {
+                                        setLoading(false);
+                                        console.log("catch...update screen", err);
+                                    });
+                                }
+                            }else {
+                                setLoading(true);
+                                handleSubmission(values).then(() => {
+                                    setLoading(false);
+                                    props.navigation.goBack();
+                                }).catch((err) => {
+                                    setLoading(false);
+                                    console.log("catch...update screen", err);
+                                });
+                            }
                         }
                     }}
                     validationSchema={validationSchema}
                 >
-                    <TouchableOpacity style={styles.imageContainer} onPress={pickImage}>
-                        {image === props_initial.images[0].url ?
-                            <Image source={{ uri: image }} style={styles.image} />
-                            :
-                            <Image source={{ uri: image }} style={[styles.image, { borderWidth: 3 ,borderColor: "red"}]} />
-                        }
+                    <TouchableOpacity style={styles.imageContainer} onPress={() =>  props.navigation.navigate("ImageBrowserScreen", {from: "Update"})}>
+                        {/*{image === props_initial.images[0].url ?*/}
+                        {/*    <Image source={{ uri: image }} style={styles.image} />*/}
+                        {/*    :*/}
+                        {/*    <Image source={{ uri: image }} style={[styles.image, { borderWidth: 3 ,borderColor: "red"}]} />*/}
+                        {/*}*/}
+                        {image && image.map((item) => <Image source={{ uri: item }} style={styles.image} />)}
                     </TouchableOpacity>
                     <FormField
                         maxLength={255}
@@ -270,12 +308,14 @@ const styles = StyleSheet.create({
         height:100,
         justifyContent:'center',
         overflow:'hidden',
-        width:100
+        // width:100
+        flexDirection: "row"
     },
     image:{
         height:100,
         width:100,
         borderRadius:15,
+        marginHorizontal: 2
     }
 });
 
