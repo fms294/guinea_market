@@ -22,6 +22,9 @@ import * as authActions from "../store/actions/auth";
 import {useDispatch} from "react-redux";
 import {forgetPassword, updatePassword, registration_otp} from "../api/apiCall";
 import {translate} from "react-i18next";
+import {Notifications} from "expo";
+import * as Permissions from 'expo-permissions';
+import Constants from "expo-constants";
 
 const WelcomeScreen = (props) => {
     const {t} = props;

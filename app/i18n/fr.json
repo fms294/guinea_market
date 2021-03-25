@@ -156,10 +156,10 @@
     "type_msg": "Tapez un message",
     "no_owner" : "Le propriétaire de ce produit n'est plus disponible",
     "st_title" : "Conseils de sécurité:",
-    "st_1": "N'envoyez d'argent à personne avant de récupérer l'article",
-    "st_2": "Ne payez pas à l'avance même pour la livraison",
-    "st_3": "Vérifiez votre article pour vous assurer qu'il correspond à la description",
-    "st_4": "Essayez de vous réunir dans un endroit sûr, comme un lieu public, une station-service, une école, un marché."
+    "st_1": "Ne payez aucun article à l'avance",
+    "st_2": "Vérifiez l'article avant de l'acheter",
+    "st_3": "Payez seulement après avoir récupéré l'article",
+    "st_4": "Essayez de vous rencontrer dans un lieu public sûr"
   },
   "account_screen": {
     "account" : "Compte",

@@ -124,11 +124,11 @@ const ListingDetailsScreen = (props) => {
     const renderRow = () => {
         const points = [1,2,3,4];
         return (
-            <View style={{padding: 10}}>
+            <View style={{padding: 5}}>
                 {points.map((item) => (
                     <View style={{flexDirection: "row"}}>
                         <Text style={styles.textNormal}>{'\u2022'}</Text>
-                        <Text style={[styles.textNormal, {paddingLeft: 7}]}>{t("detail_screen:st_"+item)}</Text>
+                        <Text style={[styles.textNormal, {fontSize: 15,paddingLeft: 7}]}>{t("detail_screen:st_"+item)}</Text>
                     </View>
                     ))
                 }
@@ -170,7 +170,7 @@ const ListingDetailsScreen = (props) => {
                 <View style={{backgroundColor:colors.white, padding: 10}}>
                     <Text style={styles.textNormal}>{listing.description}</Text>
                 </View>
-                <Text style={[styles.title, {marginTop: 15, marginBottom: 5}]}>{t("detail_screen:st_title")}</Text>
+                <Text style={[styles.title, {color: "red",marginTop: 15,fontSize: 18}]}>{t("detail_screen:st_title")}</Text>
                 {renderRow()}
                 {/*<Text style={styles.contact}>Contact Info : {listing.contact_phone}</Text>*/}
                 {loading ?

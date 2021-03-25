@@ -55,7 +55,8 @@
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "undefined": "https://github.com/smartsuhani/expo-image-picker-multiple",
-    "yup": "^0.29.3"
+    "yup": "^0.29.3",
+    "expo-notifications": "~0.3.3"
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",

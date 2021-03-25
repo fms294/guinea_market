@@ -25,6 +25,7 @@ import colors from '../config/colors';
 import {categories, prefectures} from "../data/data";
 
 import * as listingActions from "../store/actions/listing";
+import * as Notifications from "expo-notifications";
 
 const ListingsScreen = (props) => {
     const {t, i18n} = props;
@@ -43,6 +44,26 @@ const ListingsScreen = (props) => {
     const [sortedData,setSortedData] = useState([]);
     const [filterData, setFilterData] = useState([]);
     //console.log("listing screen",data);
+    const [notification, setNotification] = useState({});
+
+    const handleNotification = notification => {
+        setNotification({ notification: notification });
+        //console.log("hello foreground",notification.request.trigger.remoteMessage.data.message);
+    };
+
+    const handleNotificationResponse = response => {
+        //console.log("hello background",response.notification.request);
+        const body = response.notification.request.trigger.remoteMessage.data.body;
+        const data = "{\"screen\":\"Account\"}";
+        if(data === body) {
+            props.navigation.navigate("AccountNavigator");
+        }
+    };
+
+    useEffect(() => {
+        Notifications.addNotificationReceivedListener(handleNotification);
+        Notifications.addNotificationResponseReceivedListener(handleNotificationResponse);
+    })
 
     const onIconPress = () => {
         //console.log("pressed");
@@ -76,7 +97,7 @@ const ListingsScreen = (props) => {
 
     let filterObject = {};
 
-    const applyFilter = () => {
+    const applyFilter = async () => {
         filterObject = {
             category: category,
             prefecture: prefecture
@@ -360,7 +381,7 @@ const ListingsScreen = (props) => {
                                                                     if (!category.includes(item)) {
                                                                         setCategory([...category, item]);
                                                                     } else {
-                                                                        setCategory(category.filter((item) => (item !== item)))
+                                                                        setCategory(category.filter((itemF) => (itemF !== item)))
                                                                     }
                                                                 }}>
                                                                     <Text style={category.includes(item) ? [styles.sub_category, {color: colors.primary}] : styles.sub_category}>
@@ -383,7 +404,10 @@ const ListingsScreen = (props) => {
                                                 onPress={() => {
                                                     setFilterVisible("Home");
                                                     setActiveFilter('');
-                                                    applyFilter()
+                                                    setLoading(true);
+                                                    applyFilter().then(() => {
+                                                        setLoading(false);
+                                                    })
                                                 }}>{category.length === 0 ? t("listing_screen:close") : t("listing_screen:apply")}</Button>
                                             <Button
                                                 style={{flex: 2}}
@@ -426,7 +450,10 @@ const ListingsScreen = (props) => {
                                                 onPress={() => {
                                                     setFilterVisible("Home");
                                                     setActiveFilter('');
-                                                    applyFilter()
+                                                    setLoading(true);
+                                                    applyFilter().then(() => {
+                                                        setLoading(false);
+                                                    })
                                                 }}>{prefecture.length === 0 ? t("listing_screen:close") : t("listing_screen:apply") }</Button>
                                             <Button
                                                 style={{flex: 2}}

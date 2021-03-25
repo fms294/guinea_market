@@ -5,7 +5,7 @@ import { AppLoading } from 'expo';
 // import OfflineNotice from './app/components/offlineNotice';
 import AppNavigator from './app/navigation/AppNavigator';
 import AuthNavigator from './app/navigation/AuthNavigator';
-import {View,Text, ActivityIndicator} from "react-native";
+import {View,Text, ActivityIndicator, Alert} from "react-native";
 import {NavigationContainer} from "@react-navigation/native";
 import AsyncStorage from "@react-native-community/async-storage";
 // import AuthContext from './app/auth/context';
@@ -21,6 +21,10 @@ import authReducers from "./app/store/reducers/auth";
 import listingReducers from "./app/store/reducers/listing";
 import localizationReducers from "./app/store/reducers/localization";
 import MainNavigator from "./app/navigation/MainNavigator";
+import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
+import * as Permissions from "expo-permissions";
+
 
 const rootReducer = combineReducers({
     auth: authReducers,
@@ -48,12 +52,49 @@ const ReloadApp = translate('common', {
     bindStore: false,
 })(WrappedStack);
 
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: false,
+        shouldSetBadge: false,
+    }),
+});
+
 export default function App() {
-        return(
-            <Provider store={store}>
-                <ReloadApp />
-            </Provider>
-        );
+
+    const getPushNotificationPermissions = async () => {
+        if (Constants.isDevice) {
+            const { status: existingStatus } = await Notifications.getPermissionsAsync();
+            let finalStatus = existingStatus;
+            if (existingStatus !== 'granted') {
+                const { status } = await Notifications.requestPermissionsAsync();
+                finalStatus = status;
+            }
+            if (finalStatus !== 'granted') {
+                alert('Failed to get push token for push notification!');
+                return;
+            }
+            const token = (await Notifications.getExpoPushTokenAsync()).data;
+            console.log(token);
+            // this.setState({ expoPushToken: token });
+        } else {
+            alert('Must use physical device for Push Notifications');
+        }
+    }
+
+    // const handleNotificationAlert = (notification, type) => {
+    //     Alert.alert(JSON.stringify(notification));
+    // }
+
+    useEffect(() => {
+        getPushNotificationPermissions();
+    });
+
+    return(
+        <Provider store={store}>
+            <ReloadApp />
+        </Provider>
+    );
 }
     // }else{
     //     return(
