@@ -17,7 +17,7 @@ export default (state = initialState, action) => {
                 userData: action.userData
             };
         case USER_LOGIN:
-            //console.log("in reducers..", action);
+            console.log("in reducers..", action.userData);
             return {
                 ...state,
                 token: action.token,

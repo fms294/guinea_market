@@ -24,8 +24,10 @@ import ProductItem from "../components/UI/ProductItem";
 import colors from '../config/colors';
 import {categories, prefectures} from "../data/data";
 
+import * as authActions from "../store/actions/auth";
 import * as listingActions from "../store/actions/listing";
 import * as Notifications from "expo-notifications";
+import AsyncStorage from "@react-native-community/async-storage";
 
 const ListingsScreen = (props) => {
     const {t, i18n} = props;
@@ -45,6 +47,26 @@ const ListingsScreen = (props) => {
     const [filterData, setFilterData] = useState([]);
     //console.log("listing screen",data);
     const [notification, setNotification] = useState({});
+    const userData = useSelector((state) => state.auth);
+    // console.log("userData", userData.userData.userNotification_token);
+
+    useEffect(() => {
+        AsyncStorage.getItem("notification_token").then((res) => {
+            const resToken = JSON.parse(res);
+            if(userData.userData.userNotification_token !== resToken.token){
+                Alert.alert(t("listing_screen:alert_title_logout"), t("listing_screen:alert_msg_logout"), [
+                    {
+                        text: t("listing_screen:re-login"),
+                        style: 'destructive',
+                        onPress: async () => {
+                            await dispatch(authActions.logout());
+                        },
+                    },
+                ]);
+            }
+            // console.log("in listings... token...",resToken.token);
+        });
+    }, []);
 
     const handleNotification = notification => {
         setNotification({ notification: notification });

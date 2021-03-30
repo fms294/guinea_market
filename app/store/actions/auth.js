@@ -12,6 +12,9 @@ export const signup = (username, phone, password) => {
     return async (dispatch) => {
         console.log("in action...",username, phone, password, `${uri}/users/signup`);
         try{
+            const token = await AsyncStorage.getItem("notification_token");
+            const resToken = JSON.parse(token);
+            console.log("in action... token...",resToken.token);
             const response = await fetch(`${uri}/users/signup`,
                 {
                     method: 'POST',
@@ -22,7 +25,8 @@ export const signup = (username, phone, password) => {
                         username: username,
                         phone,
                         password,
-                        profile_img: ""
+                        profile_img: "",
+                        notification_token: resToken.token
                     }),
                 });
             if(!response.ok){
@@ -55,6 +59,9 @@ export const signup = (username, phone, password) => {
 export const login = (phone, password) => {
     return async (dispatch) => {
         try{
+            const token = await AsyncStorage.getItem("notification_token");
+            const resToken = JSON.parse(token);
+            console.log("in action... token...",resToken.token);
             const response = await fetch(`${uri}/users/login`,
                 {
                     method: 'POST',
@@ -64,6 +71,7 @@ export const login = (phone, password) => {
                     body: JSON.stringify({
                         phone,
                         password,
+                        notification_token: resToken.token
                     }),
                 });
             //console.log("response.. login",await response.json())
@@ -137,7 +145,8 @@ const resDataHandler = (resData) => {
         userId: resData.user._id,
         username: resData.user.username,
         userPhone: resData.user.phone,
-        userImage: resData.user.profile_img
+        userImage: resData.user.profile_img,
+        userNotification_token: resData.user.notification_token
     }
 
     saveDataToStorage(resData.token, userData);

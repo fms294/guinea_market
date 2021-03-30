@@ -76,6 +76,12 @@ export default function App() {
             }
             const token = (await Notifications.getExpoPushTokenAsync()).data;
             console.log(token);
+            AsyncStorage.setItem(
+                'notification_token',
+                JSON.stringify({
+                    token: token
+                }),
+            );
             // this.setState({ expoPushToken: token });
         } else {
             alert('Must use physical device for Push Notifications');
