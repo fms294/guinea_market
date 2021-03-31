@@ -222,3 +222,17 @@ export const fetchOwner = () => {
         })
     })
 };
+
+export const sendNotification = (body) => {
+    return new Promise((resolve, reject) => {
+        console.log("body", JSON.stringify(body));
+        return axios.post(`https://exp.host/--/api/v2/push/send`, JSON.stringify(body),
+            {
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            }).then(res => resolve(res))
+            .catch(error => reject(error))
+    });
+};

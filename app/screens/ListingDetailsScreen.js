@@ -13,7 +13,7 @@ import {
 //import {Image} from 'react-native-expo-image-cache';
 import { SliderBox } from "react-native-image-slider-box";
 import {useSelector} from "react-redux";
-import {fetchOtherUser, sendMessage} from "../api/apiCall";
+import {fetchOtherUser, sendMessage, sendNotification} from "../api/apiCall";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {translate} from "react-i18next";
 import moment from "moment";
@@ -28,6 +28,7 @@ import {Avatar, IconButton, Snackbar, TextInput} from "react-native-paper";
 const ListingDetailsScreen = (props) => {
     const {t, i18n} = props;
     const ownerId = useSelector((state) => state.auth.userData.userId);
+    const ownerName = useSelector((state) => state.auth.userData.username);
     const listing = props.route.params.listing;
     const images = props.route.params.images;
     const [listedUser, setListedUser] = useState({});
@@ -59,7 +60,8 @@ const ListingDetailsScreen = (props) => {
                             const user = {
                                 username: res.data.user.username,
                                 feed_count: res.data.feed.length,
-                                userImage: res.data.user.profile_img
+                                userImage: res.data.user.profile_img,
+                                userNotification_token: res.data.user.notification_token
                             }
                             setListedUser(user);
                             if (user.userImage === "") {
@@ -105,7 +107,7 @@ const ListingDetailsScreen = (props) => {
             }
             await sendMessage(messageObj)
                 .then((res) => {
-                    console.log("Message send", res);
+                    // console.log("Message send", res);
                 }).catch((err) => {
                     console.log("Message send error", err);
                 })
@@ -113,6 +115,30 @@ const ListingDetailsScreen = (props) => {
             console.log(err);
         }
     }
+
+    const sendNotificationHandler = async (to, title, body, data) => {
+        try {
+            const finalObj = {
+                to: to,
+                title: title,
+                body: body,
+                priority: "high",
+                sound: "default",
+                channelId: "default",
+                data: {screen: data}
+            }
+            // console.log("finalobj", finalObj);
+            await sendNotification(finalObj)
+                .then((res) => {
+                    console.log("Notification sent", res);
+                }).catch((err) => {
+                    console.log("Notification sent error", err);
+                })
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
     // <View style={{flexDirection: 'row'}}>
     //     <Text style={styles.textNormal}>{'\u2022'}</Text>
     //     <Text style={[styles.textNormal, {paddingLeft: 5}]}>{t("detail_screen:st_1")}</Text>
@@ -204,7 +230,10 @@ const ListingDetailsScreen = (props) => {
                                                 if(text !== ''){
                                                     setText("")
                                                     onToggleSnackBar()
-                                                    sendMessageHandler()
+                                                    sendMessageHandler().then(() => {
+                                                        // console.log("listed token", listedUser.userNotification_token, text, ownerName);
+                                                        sendNotificationHandler(listedUser.userNotification_token, ownerName, text, ownerId)
+                                                    })
                                                 }
                                             }}
                                         />

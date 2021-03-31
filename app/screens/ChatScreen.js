@@ -2,21 +2,72 @@ import React, {useEffect, useState, useCallback} from "react";
 import {ActivityIndicator, StyleSheet, View, FlatList, Text, KeyboardAvoidingView, Platform} from "react-native";
 import {translate} from "react-i18next";
 
-import {conversation, sendMessage} from "../api/apiCall";
+import {conversation, fetchOtherUser, sendMessage, sendNotification} from "../api/apiCall";
 import colors from "../config/colors";
 import {TextInput, IconButton} from "react-native-paper";
+import {HeaderButtons, Item} from "react-navigation-header-buttons";
+import HeaderButton from "../components/UI/HeaderButton";
+import {StackActions} from "@react-navigation/native";
+import {useSelector} from "react-redux";
 
 const ChatScreen = (props) => {
     const {t} = props;
     const chatId = props.route.params.id;
+    const ownerId = useSelector((state) => state.auth.userData.userId);
+    const ownerName = useSelector((state) => state.auth.userData.username);
     const [text, setText] = useState('');
     const [message, setMessage] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [listedUser, setListedUser] = useState({});
     const [inputHeight, setInputHeight] = useState();
+
+    console.log(chatId);
+
+    useEffect(() => {
+        const loadOtherUser = async () => {
+            try {
+                setLoading(true);
+                await fetchOtherUser(chatId)
+                    .then((res) => {
+                        if(res.data.user !== null) {
+                            const user = {
+                                username: res.data.user.username,
+                                userNotification_token: res.data.user.notification_token
+                            }
+                            setListedUser(user);
+                        } else {
+                            setListedUser(null);
+                        }
+                        setLoading(false);
+                    }).catch((err) => {
+                        setLoading(false);
+                        console.log("err.....", err);
+                    })
+            } catch (err) {
+                setLoading(false);
+                console.log("Error in ListingScreen", err);
+            }
+        };
+
+        loadOtherUser();
+    }, [fetchOtherUser]);
 
     useEffect(() => {
         props.navigation.setOptions({
-            title: props.route.params.name
+            title: props.route.params.name,
+            headerRight: () => (
+                <HeaderButtons HeaderButtonComponent={HeaderButton}>
+                    <Item
+                        //title={"Search"}
+                        iconName={"ios-person"}
+                        onPress={() => {
+                            props.navigation.dispatch(
+                                StackActions.replace("AccountScreen")
+                            )
+                        }}
+                    />
+                </HeaderButtons>
+            )
         });
     });
 
@@ -85,6 +136,29 @@ const ChatScreen = (props) => {
         }
     }
 
+    const sendNotificationHandler = async (to, title, body, data) => {
+        try {
+            const finalObj = {
+                to: to,
+                title: title,
+                body: body,
+                priority: "high",
+                sound: "default",
+                channelId: "default",
+                data: {screen: data}
+            }
+            // console.log("finalobj", finalObj);
+            await sendNotification(finalObj)
+                .then((res) => {
+                    console.log("Notification sent", res);
+                }).catch((err) => {
+                    console.log("Notification sent error", err);
+                })
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
     const sortBy = (item) => {
         return item.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
     }
@@ -148,7 +222,10 @@ const ChatScreen = (props) => {
                     onPress={() => {
                         if(text !== ''){
                             setText("")
-                            sendMessageHandler()
+                            sendMessageHandler().then(() => {
+                                // console.log("listed token", listedUser.userNotification_token, text, ownerName);
+                                sendNotificationHandler(listedUser.userNotification_token, ownerName, text, ownerId);
+                            })
                         }
                     }}
                 />

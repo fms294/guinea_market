@@ -76,10 +76,13 @@ const ListingsScreen = (props) => {
     const handleNotificationResponse = response => {
         //console.log("hello background",response.notification.request);
         const body = response.notification.request.trigger.remoteMessage.data.body;
-        const data = "{\"screen\":\"Account\"}";
-        if(data === body) {
-            props.navigation.navigate("AccountNavigator");
-        }
+        const title = response.notification.request.trigger.remoteMessage.data.title;
+        const res = body.split(`:`)
+        const id = res[res.length - 1].substr(1, 24)
+        props.navigation.navigate("AccountNavigator", {
+            screen: "ChatScreen",
+            params: {id : id, name: title}
+        });
     };
 
     useEffect(() => {
