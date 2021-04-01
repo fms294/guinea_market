@@ -69,7 +69,7 @@ const ListingsScreen = (props) => {
     }, []);
 
     const handleNotification = notification => {
-        setNotification({ notification: notification });
+        // setNotification({ notification: notification });
         //console.log("hello foreground",notification.request.trigger.remoteMessage.data.message);
     };
 

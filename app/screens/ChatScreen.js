@@ -1,13 +1,13 @@
 import React, {useEffect, useState, useCallback} from "react";
-import {ActivityIndicator, StyleSheet, View, FlatList, Text, KeyboardAvoidingView, Platform} from "react-native";
+import {ActivityIndicator, StyleSheet, View, FlatList, Text, KeyboardAvoidingView, Platform, Image} from "react-native";
 import {translate} from "react-i18next";
 
 import {conversation, fetchOtherUser, sendMessage, sendNotification} from "../api/apiCall";
 import colors from "../config/colors";
-import {TextInput, IconButton} from "react-native-paper";
+import {TextInput, IconButton, Avatar} from "react-native-paper";
 import {HeaderButtons, Item} from "react-navigation-header-buttons";
 import HeaderButton from "../components/UI/HeaderButton";
-import {StackActions} from "@react-navigation/native";
+import {StackActions, useNavigationState} from "@react-navigation/native";
 import {useSelector} from "react-redux";
 
 const ChatScreen = (props) => {
@@ -19,9 +19,19 @@ const ChatScreen = (props) => {
     const [message, setMessage] = useState([]);
     const [loading, setLoading] = useState(false);
     const [listedUser, setListedUser] = useState({});
-    const [inputHeight, setInputHeight] = useState();
+    const [imageName, setImageName] = useState('');
 
-    console.log(chatId);
+    const nameImageHandler = (username) => {
+        let name = username.split(" ");
+        const newName = name.map((name) => name[0]).join('');
+        setImageName(newName.toUpperCase());
+    };
+
+    // console.log(props.navigation);
+    // const index = useNavigationState(state => state.index);
+    // console.log("index...",index);
+    // const index = useNavigationState(state => state.index);
+    // if(index === 0) {}
 
     useEffect(() => {
         const loadOtherUser = async () => {
@@ -32,9 +42,13 @@ const ChatScreen = (props) => {
                         if(res.data.user !== null) {
                             const user = {
                                 username: res.data.user.username,
-                                userNotification_token: res.data.user.notification_token
+                                userNotification_token: res.data.user.notification_token,
+                                userProfile: res.data.user.profile_img
                             }
                             setListedUser(user);
+                            if (res.data.user.profile_img === "") {
+                                nameImageHandler(res.data.user.username)
+                            }
                         } else {
                             setListedUser(null);
                         }
@@ -52,7 +66,7 @@ const ChatScreen = (props) => {
         loadOtherUser();
     }, [fetchOtherUser]);
 
-    useEffect(() => {
+    const headerBarOne = () => {
         props.navigation.setOptions({
             title: props.route.params.name,
             headerRight: () => (
@@ -69,7 +83,20 @@ const ChatScreen = (props) => {
                 </HeaderButtons>
             )
         });
-    });
+    }
+
+    const headerBarTwo = () => {
+        props.navigation.setOptions({
+            title: props.route.params.name
+        });
+    }
+
+    const index = useNavigationState(state => state.index);
+    if(index === 0) {
+        headerBarOne()
+    } else {
+        headerBarTwo()
+    }
 
     const loadConversation = useCallback(async () => {
         try {
@@ -197,8 +224,23 @@ const ChatScreen = (props) => {
                         //console.log("itemData received...", itemData.item);
                         return (
                             <View
-                                style={[styles.messageView, {alignItems: itemData.item.flag === 0 ? "flex-end" : "flex-start"}]}>
+                                style={{alignItems: itemData.item.flag === 0 ? "flex-end" : "flex-start"}}>
+                                <View style={styles.messageView}>
+                                {itemData.item.flag === 1 ?
+                                    <>
+                                        {listedUser.userProfile === "" ?
+                                            <Avatar.Text style={{backgroundColor: colors.medium}} size={30} label={imageName} />
+                                            :
+                                            <Image
+                                                style={{height:30, width:30, borderRadius: 100}}
+                                                source={{uri: listedUser.userProfile}}
+                                            />
+                                        }
+                                    </>
+                                    :
+                                    <></>}
                                 <Text style={styles.textView}>{itemData.item.message_data}</Text>
+                                </View>
                             </View>
                         );
                     }}
@@ -243,16 +285,20 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
     messageView:{
-        flex: 1
+        flex: 1,
+        flexDirection: "row",
+        alignItems: "center",
+        paddingHorizontal: 10,
+        marginTop: 10
     },
     textView:{
         fontSize: 20,
         borderWidth: 1,
         borderColor: colors.medium,
         borderRadius: 10,
-        padding:10,
+        padding:5,
         color:colors.primary,
-        marginHorizontal: 20
+        marginHorizontal: 10
     },
     inputView:{
         flexDirection: "row",

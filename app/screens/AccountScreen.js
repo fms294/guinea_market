@@ -61,21 +61,6 @@ const AccountScreen = (props) => {
         });
     }, [loadOwner]);
 
-    useEffect(() => {
-        const {params} = props.route;
-        if(params) {
-            console.log("props.. in params", params.values)
-            if(params.values === "MessagesScreen"){
-                // props.navigation.navigate("MessagesScreen")
-                console.log("messages..")
-                // messageHandler()
-            }
-        }else {
-            console.log("props.....outer", props.route)
-        }
-    }, [props]);
-
-
     Array.prototype.unique = function() {
         let a = this.concat();
         for(let i=0; i<a.length; ++i) {

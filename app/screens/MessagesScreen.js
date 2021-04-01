@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import { FlatList, StyleSheet, View, Text, ActivityIndicator} from 'react-native';
+import {FlatList, StyleSheet, View, TouchableOpacity, ActivityIndicator, Image, Text} from 'react-native';
 
 import ListItem from '../components/lists/ListItem';
 import Screen from '../components/Screen';
@@ -9,31 +9,19 @@ import {fetchOtherUser, receiveMessage, sentMessage} from "../api/apiCall";
 import {useSelector} from "react-redux";
 import colors from "../config/colors";
 import Icon from "../components/Icon";
-import {List} from "react-native-paper";
-
-const initialMessages =[
-    {
-        id:1,
-        title: 'T1',
-        description: 'D1',
-        image:require('../assets/fanta.jpeg')
-
-    },
-    {
-        id:2,
-        title: 'T2',
-        description: 'D2',
-        image:require('../assets/fanta.jpeg')
-
-    }
-]
+import {Avatar} from "react-native-paper";
 
 const MessagesScreen = (props) => {
-    const [messages, setMessages] = useState(initialMessages);
-    const [refreshing, setRefreshing] = useState(false);
     const data = props.route.params.data;
     const [chats, setChats] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [imageName, setImageName] = useState('');
+
+    const nameImageHandler = (username) => {
+        let name = username.split(" ");
+        const newName = name.map((name) => name[0]).join('');
+        setImageName(newName.toUpperCase());
+    };
 
     useEffect(() => {
         props.navigation.setOptions({
@@ -49,13 +37,17 @@ const MessagesScreen = (props) => {
                 await fetchOtherUser(item)
                     .then((res) => {
                         if(res !== null){
-                            //console.log("res", res.data.user._id);
+                            // console.log("res", res.data.user);
                             const obj = {
                                 id: res.data.user._id,
-                                username: res.data.user.username
+                                username: res.data.user.username,
+                                profile: res.data.user.profile_img
                             }
                             array.push(obj);
                             setChats(array);
+                            if(res.data.user.profile_img === ""){
+                                nameImageHandler(res.data.user.username)
+                            }
                         }
                     }).catch((err) => {
                         console.log("err.....", err);
@@ -81,30 +73,6 @@ const MessagesScreen = (props) => {
             setLoading(false);
         });
     }, [loadOtherUser]);
-
-    // useEffect(() => {
-    //     const loadOtherUser = async () => {
-    //         try {
-    //                 setLoading(true);
-    //                 let array = [];
-    //                 await data.map(async (item) => {
-    //                     await fetchOtherUser(item)
-    //                         .then((res) => {
-    //                             console.log("res", res.data.user.username);
-    //                             array.push(res.data.user.username);
-    //                         }).catch((err) => {
-    //                             console.log("err.....", err);
-    //                         })
-    //                 })
-    //                 setChats(array);
-    //                 setLoading(false);
-    //         } catch (err) {
-    //             console.log("Error in MessageScreen", err);
-    //         }
-    //     };
-    //
-    //     loadOtherUser();
-    // }, [fetchOtherUser]);
 
     if (loading) {
         return(
@@ -134,12 +102,24 @@ const MessagesScreen = (props) => {
                     ItemSeparatorComponent={ListItemSeparator}
                     keyExtractor={item => item.id}
                     renderItem={(itemData) => {
-                        //console.log("itemData", itemData.item)
+                        // console.log("itemData", itemData.item)
                         return (
-                            <ListItem
-                                title={itemData.item.username}
+                            <TouchableOpacity
+                                style={styles.chatView}
                                 onPress={() => chatHandler(itemData.item)}
-                            />
+                            >
+                                {itemData.item.profile === "" ?
+                                    <Avatar.Text style={{backgroundColor: colors.medium}} size={70} label={imageName} />
+                                    :
+                                    <Image
+                                        style={styles.image}
+                                        source={{uri: itemData.item.profile}}
+                                    />
+                                }
+                                <View style={{marginHorizontal: 20, justifyContent: "center"}}>
+                                    <Text style={{fontSize: 24}}>{itemData.item.username}</Text>
+                                </View>
+                            </TouchableOpacity>
                         );
                     }}
                 />
@@ -155,33 +135,18 @@ const styles = StyleSheet.create({
         flex:1,
         justifyContent: "center",
         alignItems: "center"
+    },
+    image:{
+        height: 70,
+        width: 70,
+        borderRadius: 100
+    },
+    chatView:{
+        flexDirection: "row",
+        backgroundColor: colors.white,
+        paddingVertical: 10,
+        paddingHorizontal: 20
     }
 });
 
 export default MessagesScreen;
-
-//         <ListItem
-//             title={item.title}
-//             subTitle={item.description}
-//             image={item.image}
-//             onPress={() => console.log("Message Selected", item)}
-//             renderRightActions={() =>
-//                 <ListItemDeleteAction
-//                     onPress={() => handleDelete(item)}
-//                 />}
-//
-//         />
-//         )}
-//         ItemSeparatorComponent={ListItemSeparator}
-//         refreshing={refreshing}
-//         onRefresh={() =>{
-//             setMessages([
-//                 {
-//                     id:2,
-//                     title: 'T2',
-//                     description: 'D2',
-//                     image:require('../assets/fanta.jpeg')
-//
-//                 }
-//             ])
-//         }}
