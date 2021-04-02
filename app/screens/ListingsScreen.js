@@ -270,32 +270,36 @@ const ListingsScreen = (props) => {
 
     let titleForSearch = [];
 
-    if (filterApplied) {
-        for(let x in filterData){
-            titleForSearch = titleForSearch.concat(filterData[x].title);
+    const titleHandler = async () => {
+        if (filterApplied) {
+            for(let x in filterData){
+                titleForSearch = await titleForSearch.concat(filterData[x].title);
+            }
+        } else {
+            for(let x in sortedData){
+                titleForSearch = await titleForSearch.concat(sortedData[x].title);
+            }
         }
-    } else {
-        for(let x in sortedData){
-            titleForSearch = titleForSearch.concat(sortedData[x].title);
-        }
-    }
+    };
 
     const onChangeSearch = (query) => {
         //console.log("search", query);
         setSearchQuery(query);
         setIconSet("arrow-left");
 
-        if(query === ""){
-            setSearchData([]);
-        }else{
-            const newData = titleForSearch.filter((item) => {
-                const itemData = item.toUpperCase();
-                const textData = query.toUpperCase();
+        titleHandler().then(() => {
+            if(query === ""){
+                setSearchData([]);
+            }else{
+                const newData = titleForSearch.filter((item) => {
+                    const itemData = item.toUpperCase();
+                    const textData = query.toUpperCase();
 
-                return itemData.indexOf(textData) > -1;
-            });
-            setSearchData(newData);
-        }
+                    return itemData.indexOf(textData) > -1;
+                });
+                setSearchData(newData);
+            }
+        }).catch((err) => console.log("Catch err in search..",err))
     };
 
     if (loading) {

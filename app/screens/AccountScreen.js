@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useCallback} from 'react';
-import {StyleSheet, View, FlatList, Alert, TouchableOpacity, Text, Image} from 'react-native';
+import {StyleSheet, View, FlatList, Alert, TouchableOpacity, Text, Image, ActivityIndicator} from 'react-native';
 
 import ListItem from '../components/lists/ListItem';
 import colors from '../config/colors';
@@ -185,9 +185,9 @@ const AccountScreen = (props) => {
         },
     ];
 
-    const messageHandler = () => {
-        loadReceivedMessage();
-        loadSentMessage();
+    const messageHandler = async () => {
+        await loadReceivedMessage();
+        await loadSentMessage();
         if(sent.length === 0 && receiver.length === 0){
             Alert.alert(t("account_screen:alert_title"), t("account_screen:alert_msg"), [{text: t("account_screen:okay")}])
         } else if(sent.length === 0 && receiver.length !== 0){
@@ -228,6 +228,14 @@ const AccountScreen = (props) => {
                 },
             },
         ]);
+    }
+
+    if(loading){
+        return (
+            <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
+                <ActivityIndicator size={"large"} color={colors.primary}/>
+            </View>
+        );
     }
 
     return(
