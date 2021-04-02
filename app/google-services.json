@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "882118862741",
+    "project_id": "dibida-17ada",
+    "storage_bucket": "dibida-17ada.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:882118862741:android:b106f26f4b02a135ce389c",
+        "android_client_info": {
+          "package_name": "com.guineamarket.dibida"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "882118862741-qkqala7ens3lngppd42v0g64nenon104.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkLQtFhixENfm34ejlCXvaH7EU5nbMJuk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "882118862741-qkqala7ens3lngppd42v0g64nenon104.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
