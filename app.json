@@ -18,7 +18,7 @@
     ],
     "ios": {
       "bundleIdentifier": "com.guineamarket.dibida",
-      "buildNumber": "1.0.10",
+      "buildNumber": "1.0.11",
       "supportsTablet": true
     },
     "android": {
@@ -27,7 +27,7 @@
       "useNextNotificationsApi": true,
       "adaptiveIcon": {
         "foregroundImage": "./app/assets/adaptive-icon.png",
-        "backgroundColor": "#FFF"
+        "backgroundColor": "#DA70D6"
       },
       "googleServicesFile": "./app/google-services.json"
     },

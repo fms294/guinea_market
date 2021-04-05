@@ -127,7 +127,7 @@ const ListingsScreen = (props) => {
             category: category,
             prefecture: prefecture
         }
-        //console.log("Filters : ", filterObject);
+        console.log("Filters : ", filterObject);
         setFilterData([]);
         if(filterObject.category.length === 0 && filterObject.prefecture.length === 0){
             setFilterApplied(false);
@@ -142,8 +142,8 @@ const ListingsScreen = (props) => {
                 });
             });
             if(filterDataArray.length !== 0){
-                const uniqueArray = uniqueData(filterDataArray);
-                setFilterData(sortBy(uniqueArray));
+                // const uniqueArray = uniqueData(filterDataArray);
+                setFilterData(sortBy(filterDataArray));
             }
         } else if(filterObject.category.length !== 0 && filterObject.prefecture.length === 0) {
             setFilterApplied(true);
@@ -162,9 +162,11 @@ const ListingsScreen = (props) => {
                     }
                 });
             });
+            console.log(filterDataArray.length);
             if(filterDataArray.length !== 0){
-                const uniqueArray = uniqueData(filterDataArray);
-                setFilterData(sortBy(uniqueArray));
+                // const uniqueArray = uniqueData(filterDataArray);
+                // console.log(uniqueArray.length);
+                setFilterData(sortBy(filterDataArray));
             }
         } else if(filterObject.category.length !== 0 && filterObject.prefecture.length !== 0) {
             setFilterApplied(true);
@@ -190,8 +192,8 @@ const ListingsScreen = (props) => {
                 })
             })
             if(filterDataArray.length !== 0){
-                const uniqueArray = uniqueData(filterDataArray);
-                setFilterData(sortBy(uniqueArray));
+                // const uniqueArray = uniqueData(filterDataArray);
+                setFilterData(sortBy(filterDataArray));
             }
         }
     }
@@ -354,28 +356,28 @@ const ListingsScreen = (props) => {
                 ) : (
                     <>
                         <View style={styles.filterContainer}>
-                        <TouchableOpacity
-                            style={activeFilter === "Category" ? [styles.filterObject, {borderColor: colors.primary}] : styles.filterObject}
-                            onPress={() => {
-                                filterView("Category");
-                            }}
-                        >
-                            <Text style={styles.filterText}>{t("listing_screen:category")}</Text>
-                            <Ionicons
-                                size={15}
-                                name={activeFilter === "Category" ? "chevron-up" : "chevron-down"}
-                            />
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={activeFilter === "Prefecture" ? [styles.filterObject, {borderColor: colors.primary}] : styles.filterObject}
-                            onPress={() => {
-                                filterView("Prefecture")
-                            }}
-                        >
-                            <Text style={styles.filterText}>{t("listing_screen:prefecture")}</Text>
-                            <Ionicons size={15} name={activeFilter === "Prefecture" ? "chevron-up" : "chevron-down"}/>
-                        </TouchableOpacity>
-                    </View>
+                            <TouchableOpacity
+                                style={activeFilter === "Category" ? [styles.filterObject, {borderColor: colors.primary}] : styles.filterObject}
+                                onPress={() => {
+                                    filterView("Category");
+                                }}
+                            >
+                                <Text style={styles.filterText}>{t("listing_screen:category")}</Text>
+                                <Ionicons
+                                    size={15}
+                                    name={activeFilter === "Category" ? "chevron-up" : "chevron-down"}
+                                />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={activeFilter === "Prefecture" ? [styles.filterObject, {borderColor: colors.primary}] : styles.filterObject}
+                                onPress={() => {
+                                    filterView("Prefecture")
+                                }}
+                            >
+                                <Text style={styles.filterText}>{t("listing_screen:prefecture")}</Text>
+                                <Ionicons size={15} name={activeFilter === "Prefecture" ? "chevron-up" : "chevron-down"}/>
+                            </TouchableOpacity>
+                        </View>
                         {filterVisible !== "Home" ?
                             <>
                                 {activeFilter === "Category" ?
@@ -510,7 +512,7 @@ const ListingsScreen = (props) => {
                                                     data={filterData}
                                                     keyExtractor={(item, index) => index.toString()}
                                                     renderItem={(itemData) => {
-                                                        console.log("listings", itemData.item);
+                                                        console.log("listings itemData.....", filterData.length);
                                                         let posted;
                                                         if(i18n.language === 'fr'){
                                                             moment.updateLocale('fr', frMoment)
@@ -688,4 +690,3 @@ const styles = StyleSheet.create({
 })
 
 export default translate(["listing_screen", "category"],{wait: true})(ListingsScreen);
-
