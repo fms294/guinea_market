@@ -24,6 +24,7 @@ import ListItem from '../components/lists/ListItem';
 import colors from '../config/colors';
 import Text from '../components/Text';
 import {Avatar, IconButton, Snackbar, TextInput} from "react-native-paper";
+import * as Analytics from 'expo-firebase-analytics';
 
 const ListingDetailsScreen = (props) => {
     const {t, i18n} = props;
@@ -186,7 +187,7 @@ const ListingDetailsScreen = (props) => {
                />
             <View style={styles.detailContainer}>
                 <Text style={styles.title}>{listing.title}</Text>
-                <Text style={[styles.textNormal, {marginTop:10}]}>GNF {listing.price}</Text>
+                <Text style={[styles.textNormal, {marginTop:10}]}>GNF {Platform.OS === "ios" ? listing.price.toLocaleString() : listing.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Text>
                 {i18n.language === 'fr' ? (
                     printDate("fr", "frMoment")
                 ) : (

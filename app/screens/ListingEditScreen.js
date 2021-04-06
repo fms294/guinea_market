@@ -25,6 +25,7 @@ import * as listingAction from "../store/actions/listing";
 import { useDispatch } from "react-redux";
 import {translate} from "react-i18next";
 import colors from "../config/colors";
+import * as Analytics from "expo-firebase-analytics";
 
 const phoneRegEx = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
@@ -66,7 +67,7 @@ const ListingEditScreen = (props) => {
 
     useEffect(() => {
         props.navigation.setOptions({
-            headerShown: false
+            title: props.t("listing_add:header_title")
         })
     })
 
@@ -117,6 +118,12 @@ const ListingEditScreen = (props) => {
        //console.log("values.....", values);
         const final = resDataGenerator(values);
         console.log("FinalData...",final);
+        await Analytics.logEvent('ButtonTapped', {
+            name: 'Post AD',
+            screen: 'ListingScreen',
+            purpose: 'Adding the post to the Dibida',
+        });
+
         if(imageData === null){
             Alert.alert(t("listing_add:alert_title"),t("listing_add:alert_msg"), [{text: t("listing_add:okay")}])
         }else{

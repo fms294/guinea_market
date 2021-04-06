@@ -56,7 +56,9 @@
     "redux-thunk": "^2.3.0",
     "undefined": "https://github.com/smartsuhani/expo-image-picker-multiple",
     "yup": "^0.29.3",
-    "expo-notifications": "~0.3.3"
+    "expo-notifications": "~0.3.3",
+    "expo-firebase-core": "~1.1.1",
+    "expo-firebase-analytics": "~2.4.1"
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",

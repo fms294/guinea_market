@@ -149,7 +149,8 @@
     "alert_update_title": "Aucune mise à jour",
     "alert_update_msg": "Modifiez au moins une valeur pour mettre à jour le produit",
     "alert_sub_category": "Veuillez sélectionner la sous-catégorie appropriée pour continuer",
-    "alert": "Alerte"
+    "alert": "Alerte",
+    "header_title": "PUBLIER ANNONCE"
   },
   "detail_screen": {
     "posted" : "Listé",

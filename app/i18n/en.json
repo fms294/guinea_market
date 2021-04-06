@@ -149,7 +149,8 @@
     "alert_update_title": "No Updates",
     "alert_update_msg": "Change at-least any one value to get the product updated",
     "alert_sub_category": "Please select the appropriate subcategory to continue",
-    "alert": "Alert"
+    "alert": "Alert",
+    "header_title": "POST AD"
   },
   "detail_screen": {
     "posted" : "Listed",
