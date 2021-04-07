@@ -119,7 +119,7 @@ const ListingEditScreen = (props) => {
         const final = resDataGenerator(values);
         console.log("FinalData...",final);
         await Analytics.logEvent('ButtonTapped', {
-            name: 'Post AD',
+            name: 'Post_AD',
             screen: 'ListingScreen',
             purpose: 'Adding the post to the Dibida',
         });

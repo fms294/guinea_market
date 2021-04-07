@@ -18,7 +18,7 @@
     ],
     "ios": {
       "bundleIdentifier": "com.guineamarket.dibida",
-      "buildNumber": "1.0.11",
+      "buildNumber": "1.0.12",
       "supportsTablet": true,
       "googleServicesFile": "./app/GoogleService-Info.plist"
     },
@@ -33,7 +33,15 @@
       "googleServicesFile": "./app/google-services.json"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "config": {
+        "firebase": {
+          "appId": "1:882118862741:web:b326f6632ad046f8ce389c",
+          "apiKey": "AIzaSyC55EU0zYqvJFWAl6OVcqnL4K7Uvyqvkos",
+          "projectId": "dibida-17ada",
+          "measurementId": "G-D8CTV1QYN7"
+        }
+      }
     }
   }
 }

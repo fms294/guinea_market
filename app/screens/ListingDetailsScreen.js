@@ -242,10 +242,15 @@ const ListingDetailsScreen = (props) => {
                                 }
                                 <TouchableOpacity
                                     style={{flexDirection: "row", backgroundColor: colors.white, paddingHorizontal: 25, paddingVertical: 15,marginTop: 20, borderRadius: 20}}
-                                    onPress={() => {
+                                    onPress={async () => {
                                         if(ownerId === listing.owner){
                                             props.navigation.navigate("AccountNavigator")
                                         }else {
+                                            await Analytics.logEvent('ButtonTapped', {
+                                                name: 'Visited_User',
+                                                screen: 'UserProfileScreen',
+                                                purpose: `User Visited ${listedUser.username}`,
+                                            });
                                             props.navigation.navigate("UserProfileScreen",{
                                                 listing: listing,
                                                 listedUser: listedUser

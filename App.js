@@ -24,6 +24,7 @@ import MainNavigator from "./app/navigation/MainNavigator";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 import * as Permissions from "expo-permissions";
+import * as Analytics from "expo-firebase-analytics";
 
 
 const rootReducer = combineReducers({
@@ -91,6 +92,10 @@ export default function App() {
     // const handleNotificationAlert = (notification, type) => {
     //     Alert.alert(JSON.stringify(notification));
     // }
+
+    useEffect(() => {
+        Analytics.setDebugModeEnabled(true);
+    });
 
     useEffect(() => {
         getPushNotificationPermissions();
