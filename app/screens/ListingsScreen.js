@@ -285,7 +285,7 @@ const ListingsScreen = (props) => {
     };
 
     const onChangeSearch = (query) => {
-        //console.log("search", query);
+        // console.log("search", query, titleForSearch);
         setSearchQuery(query);
         setIconSet("arrow-left");
 
@@ -294,10 +294,12 @@ const ListingsScreen = (props) => {
                 setSearchData([]);
             }else{
                 const newData = titleForSearch.filter((item) => {
-                    const itemData = item.toUpperCase();
-                    const textData = query.toUpperCase();
+                    if(item !== undefined) {
+                        const itemData = item.toUpperCase();
+                        const textData = query.toUpperCase();
 
-                    return itemData.indexOf(textData) > -1;
+                        return itemData.indexOf(textData) > -1;
+                    }
                 });
                 setSearchData(newData);
             }

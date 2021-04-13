@@ -1,11 +1,19 @@
-import React, { useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import * as ImageManipulator from 'expo-image-manipulator';
 import {ImageBrowser} from 'expo-image-picker-multiple';
+import {translate} from "react-i18next";
+import colors from "../../config/colors";
 
 const ImageBrowserScreen = (props) => {
+    const {t} = props;
     const [loading, setLoading] = useState(false);
-    console.log(props.route.params.from);
+
+    useEffect(() => {
+        props.navigation.setOptions({
+            title: props.t("ImageBrowser:title")
+        })
+    })
 
     const _getHeaderLoader = () => {
         if (loading) {
@@ -20,12 +28,8 @@ const ImageBrowserScreen = (props) => {
         navigation.setOptions({
             headerRight: () => _getHeaderLoader()
         });
-        console.log("Before callback");
         setLoading(true);
-        // callback
-        //     .then(async (photos) => {
         try {
-            console.log("In then callback", photos)
             const cPhotos = [];
             for (let photo of photos) {
                 const pPhoto = await _processImageAsync(photo.uri);
@@ -35,7 +39,6 @@ const ImageBrowserScreen = (props) => {
                     type: 'image/jpg'
                 })
             }
-            console.log("In then", cPhotos);
             setLoading(false);
             if(props.route.params.from === "Edit") {
                 navigation.navigate("ListingEditScreen", {photos: cPhotos});
@@ -45,11 +48,6 @@ const ImageBrowserScreen = (props) => {
         }catch (e) {
             console.log("Catch in function....", e)
         }
-                // })
-            // .catch((err) => {
-            //     setLoading(false);
-            //     console.log("Catch...", err)
-            // });
     };
 
     const _processImageAsync = async (uri) => {
@@ -64,13 +62,13 @@ const ImageBrowserScreen = (props) => {
     const _renderDoneButton = (count, onSubmit) => {
         if (!count) return null;
         return <TouchableOpacity title={'Done'} onPress={onSubmit}>
-            <Text onPress={onSubmit}>Done</Text>
+            <Text style={styles.rightText} onPress={onSubmit}>{t("ImageBrowser:done")}</Text>
         </TouchableOpacity>
     }
 
     const updateHandler = (count, onSubmit) => {
         props.navigation.setOptions({
-            title: `Selected ${count} files`,
+            title: `${t("ImageBrowser:selected")} ${count} ${t("ImageBrowser:files")}`,
             headerRight: () => _renderDoneButton(count, onSubmit)
         });
     };
@@ -86,7 +84,7 @@ const ImageBrowserScreen = (props) => {
     return (
         <View style={[styles.flex, styles.container]}>
             <ImageBrowser
-                max={5}
+                max={10}
                 onChange={updateHandler}
                 callback={imagesCallback}
                 renderSelectedComponent={renderSelectedComponent}
@@ -118,11 +116,18 @@ const styles = StyleSheet.create({
         backgroundColor: '#0580FF'
     },
     countBadgeText: {
-        fontWeight: 'bold',
+        // fontWeight: 'bold',
         alignSelf: 'center',
         padding: 'auto',
         color: '#ffffff'
+    },
+    rightText:{
+        marginTop: 1,
+        marginRight: 10,
+        color: colors.primary,
+        fontSize: 15,
+        fontWeight: "500"
     }
 });
 
-export default ImageBrowserScreen;
+export default translate(["ImageBrowser"], {wait: true})(ImageBrowserScreen);

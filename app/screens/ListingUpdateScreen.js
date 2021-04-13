@@ -178,14 +178,21 @@ const ListingUpdateScreen = (props) => {
                     }}
                     validationSchema={validationSchema}
                 >
-                    <TouchableOpacity style={styles.imageContainer} onPress={() =>  props.navigation.navigate("ImageBrowserScreen", {from: "Update"})}>
-                        {/*{image === props_initial.images[0].url ?*/}
-                        {/*    <Image source={{ uri: image }} style={styles.image} />*/}
-                        {/*    :*/}
-                        {/*    <Image source={{ uri: image }} style={[styles.image, { borderWidth: 3 ,borderColor: "red"}]} />*/}
-                        {/*}*/}
-                        {image && image.map((item) => <Image source={{ uri: item }} style={styles.image} />)}
+                    <TouchableOpacity onPress={() =>  props.navigation.navigate("ImageBrowserScreen", {from: "Update"})} >
+                        {image &&
+                        <View style={styles.imageContainer}>
+                            {image.map((item) => <Image source={{uri: item}} style={styles.image}/>)}
+                        </View>
+                        }
                     </TouchableOpacity>
+                    {/*<TouchableOpacity style={styles.imageContainer} onPress={() =>  props.navigation.navigate("ImageBrowserScreen", {from: "Update"})}>*/}
+                    {/*    /!*{image === props_initial.images[0].url ?*!/*/}
+                    {/*    /!*    <Image source={{ uri: image }} style={styles.image} />*!/*/}
+                    {/*    /!*    :*!/*/}
+                    {/*    /!*    <Image source={{ uri: image }} style={[styles.image, { borderWidth: 3 ,borderColor: "red"}]} />*!/*/}
+                    {/*    /!*}*!/*/}
+                    {/*    {image && image.map((item) => <Image source={{ uri: item }} style={styles.image} />)}*/}
+                    {/*</TouchableOpacity>*/}
                     <FormField
                         maxLength={255}
                         name="title"
@@ -304,12 +311,9 @@ const styles = StyleSheet.create({
     },
     imageContainer:{
         alignItems:'center',
-        backgroundColor: colors.light,
-        height:100,
         justifyContent:'center',
-        overflow:'hidden',
-        // width:100
-        flexDirection: "row"
+        flexDirection: "row",
+        flexWrap: "wrap"
     },
     image:{
         height:100,

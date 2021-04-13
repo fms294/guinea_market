@@ -197,9 +197,17 @@ const ListingEditScreen = (props) => {
                       {/*<FormImagePicker*/}
                       {/*    name="Images"*/}
                       {/*/>*/}
-                      <TouchableOpacity style={styles.imageContainer} onPress={handleImage} >
-                          {!image && <MaterialCommunityIcons color={colors.medium} name="camera" size={40}/>}
-                          {image && image.map((item) => <Image source={{ uri: item }} style={styles.image} />)}
+                      <TouchableOpacity onPress={handleImage} >
+                          {!image &&
+                              <View style={styles.iconContainer}>
+                                  <MaterialCommunityIcons color={colors.medium} name="camera" size={40}/>
+                              </View>
+                          }
+                          {image &&
+                          <View style={styles.imageContainer}>
+                              {image.map((item) => <Image source={{uri: item}} style={styles.image}/>)}
+                          </View>
+                          }
                       </TouchableOpacity>
                       {/*<TouchableOpacity style={styles.imageContainer} onPress={pickImage} >*/}
                       {/*    {!image && <MaterialCommunityIcons color={colors.medium} name="camera" size={40} />}*/}
@@ -353,15 +361,18 @@ const styles = StyleSheet.create({
     picker: {
         width: '70%',
     },
-    imageContainer:{
+    iconContainer:{
         alignItems:'center',
         backgroundColor: colors.light,
         borderRadius:15,
         height:100,
+        justifyContent:'center'
+    },
+    imageContainer:{
+        alignItems:'center',
         justifyContent:'center',
-        overflow:'hidden',
-        // width:"100%",
-        flexDirection: "row"
+        flexDirection: "row",
+        flexWrap: "wrap"
     },
     image:{
         height:100,

@@ -236,3 +236,29 @@ export const sendNotification = (body) => {
             .catch(error => reject(error))
     });
 };
+
+export const deleteConversation = (id) => {
+    console.log("api call id...", id);
+    return new Promise((resolve, reject) => {
+        let user = {};
+        AsyncStorage.getItem("userData")
+            .then((res) => {
+                if (res !== null) {
+                    user = JSON.parse(res);
+                    return(
+                        axios.delete(`${uri}/message/delete/${id}`,
+                            {
+                                headers:{
+                                    Accept: 'application/json',
+                                    'Content-Type': 'application/json',
+                                    Authorization: 'Bearer ' + user.token
+                                }
+                            }).then(res => resolve(res))
+                            .catch(error => reject(error))
+                    );
+                }
+            }).catch((err) => {
+            console.log("Error in apiCall", err);
+        })
+    });
+};

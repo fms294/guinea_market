@@ -1,26 +1,42 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {FlatList, StyleSheet, View, TouchableOpacity, ActivityIndicator, Image, Text} from 'react-native';
+import {
+    FlatList,
+    StyleSheet,
+    View,
+    TouchableOpacity,
+    ActivityIndicator,
+    Image,
+    Text,
+    Alert,
+    RefreshControl
+} from 'react-native';
 
 import ListItem from '../components/lists/ListItem';
 import Screen from '../components/Screen';
 import ListItemSeparator from '../components/lists/ListItemSeparator';
 import ListItemDeleteAction from '../components/lists/ListItemDeleteAction';
-import {fetchOtherUser, receiveMessage, sentMessage} from "../api/apiCall";
+import {conversation, deleteConversation, fetchOtherUser, receiveMessage, sentMessage} from "../api/apiCall";
 import {useSelector} from "react-redux";
 import colors from "../config/colors";
 import Icon from "../components/Icon";
-import {Avatar} from "react-native-paper";
+import {Avatar, IconButton} from "react-native-paper";
+import * as authActions from "../store/actions/auth";
+import {translate} from "react-i18next";
 
 const MessagesScreen = (props) => {
-    const data = props.route.params.data;
+    const {t} = props;
+    const [data, setData] = useState(props.route.params.data);
     const [chats, setChats] = useState([]);
     const [loading, setLoading] = useState(false);
     const [imageName, setImageName] = useState('');
+    // const dataLocal = data;
+    // const global = chats;
 
     const nameImageHandler = (username) => {
         let name = username.split(" ");
         const newName = name.map((name) => name[0]).join('');
-        setImageName(newName.toUpperCase());
+        // setImageName(newName.toUpperCase());
+        return newName.toUpperCase();
     };
 
     useEffect(() => {
@@ -60,12 +76,12 @@ const MessagesScreen = (props) => {
         setLoading(false);
     }, [fetchOtherUser]);
 
-    useEffect(() => {
-        props.navigation.addListener('focus', loadOtherUser);
-        return () => {
-            props.navigation.removeListener('focus', loadOtherUser);
-        };
-    }, [loadOtherUser]);
+    // useEffect(() => {
+    //     props.navigation.addListener('focus', loadOtherUser);
+    //     return () => {
+    //         props.navigation.removeListener('focus', loadOtherUser);
+    //     };
+    // }, [loadOtherUser]);
 
     useEffect(() => {
         setLoading(true);
@@ -73,6 +89,51 @@ const MessagesScreen = (props) => {
             setLoading(false);
         });
     }, [loadOtherUser]);
+
+    // const loadConversation = useCallback(async () => {
+    //     try {
+    //         setLoading(true);
+    //         await data.map(async (item) => {
+    //         await conversation(item)
+    //             .then((res) => {
+    //                 let array = [];
+    //                 let arr = [];
+    //                 let temp = [];
+    //                 let aa = [];
+    //                 if (res !== null) {
+    //                     array = res.data.received.sort((a,b)=>a.updatedAt-b.updatedAt);
+    //                     arr = res.data.sent.sort((a,b)=>a.updatedAt-b.updatedAt);
+    //                     // console.log("converstion...received",array[array.length - 1]);
+    //                     // console.log("converstion... sent",arr[arr.length - 1]);
+    //                     temp.push(array[array.length - 1]);
+    //                     temp.push(arr[arr.length - 1]);
+    //                     aa = temp.sort((a,b)=>a.updatedAt-b.updatedAt);
+    //                     // console.log("final ...",aa[aa.length -1]);
+    //                 }
+    //             }).catch((err) => {
+    //                 console.log("err.....", err);
+    //             })
+    //         })
+    //         setLoading(false);
+    //     } catch (err) {
+    //         setLoading(false);
+    //         console.log("Error in MessageScreen", err);
+    //     }
+    // }, [conversation]);
+    //
+    // useEffect(() => {
+    //     props.navigation.addListener('focus', loadConversation);
+    //     return () => {
+    //         props.navigation.removeListener('focus', loadConversation);
+    //     };
+    // }, [loadConversation]);
+    //
+    // useEffect(() => {
+    //     setLoading(true);
+    //     loadConversation().then(() => {
+    //         setLoading(false);
+    //     });
+    // }, [loadConversation]);
 
     if (loading) {
         return(
@@ -95,6 +156,39 @@ const MessagesScreen = (props) => {
         });
     }
 
+    const deleteChat = async (id) => {
+            Alert.alert(t("message_screen:alert_title"), t("message_screen:alert_msg"), [
+                { text: t("account_screen:no"), style: 'default' },
+                {
+                    text: t("account_screen:yes"),
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            setLoading(true);
+                            await deleteConversation(id)
+                                .then((res) => {
+                                    console.log("response of delete...");
+                                    const values = chats.filter((item) => item.id !== id);
+                                    setChats(values);
+                                    let ids = [];
+                                    values.map((itemInner) => {
+                                        ids.push(itemInner.id);
+                                    })
+                                    console.log(ids);
+                                    setData(ids);
+                                }).catch((err) => {
+                                    console.log("catch in delete...", err);
+                                })
+                            setLoading(false);
+                        }catch (e) {
+                            setLoading(false);
+                            console.log("catch in delete", e);
+                        }
+                    }
+                },
+            ]);
+    }
+
     return (
         <View style={styles.screen}>
                 <FlatList
@@ -108,8 +202,9 @@ const MessagesScreen = (props) => {
                                 style={styles.chatView}
                                 onPress={() => chatHandler(itemData.item)}
                             >
+                                <View style={{flexDirection: "row"}}>
                                 {itemData.item.profile === "" ?
-                                    <Avatar.Text style={{backgroundColor: colors.medium}} size={70} label={imageName} />
+                                    <Avatar.Text style={{backgroundColor: colors.medium}} size={70} label={nameImageHandler(itemData.item.username)} />
                                     :
                                     <Image
                                         style={styles.image}
@@ -118,6 +213,15 @@ const MessagesScreen = (props) => {
                                 }
                                 <View style={{marginHorizontal: 20, justifyContent: "center"}}>
                                     <Text style={{fontSize: 24}}>{itemData.item.username}</Text>
+                                </View>
+                                </View>
+                                <View>
+                                    <IconButton
+                                        icon={"delete"}
+                                        color={colors.danger}
+                                        size={24}
+                                        onPress={() => deleteChat(itemData.item.id)}
+                                    />
                                 </View>
                             </TouchableOpacity>
                         );
@@ -143,10 +247,12 @@ const styles = StyleSheet.create({
     },
     chatView:{
         flexDirection: "row",
+        justifyContent: 'space-between',
+        alignItems: 'center',
         backgroundColor: colors.white,
         paddingVertical: 10,
         paddingHorizontal: 20
     }
 });
 
-export default MessagesScreen;
+export default translate(["message_screen", "account_screen"], {wait: true})(MessagesScreen);

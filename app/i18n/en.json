@@ -218,5 +218,15 @@
     "alert_msg": "Change the values to update profile details",
     "okay": "Okay",
     "toast_msg": "Successfully Updated the Password"
+  },
+  "ImageBrowser" : {
+    "title": "Browse images",
+    "selected": "Selected",
+    "files": "files",
+    "done": "Done"
+  },
+  "message_screen": {
+    "alert_title": "Delete the conversation",
+    "alert_msg": "Are you sure you want to delete this conversation ?"
   }
 }

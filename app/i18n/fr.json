@@ -218,5 +218,15 @@
     "alert_msg": "Modifiez les valeurs pour mettre à jour les détails du profil",
     "okay": "D'accord",
     "toast_msg": "Mise à jour réussie du mot de passe"
+  },
+  "ImageBrowser" : {
+    "title": "Parcourir les images",
+    "selected": "Sélection de",
+    "files": "fichiers",
+    "done": "Fini"
+  },
+  "message_screen": {
+    "alert_title": "Supprimer la conversation",
+    "alert_msg": "Voulez-vous vraiment supprimer cette conversation?"
   }
 }
