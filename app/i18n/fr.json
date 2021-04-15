@@ -227,6 +227,7 @@
   },
   "message_screen": {
     "alert_title": "Supprimer la conversation",
-    "alert_msg": "Voulez-vous vraiment supprimer cette conversation?"
+    "alert_msg": "Voulez-vous vraiment supprimer cette conversation?",
+    "no_message": "Aucune conversation à afficher"
   }
 }
