@@ -12,9 +12,16 @@ export const signup = (username, phone, password) => {
     return async (dispatch) => {
         console.log("in action...",username, phone, password, `${uri}/users/signup`);
         try{
-            const token = await AsyncStorage.getItem("notification_token");
-            const resToken = JSON.parse(token);
-            console.log("in action... token...",resToken.token);
+            let token = "";
+            await AsyncStorage.getItem("notification_token")
+                .then((res) => {
+                    console.log(res);
+                    if(res !== null){
+                        const temp = JSON.parse(res);
+                        token = temp.token;
+                    }
+                })
+            console.log("in action... token...",token);
             const response = await fetch(`${uri}/users/signup`,
                 {
                     method: 'POST',
@@ -26,7 +33,7 @@ export const signup = (username, phone, password) => {
                         phone,
                         password,
                         profile_img: "",
-                        notification_token: resToken.token
+                        notification_token: token
                     }),
                 });
             if(!response.ok){
@@ -59,9 +66,16 @@ export const signup = (username, phone, password) => {
 export const login = (phone, password) => {
     return async (dispatch) => {
         try{
-            const token = await AsyncStorage.getItem("notification_token");
-            const resToken = JSON.parse(token);
-            console.log("in action... token...",resToken.token);
+            let token = "";
+            await AsyncStorage.getItem("notification_token")
+                .then((res) => {
+                    console.log(res);
+                    if(res !== null){
+                        const temp = JSON.parse(res);
+                        token = temp.token;
+                    }
+                })
+            console.log("in action... token...",token);
             const response = await fetch(`${uri}/users/login`,
                 {
                     method: 'POST',
@@ -71,7 +85,7 @@ export const login = (phone, password) => {
                     body: JSON.stringify({
                         phone,
                         password,
-                        notification_token: resToken.token
+                        notification_token: token
                     }),
                 });
             //console.log("response.. login",await response.json())

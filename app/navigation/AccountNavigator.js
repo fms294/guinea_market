@@ -11,6 +11,7 @@ import ChatScreen from "../screens/ChatScreen";
 import OwnerProfileScreen from "../screens/OwnerProfileScreen";
 import ImageBrowserScreen from "../components/UI/ImageBrowserScreen";
 import colors from "../config/colors";
+import WelcomeScreen from "../screens/WelcomeScreen";
 
 const Stack = createStackNavigator();
 
@@ -29,6 +30,7 @@ const AccountNavigator = () => (
         <Stack.Screen name={"ChatScreen"} component={ChatScreen} />
         <Stack.Screen name={"AboutScreen"} component={AboutScreen} />
         <Stack.Screen name={"SettingScreen"} component={SettingScreen} />
+        <Stack.Screen name={"WelcomeScreen"} component={WelcomeScreen} options={{ headerShown: false}}/>
     </Stack.Navigator>
 );
 

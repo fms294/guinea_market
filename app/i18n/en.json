@@ -129,7 +129,11 @@
     "filter_empty" : "No Filter Results",
     "alert_title_logout": "Notification Error",
     "alert_msg_logout": "Log back in to receive a notification",
-    "re-login": "Re-Login"
+    "re-login": "Re-Login",
+    "alert_login_title" : "Login Required",
+    "alert_login_msg" : "Please register or login first",
+    "cancel" : "Cancel",
+    "login" : "Login"
   },
   "listing_add": {
     "title": "Title",

@@ -129,7 +129,11 @@
     "filter_empty" : "Aucun résultat de filtre",
     "alert_title_logout": "Erreur de notification",
     "alert_msg_logout": "Reconnectez-vous pour recevoir une notification",
-    "re-login": "Se reconnecter"
+    "re-login": "Se reconnecter",
+    "alert_login_title" : "Connexion requise",
+    "alert_login_msg" : "Veuillez d'abord vous inscrire ou vous connecter",
+    "cancel" : "Annuler",
+    "login" : "Connexion"
   },
   "listing_add": {
     "title": "Titre",

@@ -121,7 +121,7 @@ export const update_item = (finalData, id) => {
 //Fetch all items from DB
 export const fetchFeed = () => {
     return async (dispatch, getState) => {
-        const token = getState().auth.token;
+        // const token = getState().auth.token;
         //console.log("in action", token);
         try{
             const response = await fetch(`${uri}/listing/fetch`,
@@ -129,7 +129,7 @@ export const fetchFeed = () => {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: "Bearer " + token,
+                        // Authorization: "Bearer " + token,
                     }
                 });
             if(!response.ok){

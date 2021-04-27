@@ -8,9 +8,9 @@ import {
     ScrollView,
     Dimensions,
     TouchableOpacity,
-    ActivityIndicator
+    ActivityIndicator,
+    Alert
 } from 'react-native';
-//import {Image} from 'react-native-expo-image-cache';
 import { SliderBox } from "react-native-image-slider-box";
 import {useSelector} from "react-redux";
 import {fetchOtherUser, sendMessage, sendNotification} from "../api/apiCall";
@@ -25,11 +25,16 @@ import colors from '../config/colors';
 import Text from '../components/Text';
 import {Avatar, IconButton, Snackbar, TextInput} from "react-native-paper";
 import * as Analytics from 'expo-firebase-analytics';
+import AsyncStorage from "@react-native-community/async-storage";
+import WelcomeScreen from "./WelcomeScreen";
+import * as authActions from "../store/actions/auth";
 
 const ListingDetailsScreen = (props) => {
     const {t, i18n} = props;
-    const ownerId = useSelector((state) => state.auth.userData.userId);
-    const ownerName = useSelector((state) => state.auth.userData.username);
+    // const ownerId = useSelector((state) => state.auth.userData.userId);
+    // const ownerName = useSelector((state) => state.auth.userData.username);
+    const [ownerId,setOwnerId] = useState("");
+    const [ownerName, setOwnerName] = useState("");
     const listing = props.route.params.listing;
     const images = props.route.params.images;
     const [listedUser, setListedUser] = useState({});
@@ -37,6 +42,7 @@ const ListingDetailsScreen = (props) => {
     const [visible, setVisible] = useState(false);
     const [imageName, setImageName] = useState('');
     const [loading, setLoading] = useState(false);
+    const [login, setLogin] = useState(false);
 
     const nameImageHandler = (nameData) => {
         let name = nameData.split(" ");
@@ -49,6 +55,22 @@ const ListingDetailsScreen = (props) => {
             //title: props.route.params.listing.title,
             headerShown: false
         })
+    })
+
+    useEffect(() => {
+        AsyncStorage.getItem("userData")
+            .then((res) => {
+                setLogin(false);
+                if(res !== null) {
+                    const resData = JSON.parse(res);
+                   //console.log("res..", resData);
+                    setOwnerId(resData.userData.userId);
+                    setOwnerName(resData.userData.username);
+                }
+            })
+            .catch((err) => {
+                console.log("catch", err)
+            })
     })
 
     useEffect(() => {
@@ -106,14 +128,26 @@ const ListingDetailsScreen = (props) => {
                 message_data: text,
                 receiver: listing.owner
             }
-            await sendMessage(messageObj)
-                .then((res) => {
-                    // console.log("Message send", res);
+            await AsyncStorage.getItem("userData")
+                .then(async (res) => {
+                    console.log("res..", res)
+                    if(res === null) {
+                        throw new Error("Can't send message")
+                    }else {
+                        await sendMessage(messageObj)
+                            .then((res) => {
+                                // console.log("Message send", res);
+                            }).catch((err) => {
+                                console.log("Message send error", err);
+                            })
+                    }
                 }).catch((err) => {
-                    console.log("Message send error", err);
+                console.log("err..", err)
+                    throw new Error("Can't send message")
                 })
         } catch (err) {
-            console.log(err);
+            console.log("err in catch",err);
+            throw new Error("Can't send message")
         }
     }
 
@@ -163,12 +197,51 @@ const ListingDetailsScreen = (props) => {
         );
     }
 
+    const welcome = () => {
+        props.navigation.navigate("WelcomeScreen", {
+            listing : listing,
+            images: images
+        })
+    }
+
+    const profileHandler = async () => {
+        await AsyncStorage.getItem("userData")
+            .then((res) => {
+                if(res !== null) {
+                    if(ownerId === listing.owner) {
+                        props.navigation.navigate("AccountNavigator")
+                    }else {
+                        props.navigation.navigate("UserProfileScreen",{
+                            listing: listing,
+                            listedUser: listedUser
+                        })
+                    }
+                }else {
+                    console.log("else...");
+                    Alert.alert(t("listing_screen:alert_login_title"), t("listing_screen:alert_login_msg"), [
+                        { text: t("listing_screen:cancel"), style: 'default' },
+                        {
+                            text: t("listing_screen:login"),
+                            style: 'destructive',
+                            onPress: async () => {
+                                setLogin(true);
+                            },
+                        }
+                    ]);
+                }
+            }).catch((err) => {
+                console.log(err);
+            })
+    };
+
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : ""}
             keyboardVerticalOffset={50}
             style={{flex:1}}
         >
+            {login ?
+                <>{welcome()}</> :
         <ScrollView>
                 <SliderBox
                     resize={"cover"}
@@ -214,49 +287,51 @@ const ListingDetailsScreen = (props) => {
                             <>
                                 {ownerId === listing.owner ? <></> :
                                     <View style={{flexDirection: "row", marginTop: 20}}>
-                                        <TextInput
-                                            style={{flex:1}}
-                                            label={t("detail_screen:input_label")}
-                                            mode={"outlined"}
-                                            placeholder={t("detail_screen:input_placeholder")}
-                                            value={text}
-                                            onChangeText={text => setText(text)}
-                                        />
-                                        <IconButton
-                                            icon="send"
-                                            color={colors.primary}
-                                            size={30}
-                                            style={{marginTop:12}}
-                                            onPress={() => {
-                                                if(text !== ''){
-                                                    setText("")
-                                                    onToggleSnackBar()
-                                                    sendMessageHandler().then(() => {
-                                                        // console.log("listed token", listedUser.userNotification_token, text, ownerName);
-                                                        sendNotificationHandler(listedUser.userNotification_token, ownerName, text, ownerId)
-                                                    })
+                                    <TextInput
+                                        style={{flex: 1}}
+                                        label={t("detail_screen:input_label")}
+                                        mode={"outlined"}
+                                        placeholder={t("detail_screen:input_placeholder")}
+                                        value={text}
+                                        onChangeText={text => setText(text)}
+                                    />
+                                    <IconButton
+                                        icon="send"
+                                        color={colors.primary}
+                                        size={30}
+                                        style={{marginTop: 12}}
+                                        onPress={() => {
+                                        if (text !== '') {
+                                        setText("")
+                                        console.log("owner", ownerId === listing.owner);
+                                        sendMessageHandler()
+                                            .then(() => {
+                                                console.log("listed token", listedUser);
+                                                onToggleSnackBar();
+                                                if(listedUser.userNotification_token !== "") {
+                                                    sendNotificationHandler(listedUser.userNotification_token, ownerName, text, ownerId)
                                                 }
-                                            }}
-                                        />
+                                            }).catch((err) => {
+                                                Alert.alert(t("listing_screen:alert_login_title"), t("listing_screen:alert_login_msg"), [
+                                                    { text: t("listing_screen:cancel"), style: 'default' },
+                                                    {
+                                                        text: t("listing_screen:login"),
+                                                        style: 'destructive',
+                                                        onPress: async () => {
+                                                            setLogin(true);
+                                                        },
+                                                    }
+                                        ]);
+                                    console.log("erros..", err)
+                                })
+                                }
+                                }}
+                                    />
                                     </View>
                                 }
                                 <TouchableOpacity
                                     style={{flexDirection: "row", backgroundColor: colors.white, paddingHorizontal: 25, paddingVertical: 15,marginTop: 20, borderRadius: 20}}
-                                    onPress={async () => {
-                                        if(ownerId === listing.owner){
-                                            props.navigation.navigate("AccountNavigator")
-                                        }else {
-                                            // await Analytics.logEvent('ButtonTapped', {
-                                            //     name: 'Visited_User',
-                                            //     screen: 'UserProfileScreen',
-                                            //     purpose: `User Visited ${listedUser.username}`,
-                                            // });
-                                            props.navigation.navigate("UserProfileScreen",{
-                                                listing: listing,
-                                                listedUser: listedUser
-                                            })
-                                        }
-                                    }}
+                                    onPress={() => { profileHandler() }}
                                 >
                                     {listedUser.userImage === "" ?
                                         <Avatar.Text style={{backgroundColor: colors.medium}} size={80} label={imageName} />
@@ -278,7 +353,7 @@ const ListingDetailsScreen = (props) => {
                     </>
                 }
             </View>
-        </ScrollView>
+        </ScrollView> }
             <Snackbar
                 visible={visible}
                 duration={7000}

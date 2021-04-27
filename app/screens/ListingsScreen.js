@@ -52,17 +52,19 @@ const ListingsScreen = (props) => {
 
     useEffect(() => {
         AsyncStorage.getItem("notification_token").then((res) => {
-            const resToken = JSON.parse(res);
-            if(userData.userData.userNotification_token !== resToken.token){
-                Alert.alert(t("listing_screen:alert_title_logout"), t("listing_screen:alert_msg_logout"), [
-                    {
-                        text: t("listing_screen:re-login"),
-                        style: 'destructive',
-                        onPress: async () => {
-                            await dispatch(authActions.logout());
+            if(res !== null) {
+                const resToken = JSON.parse(res);
+                if(userData.userData.userNotification_token !== resToken.token){
+                    Alert.alert(t("listing_screen:alert_title_logout"), t("listing_screen:alert_msg_logout"), [
+                        {
+                            text: t("listing_screen:re-login"),
+                            style: 'destructive',
+                            onPress: async () => {
+                                await dispatch(authActions.logout());
+                            },
                         },
-                    },
-                ]);
+                    ]);
+                }
             }
             // console.log("in listings... token...",resToken.token);
         });

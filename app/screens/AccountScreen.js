@@ -10,6 +10,8 @@ import * as authActions from "../store/actions/auth";
 import {Button, Avatar} from "react-native-paper";
 import { translate } from 'react-i18next';
 import {receiveMessage, sentMessage, fetchOwner} from "../api/apiCall";
+import AsyncStorage from "@react-native-community/async-storage";
+import {Ionicons} from "@expo/vector-icons";
 
 const AccountScreen = (props) => {
     const {t} = props;
@@ -28,23 +30,29 @@ const AccountScreen = (props) => {
     };
 
     const loadOwner = useCallback(async () => {
-        setLoading(true);
         try {
-            await fetchOwner()
+            AsyncStorage.getItem("userData")
                 .then(async (res) => {
-                    // console.log("resdata receive", res.data);
-                    setUserData(res.data);
-                    if(res.data.profile_img === ""){
-                        nameImageHandler(res.data.username)
+                    if(res !== null) {
+                        setLoading(true);
+                        await fetchOwner()
+                            .then(async (res) => {
+                                // console.log("resdata receive", res.data);
+                                setUserData(res.data);
+                                if(res.data.profile_img === ""){
+                                    nameImageHandler(res.data.username)
+                                }
+                            }).catch((err) => {
+                                console.log("err.....", err);
+                            })
+                        setLoading(false);
                     }
                 }).catch((err) => {
-                    console.log("err.....", err);
-                })
+                    console.log("err...", err);
+            })
         } catch (err) {
             console.log("Error in MessageScreen", err);
-            setLoading(false);
         }
-        setLoading(false);
     }, [fetchOwner]);
 
     useEffect(() => {
@@ -185,6 +193,25 @@ const AccountScreen = (props) => {
         },
     ];
 
+    const menuItemsWithoutUser = [
+        {
+            title: t("account_screen:settings"),
+            icon: {
+                name: "cog",
+                backgroundColor: colors.black,
+            },
+            targetScreen: "SettingScreen",
+        },
+        {
+            title: t("account_screen:about"),
+            icon: {
+                name: "information-variant",
+                backgroundColor: colors.backgroundImage,
+            },
+            targetScreen: "AboutScreen",
+        },
+    ];
+
     const messageHandler = () => {
         // await loadReceivedMessage();
         // await loadSentMessage();
@@ -250,6 +277,21 @@ const AccountScreen = (props) => {
                 {/*        props.navigation.navigate("OwnerProfileScreen")*/}
                 {/*    }}*/}
                 {/*/>*/}
+                {userData.length === 0 ?
+                    <>
+                    <TouchableOpacity
+                        style={{justifyContent: 'center', flexDirection: "row", backgroundColor: colors.white, padding: 30}}
+                        onPress={() => {
+                            props.navigation.navigate("WelcomeScreen", {
+                                account: "account"
+                            })
+                        }}
+                    >
+                        <Ionicons name={"enter"} size={34} color={colors.primary}/>
+                        <Text style={{fontSize: 30, color: colors.primary}}>{" "+t("welcome_screen:login")}</Text>
+                    </TouchableOpacity>
+                    </>
+                    :
                 <TouchableOpacity
                     style={{flexDirection: "row", backgroundColor: colors.white, padding: 20}}
                         onPress={() => {
@@ -273,10 +315,11 @@ const AccountScreen = (props) => {
                         <Text style={{fontSize: 15, color:colors.medium}}>{userData.phone}</Text>
                     </View>
                 </TouchableOpacity>
+                }
             </View>
             <View style={styles.container}>
                 <FlatList
-                    data={menuItems}
+                    data={userData.length === 0 ? menuItemsWithoutUser : menuItems}
                     keyExtractor={menuItem => menuItem.title}
                     ItemSeparatorComponent={ListItemSeparator}
                     renderItem={({ item }) =>{
@@ -302,16 +345,20 @@ const AccountScreen = (props) => {
                 }
                 />
             </View>
-            <View style={styles.container}>
-                <Button
-                    style={styles.button}
-                    labelStyle={styles.buttonText}
-                    icon={"logout"}
-                    color={colors.dark}
-                    uppercase={false}
-                    mode={"outline"}
-                    onPress={() => logoutHandler()}>{t("account_screen:logout")}</Button>
-            </View>
+            {userData.length === 0 ?
+                <></>
+                :
+                <View style={styles.container}>
+                    <Button
+                        style={styles.button}
+                        labelStyle={styles.buttonText}
+                        icon={"logout"}
+                        color={colors.dark}
+                        uppercase={false}
+                        mode={"outline"}
+                        onPress={() => logoutHandler()}>{t("account_screen:logout")}</Button>
+                </View>
+            }
         </View>
     )
 }

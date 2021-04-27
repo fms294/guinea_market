@@ -9,7 +9,7 @@ const initialState = {
 export default (state = initialState, action) => {
     switch(action.type){
         case USER_SIGNUP:
-            //console.log("in reducers..", action);
+            // console.log("in reducers..", action.userData);
             return{
                 ...state,
                 token: action.token,

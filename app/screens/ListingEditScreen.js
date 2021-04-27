@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
     View,
     StyleSheet,
@@ -26,6 +26,10 @@ import { useDispatch } from "react-redux";
 import {translate} from "react-i18next";
 import colors from "../config/colors";
 import * as Analytics from "expo-firebase-analytics";
+import AsyncStorage from "@react-native-community/async-storage";
+import {Button} from "react-native-paper";
+import {conversation} from "../api/apiCall";
+import {Ionicons} from "@expo/vector-icons";
 
 const phoneRegEx = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
@@ -42,12 +46,64 @@ const ListingEditScreen = (props) => {
     const dispatch = useDispatch();
     // const [uploadVisible, setUploadVisible] = useState(false);
     // const [progress, setProgress] = useState(0);
+    // let ownerId = "";
+    const [ownerId, setOwnerId] = useState("");
     const [image, setImage] = useState(null);
     const [imageData, setImageData] = useState(null);
     const [category, setCategory] = useState("Vehicles");
     const [sub_category, setSub_category] = useState("Cars");
     const [prefecture, setPrefecture] = useState("Conakry");
     const [loading, setLoading] = useState(false);
+    const [login, setLogin] = useState(false);
+
+    useEffect(() => {
+        props.navigation.addListener('focus', loadScreen);
+        return () => {
+            props.navigation.removeListener('focus', loadScreen);
+        };
+    }, [loadScreen]);
+
+    useEffect(() => {
+        loadScreen();
+    }, [loadScreen]);
+
+    const loadScreen = async () => {
+        try{
+            setLoading(true);
+            await AsyncStorage.getItem("userData")
+                .then((res) => {
+                    if(res !== null) {
+                        const resData = JSON.parse(res);
+                        console.log("res..", resData);
+                        setOwnerId(resData.userData.userId);
+                        //setLogin(true);
+                        setLoading(false);
+                    }
+                })
+                .catch((err) => {
+                    setLoading(false);
+                    console.log("catch", err)
+                })
+            setLoading(false);
+        }catch (err) {
+            console.log("err...", err);
+        }
+    };
+
+    // useEffect(() => {
+    //     AsyncStorage.getItem("userData")
+    //         .then((res) => {
+    //             if(res !== null) {
+    //                 const resData = JSON.parse(res);
+    //                 console.log("res..", resData);
+    //                 setOwnerId(resData.userData.userId);
+    //                 //setLogin(true);
+    //             }
+    //         })
+    //         .catch((err) => {
+    //             console.log("catch", err)
+    //         })
+    // })
 
     useEffect(() => {
         const {params} = props.route;
@@ -131,7 +187,36 @@ const ListingEditScreen = (props) => {
         }
     }
 
+    const welcome = () => {
+        props.navigation.navigate("WelcomeScreen", {
+            edit : "edit_screen"
+        })
+    }
+
+    if (loading) {
+        return (
+            <View style={styles.centered}>
+                <ActivityIndicator size={"large"} color={colors.primary}/>
+            </View>
+        );
+    }
+
     return (
+        <>
+        {ownerId === "" ?
+            <>
+                <View style={styles.centered}>
+                    <Button
+                        color={colors.primary}
+                        uppercase={false}
+                        mode={"outlined"}
+                        onPress={() => welcome()}>
+                        <Ionicons name={"enter"} size={30}/>
+                        <Text style={styles.buttonText}>{" " +t("welcome_screen:login")}</Text>
+                    </Button>
+                </View>
+            </>
+            :
           <ScrollView>
               <Screen style={styles.container}>
                   {/*<UploadScreen*/}
@@ -340,10 +425,17 @@ const ListingEditScreen = (props) => {
                   </Form>
               </Screen>
           </ScrollView>
+                  }
+            </>
     );
 };
 
 const styles = StyleSheet.create({
+    centered:{
+        flex:1,
+        justifyContent: "center",
+        alignItems: "center"
+    },
     container: {
         padding: 10,
     },
@@ -379,6 +471,9 @@ const styles = StyleSheet.create({
         width:100,
         borderRadius:15,
         marginHorizontal: 2
+    },
+    buttonText:{
+        fontSize: 30
     }
 });
 

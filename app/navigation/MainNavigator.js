@@ -18,19 +18,25 @@ const MainNavigator = () => {
         );
     }
 
-    if(token === null){
-        return(
-            <NavigationContainer>
-                <AuthNavigator />
-            </NavigationContainer>
-        );
-    }else {
-        return(
-            <NavigationContainer>
-                <AppNavigator/>
-            </NavigationContainer>
-        );
-    }
+    return (
+        <NavigationContainer>
+            <AppNavigator/>
+        </NavigationContainer>
+    );
+
+    // if(token === null){
+    //     return(
+    //         <NavigationContainer>
+    //             <AuthNavigator />
+    //         </NavigationContainer>
+    //     );
+    // }else {
+    //     return(
+    //         <NavigationContainer>
+    //             <AppNavigator/>
+    //         </NavigationContainer>
+    //     );
+    // }
 }
 
 export default MainNavigator;

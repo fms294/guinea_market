@@ -145,6 +145,18 @@ const WelcomeScreen = (props) => {
         if(parseInt(serverOtp) === parseInt(values.otp)){
             console.log("matched", registrationValues);
             await dispatch(authActions.signup(registrationValues.name, registrationValues.phone, registrationValues.password));
+            if(props.route.params.listing) {
+                props.navigation.navigate("ListingDetailsScreen",{
+                    listing: props.route.params.listing,
+                    images : props.route.params.images
+                });
+            }
+            if(props.route.params.edit) {
+                props.navigation.navigate("ListingEditScreen")
+            }
+            if(props.route.params.account){
+                props.navigation.navigate("AccountScreen");
+            }
         } else {
             console.log("wrong");
             Alert.alert(t("welcome_screen:confirmOtp_alert"), t("welcome_screen:confirmOtp_alert_msg"), [{text: t("welcome_screen:retry")}]);
@@ -176,6 +188,18 @@ const WelcomeScreen = (props) => {
                 //await dispatch(authActions.signup(values.name, values.phone, values.password));
             }else {
                 await dispatch(authActions.login(values.phone, values.password));
+                if(props.route.params.listing) {
+                    props.navigation.navigate("ListingDetailsScreen",{
+                        listing: props.route.params.listing,
+                        images : props.route.params.images
+                    });
+                }
+                if(props.route.params.edit) {
+                    props.navigation.navigate("ListingEditScreen");
+                }
+                if(props.route.params.account){
+                    props.navigation.navigate("AccountScreen");
+                }
             }
             setLoginFailed(false);
         } catch (error) {
@@ -522,22 +546,46 @@ const WelcomeScreen = (props) => {
                 }
             </View>
             <View style={styles.buttonsContainer}>
-                {modalVisible ? <></> : <><TouchableOpacity style={[styles.button,
-                    {backgroundColor: colors.primary}]}
-                                   onPress={() => {
-                                       setTitle(t("welcome_screen:login"))
-                                       setModalVisible(true)
-                                   }}>
-                    <Text style={styles.text}>{t("welcome_screen:login")}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.button,
-                    { backgroundColor: colors.primary} ]}
-                                  onPress={() => {
-                                      setTitle(t("welcome_screen:register"))
-                                      setModalVisible(true)
-                                  }}>
-                    <Text style={styles.text}>{t("welcome_screen:register")}</Text>
-                </TouchableOpacity></>}
+                {modalVisible ? <></> :
+                    <>
+                        <TouchableOpacity style={[styles.button,
+                            {backgroundColor: colors.primary}]}
+                                           onPress={() => {
+                                               setTitle(t("welcome_screen:login"))
+                                               setModalVisible(true)
+                                           }}>
+                            <Text style={styles.text}>{t("welcome_screen:login")}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.button,
+                            { backgroundColor: colors.primary} ]}
+                                          onPress={() => {
+                                              setTitle(t("welcome_screen:register"))
+                                              setModalVisible(true)
+                                          }}>
+                            <Text style={styles.text}>{t("welcome_screen:register")}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.button,
+                            { backgroundColor: colors.primary} ]}
+                                          onPress={() => {
+                                              //setTitle(t("listing_screen:cancel"))
+                                              //setModalVisible(!modalVisible)
+                                              if(props.route.params.listing) {
+                                                  props.navigation.navigate("ListingDetailsScreen",{
+                                                      listing: props.route.params.listing,
+                                                      images : props.route.params.images
+                                                  });
+                                              }
+                                              if(props.route.params.edit) {
+                                                  props.navigation.navigate("ListingEditScreen")
+                                              }
+                                              if(props.route.params.account){
+                                                  props.navigation.navigate("AccountScreen");
+                                              }
+                                          }}>
+                            <Text style={styles.text}>{t("listing_screen:cancel")}</Text>
+                        </TouchableOpacity>
+                    </>
+                }
             </View>
         </ImageBackground>
     );

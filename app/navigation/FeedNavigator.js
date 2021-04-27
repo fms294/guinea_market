@@ -6,6 +6,7 @@ import ListingDetailsScreen from '../screens/ListingDetailsScreen';
 import UserProfileScreen from "../screens/UserProfileScreen";
 import ChatScreen from "../screens/ChatScreen";
 import colors from "../config/colors";
+import WelcomeScreen from "../screens/WelcomeScreen";
 
 const Stack = createStackNavigator();
 
@@ -18,6 +19,7 @@ const FeedNavigator = () => (
     >
         <Stack.Screen name={"ListingsScreen"} component={ListingsScreen} />
         <Stack.Screen name={"ListingDetailsScreen"} component={ListingDetailsScreen} />
+        <Stack.Screen name={"WelcomeScreen"} component={WelcomeScreen} options={{ headerShown: false}}/>
         <Stack.Screen name={"UserProfileScreen"} component={UserProfileScreen} />
         <Stack.Screen name={"ChatScreen"} component={ChatScreen} />
     </Stack.Navigator>
