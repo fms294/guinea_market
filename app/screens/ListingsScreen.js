@@ -28,6 +28,7 @@ import * as authActions from "../store/actions/auth";
 import * as listingActions from "../store/actions/listing";
 import * as Notifications from "expo-notifications";
 import AsyncStorage from "@react-native-community/async-storage";
+import {ImageBackground} from "react-native-web";
 
 const ListingsScreen = (props) => {
     const {t, i18n} = props;
@@ -311,8 +312,9 @@ const ListingsScreen = (props) => {
     if (loading) {
         return (
             <View style={styles.centered}>
+                <Text style={styles.logoName}>DIBIDA</Text>
+                <Image style={styles.logo} source={require("../assets/100.gif")}/>
                 {/*<ActivityIndicator size={"large"} color={colors.primary}/>*/}
-                <Image style={styles.logo} source={require("../assets/logo.png")}/>
             </View>
         );
     }
@@ -687,9 +689,14 @@ const styles = StyleSheet.create({
         marginHorizontal: 50
     },
     logo:{
-        width:100,
-        height:100,
-        borderRadius:200
+        width:70,
+        height:70,
+        //borderRadius:200
+    },
+    logoName: {
+        color: colors.primary,
+        fontSize: 50,
+        fontWeight: "bold"
     },
 })
 

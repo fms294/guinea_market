@@ -18,7 +18,7 @@
     ],
     "ios": {
       "bundleIdentifier": "com.guineamarket.dibida",
-      "buildNumber": "1.0.18",
+      "buildNumber": "1.0.20",
       "supportsTablet": true,
       "googleServicesFile": "./app/GoogleService-Info.plist"
     },

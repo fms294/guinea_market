@@ -85,7 +85,7 @@ export default function App() {
             );
             // this.setState({ expoPushToken: token });
         } else {
-            alert('Must use physical device for Push Notifications');
+            //alert('Must use physical device for Push Notifications');
         }
     }
 
