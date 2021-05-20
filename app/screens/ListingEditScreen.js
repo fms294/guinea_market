@@ -19,7 +19,6 @@ import {
   SubmitButton,
 } from "../components/forms";
 import Screen from "../components/Screen";
-import UploadScreen from "./UploadScreen";
 import {categories, prefectures} from "../data/data";
 import * as listingAction from "../store/actions/listing";
 import { useDispatch } from "react-redux";
@@ -219,11 +218,6 @@ const ListingEditScreen = (props) => {
             :
           <ScrollView>
               <Screen style={styles.container}>
-                  {/*<UploadScreen*/}
-                  {/*    onDone={() => setUploadVisible(false)}*/}
-                  {/*    progress={progress}*/}
-                  {/*    visible={uploadVisible}*/}
-                  {/*/>*/}
                   <Form
                       initialValues={{
                           title: "",
