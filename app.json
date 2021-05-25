@@ -24,13 +24,14 @@
     },
     "android": {
       "package": "com.guineamarket.dibida",
-      "versionCode": 2,
+      "versionCode": 3,
       "useNextNotificationsApi": true,
       "adaptiveIcon": {
         "foregroundImage": "./app/assets/adaptive-icon.png",
         "backgroundColor": "#DA70D6"
       },
-      "googleServicesFile": "./app/google-services.json"
+      "googleServicesFile": "./app/google-services.json",
+      "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE", "CAMERA"]
     },
     "web": {
       "favicon": "./assets/favicon.png",
