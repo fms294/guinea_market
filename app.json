@@ -18,12 +18,12 @@
     ],
     "ios": {
       "bundleIdentifier": "com.guineamarket.dibida",
-      "buildNumber": "1.0.22",
+      "buildNumber": "1.0.23",
       "supportsTablet": true,
       "googleServicesFile": "./app/GoogleService-Info.plist",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "The application requires access to your photos to allow you to upload a profile picture & Posting ADs.",
-        "NSContactsUsageDescription": "The application requires access to your photos to allow you to upload a profile picture & Posting ADs."
+        "NSCameraUsageDescription": "The application requires access to your photos to allow you to upload a profile picture & Posting ADs."
       }
     },
     "android": {
