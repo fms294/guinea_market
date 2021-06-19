@@ -160,6 +160,7 @@
     "posted" : "Listé",
     "desc": "Description",
     "listings": "Annonces",
+    "joined": "Inscrit le",
     "input_label": "Envoyer un message au propriétaire",
     "input_placeholder": "Par exemple: Intéressé par l'achat de votre produit",
     "toast_msg": "Message envoyé au propriétaire.",

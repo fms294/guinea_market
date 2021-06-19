@@ -160,6 +160,7 @@
     "posted" : "Listed",
     "desc": "Description",
     "listings": "Listings",
+    "joined": "Joined on",
     "input_label": "Send Message to Owner",
     "input_placeholder": "For example: : Interested in buying your product",
     "toast_msg": "Message sent to owner.",

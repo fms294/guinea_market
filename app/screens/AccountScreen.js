@@ -5,16 +5,20 @@ import ListItem from '../components/lists/ListItem';
 import colors from '../config/colors';
 import Icon from  '../components/Icon';
 import ListItemSeparator from '../components/lists/ListItemSeparator';
+import moment from "moment";
 import {useDispatch, useSelector} from "react-redux";
 import * as authActions from "../store/actions/auth";
 import {Button, Avatar} from "react-native-paper";
-import { translate } from 'react-i18next';
+import {translate} from "react-i18next";
+import frMoment from "moment/locale/fr";
+import enMoment from "moment/locale/en-ca";
+
 import {receiveMessage, sentMessage, fetchOwner} from "../api/apiCall";
 import AsyncStorage from "@react-native-community/async-storage";
 import {Ionicons} from "@expo/vector-icons";
 
 const AccountScreen = (props) => {
-    const {t} = props;
+    const {t, i18n} = props;
     const dispatch = useDispatch();
     //const userData = useSelector((state) => state.auth.userData);
     const [receiver, setReceiver] = useState([]);
@@ -258,6 +262,17 @@ const AccountScreen = (props) => {
         ]);
     }
 
+    const printDate = (lang, type) => {
+        moment.updateLocale(lang, type)
+        return(
+            <>
+                <Text style={styles.createdAt}>
+                    {t("detail_screen:joined")} {moment(userData.createdAt).format('DD MMMM y')}
+                </Text>
+            </>
+        );
+    }
+
     if(loading){
         return (
             <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
@@ -313,6 +328,11 @@ const AccountScreen = (props) => {
                     <View style={{marginHorizontal: 20, justifyContent: "center"}}>
                         <Text style={{fontSize: 28}}>{userData.username}</Text>
                         <Text style={{fontSize: 15, color:colors.medium}}>{userData.phone}</Text>
+                        {i18n.language === 'fr' ? (
+                            printDate("fr", "frMoment")
+                        ) : (
+                            printDate("en", "enMoment")
+                        )}
                     </View>
                 </TouchableOpacity>
                 }
@@ -378,6 +398,10 @@ const styles = StyleSheet.create({
     },
     image:{
         backgroundColor: colors.medium,
+    },
+    createdAt: {
+        fontSize: 15,
+        color:colors.medium
     }
 })
 

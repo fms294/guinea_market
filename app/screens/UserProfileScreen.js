@@ -106,6 +106,17 @@ const UserProfileScreen = (props) => {
         Linking.openURL(`https://api.whatsapp.com/send?phone=224${phone}`);
         // Linking.openURL(`wa.me/224${phone}?text=HI`);
     };
+    
+    const printDate = (lang, type) => {
+        moment.updateLocale(lang, type)
+        return(
+            <>
+                <Text style={styles.createdAt}>
+                    {t("detail_screen:joined")} {moment(userData.createdAt).format('DD MMMM y')}
+                </Text>
+            </>
+        );
+    }
 
     if (loading) {
         return (
@@ -136,6 +147,12 @@ const UserProfileScreen = (props) => {
                     </>
                 }
                 <Text style={styles.username}>{userData.username}</Text>
+                {i18n.language === 'fr' ? (
+                    printDate("fr", "frMoment")
+                ) : (
+                    printDate("en", "enMoment")
+                )}
+                {/* <Text style={styles.createdAt}>Joined on {moment(userData.createdAt).format('DD MMMM y')}</Text> */}
                 <TouchableOpacity
                     style={{flexDirection: "row"}}
                     onPress={() => {
@@ -247,6 +264,10 @@ const styles = StyleSheet.create({
     },
     dataView:{
         flex: 2,
+    },
+    createdAt: {
+        fontSize: 15,
+        color:colors.medium
     }
 });
 
