@@ -18,7 +18,7 @@
     ],
     "ios": {
       "bundleIdentifier": "com.guineamarket.dibida",
-      "buildNumber": "1.0.23",
+      "buildNumber": "1.0.25",
       "supportsTablet": true,
       "googleServicesFile": "./app/GoogleService-Info.plist",
       "infoPlist": {
@@ -28,7 +28,7 @@
     },
     "android": {
       "package": "com.guineamarket.dibida",
-      "versionCode": 3,
+      "versionCode": 4,
       "useNextNotificationsApi": true,
       "adaptiveIcon": {
         "foregroundImage": "./app/assets/adaptive-icon.png",
