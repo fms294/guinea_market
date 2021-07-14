@@ -40,18 +40,23 @@ const WelcomeScreen = (props) => {
     const [updatePasswordView, setUpdatePasswordView] = useState(false);
     const [registerOTPView, setRegisterOTPView] = useState(false);
     const [registrationValues, setRegistrationValues] = useState();
+    const [emailLogin, setEmailLogin] = useState(false);
     const dispatch = useDispatch();
 
     const validationSchemaLogin = Yup.object().shape({
-        //email: Yup.string().required().email().label("Email"),
         phone: Yup.string().required().matches(/^\d{9}$/, {message: t("welcome_screen:error_phone_msg")}),
+        password: Yup.string().required().min(6).label("Password"),
+    });
+
+    const validationSchemaLoginEmail = Yup.object().shape({
+        phone: Yup.string().required().email().label("Email"),
         password: Yup.string().required().min(6).label("Password"),
     });
 
     const validationSchemaRegister = Yup.object().shape({
         name: Yup.string().required().label("Name"),
-        //email: Yup.string().required().email().label("Email"),
-        phone: Yup.string().required().matches(/^\d{9}$/, {message: t("welcome_screen:error_phone_msg")}),
+        // email: Yup.string().required().email().label("Email"),
+        // phone: Yup.string().required().matches(/^\d{9}$/, {message: t("welcome_screen:error_phone_msg")}),
         password: Yup.string().required().min(6).label("Password"),
         confirmPassword: Yup.string().label("Password Confirm").required()
             .oneOf([Yup.ref('password')], 'Confirm Password must matched Password'),
@@ -102,7 +107,6 @@ const WelcomeScreen = (props) => {
     }
 
     const handleConfirmOTP = async (values) => {
-        //console.log("confirm otp",values.otp);
         console.log("confirm otp...",serverOtp);
         if(parseInt(serverOtp) === parseInt(values.otp)){
             //console.log("Matched");
@@ -145,6 +149,7 @@ const WelcomeScreen = (props) => {
         if(parseInt(serverOtp) === parseInt(values.otp)){
             console.log("matched", registrationValues);
             await dispatch(authActions.signup(registrationValues.name, registrationValues.phone, registrationValues.password));
+
             if(props.route.params.listing) {
                 props.navigation.navigate("ListingDetailsScreen",{
                     listing: props.route.params.listing,
@@ -183,12 +188,16 @@ const WelcomeScreen = (props) => {
                     }).catch((err) => {
                         setLoading(false);
                         console.log("Catch in registration otp", err);
-                        throw new Error(t("welcome_screen:user_already"));
+                        if (err === "400") {
+                            throw new Error("Invalid Details");
+                        } else {
+                            throw new Error(t("welcome_screen:user_already"));
+                        }
                     })
                 //await dispatch(authActions.signup(values.name, values.phone, values.password));
-            }else {
+            } else {
                 await dispatch(authActions.login(values.phone, values.password));
-                if(props.route.params.listing) {
+                if (props.route.params.listing) {
                     props.navigation.navigate("ListingDetailsScreen",{
                         listing: props.route.params.listing,
                         images : props.route.params.images
@@ -302,14 +311,14 @@ const WelcomeScreen = (props) => {
                                                             console.log("catch...", err);
                                                         });
                                                     }}
-                                                    validationSchema={validationSchemaHandleOtp}
+                                                    // validationSchema={validationSchemaHandleOtp}
                                                 >
                                                     <FormField
                                                         icon={"phone"}
-                                                        keyboardType={"decimal-pad"}
-                                                        maxLength={9}
+                                                        keyboardType={"default"}
+                                                        // maxLength={9}
                                                         name={"phone"}
-                                                        placeholder={t("welcome_screen:phone")}
+                                                        placeholder={t("welcome_screen:email_or_phone")}
                                                     />
                                                     {loading ? (
                                                         <ActivityIndicator
@@ -342,16 +351,29 @@ const WelcomeScreen = (props) => {
                                                     console.log("catch...", err);
                                                 });
                                             }}
-                                            validationSchema={validationSchemaLogin}
+                                            validationSchema={
+                                                emailLogin ? validationSchemaLoginEmail : validationSchemaLogin
+                                            }
                                         >
                                             <ErrorMessage error={errorMessage} visible={loginFailed}/>
-                                            <FormField
-                                                icon={"phone"}
-                                                keyboardType={"decimal-pad"}
-                                                maxLength={9}
-                                                name={"phone"}
-                                                placeholder={t("welcome_screen:phone")}
-                                            />
+                                            {emailLogin ? (
+                                                <FormField
+                                                    icon={"email"}
+                                                    keyboardType={"default"}
+                                                    name={"phone"}
+                                                    placeholder={t("welcome_screen:email")}
+                                                />
+                                            ) : (
+                                                <FormField
+                                                    icon={"phone"}
+                                                    keyboardType={"decimal-pad"}
+                                                    maxLength={9}
+                                                    name={"phone"}
+                                                    placeholder={t("welcome_screen:phone")}
+                                                />
+                                            )
+                                            }
+
                                             <FormField
                                                 autoCapitalize="none"
                                                 autoCorrect={false}
@@ -378,10 +400,21 @@ const WelcomeScreen = (props) => {
                                             onPress={() => {
                                                 //Alert.alert("Warning", "Feature Yet to be Implemented", [{text: "Okay"}])
                                                 setForgetView(true);
-                                                setOtpView(false);
                                             }}
                                         >
                                             <Text style={styles.textStyleForget}>{t("welcome_screen:forget_pass")}</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={styles.openButton}
+                                            onPress={() => {
+                                                //Alert.alert("Warning", "Feature Yet to be Implemented", [{text: "Okay"}])
+                                                setEmailLogin(!emailLogin)
+                                                // console.log('Email chagned', emailLogin)
+                                            }}
+                                        >
+                                            {emailLogin ? <Text style={styles.textStyle}>{t("welcome_screen:login_phone")}</Text>
+                                            : <Text style={styles.textStyle}>{t("welcome_screen:login_email")}</Text>}
+
                                         </TouchableOpacity>
                                         <TouchableOpacity
                                             style={styles.openButton}
@@ -469,9 +502,9 @@ const WelcomeScreen = (props) => {
                                         <FormField
                                             icon={"phone"}
                                             keyboardType={"decimal-pad"}
-                                            maxLength={9}
+                                            // maxLength={9}
                                             name={"phone"}
-                                            placeholder={t("welcome_screen:phone")}
+                                            placeholder={t("welcome_screen:email_or_phone")}
                                         />
                                         <FormField
                                             autoCapitalize="none"
@@ -518,8 +551,10 @@ const WelcomeScreen = (props) => {
                                     </>
                                 )}
                                 </Formik>
-                            </>}</>
-                            )}
+                            </>
+                            }
+                            </>
+                        )}
 
                         <TouchableOpacity
                             style={styles.openButton}
@@ -528,6 +563,7 @@ const WelcomeScreen = (props) => {
                                 setErrorMessage("");
                                 setForgetView(false);
                                 setOtpView(false);
+                                setRegisterOTPView(false);
                                 setUpdatePasswordView(false);
                             }}
                         >

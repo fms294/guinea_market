@@ -34,7 +34,6 @@ const UserProfileScreen = (props) => {
     const [imageName, setImageName] = useState('');
 
     const nameImageHandler = () => {
-        //console.log("userData..", userData.username)
         let name = userData.username.split(" ");
         const newName = name.map((name) => name[0]).join('');
         setImageName(newName.toUpperCase());

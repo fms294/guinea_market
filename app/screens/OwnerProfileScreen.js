@@ -17,7 +17,7 @@ import colors from "../config/colors";
 import * as authActions from "../store/actions/auth";
 import {Avatar, Button, Snackbar} from "react-native-paper";
 import Modal from "react-native-modal";
-import {updatePassword} from "../api/apiCall";
+import {updatePassword, changePassword} from "../api/apiCall";
 import * as ImagePicker from "expo-image-picker";
 
 const validateUpdateSchema = Yup.object().shape({
@@ -40,6 +40,12 @@ const OwnerProfileScreen = (props) => {
     const [visible, setVisible] = useState(false);
     const dispatch = useDispatch();
     const [imageName, setImageName] = useState('');
+    const [updatePasswordView, setUpdatePasswordView] = useState(false);
+    const [OTPView, setOTPView] = useState(false);
+    const [newPassword, setNewPassword] = useState();
+    const [otpView, setOtpView] = useState(false);
+    const [serverOtp, setServerOtp] = useState();
+    const [serverId, setServerId] = useState('');
 
     const nameImageHandler = () => {
         let name = initialValue.split(" ");
@@ -82,6 +88,56 @@ const OwnerProfileScreen = (props) => {
             setLoading(false);
         }
     };
+
+    const validationSchemaConfirmOtp = Yup.object().shape({
+        otp : Yup.number().required().min(4).label("OTP"),
+    });
+
+    const handleOTP = async (value, values) => {
+        try{
+            setNewPassword(values)
+            setLoading(true);
+            await changePassword(value)
+                .then((res) => {
+                    console.log("response...", res.data.otp)
+                    setServerOtp(res.data.otp);
+                    setServerId(res.data.user._id);
+                    setOtpView(true);
+                    setLoading(false);
+                }).catch((err) => {
+                    console.log("Change..err", err);
+                    Alert.alert(t("welcome_screen:handle_alert"), t("welcome_screen:handle_alert_msg"),
+                        [{
+                            text : t("welcome_screen:create_acc"),
+                            style: 'destructive',
+                            onPress: () =>{
+                                console.log('User', values)
+                            }},
+                            {
+                                text: t("welcome_screen:try_again"),
+                                style: 'cancel'
+                            }
+                        ])
+                })
+            setLoading(false);
+        } catch(err) {
+            console.log("Change..catch", err);
+            setLoading(false);
+        }
+    }
+
+    const handleConfirmOTP = async (values) => {
+        console.log("confirm otp...",serverOtp);
+        if(parseInt(serverOtp) === parseInt(values.otp)){
+            //console.log("Matched");
+            setOTPView(false)
+            setUpdatePasswordView(true);
+            await handlePasswordUpdate(newPassword)
+        }else{
+            console.log("Wrong Otp");
+            Alert.alert(t("welcome_screen:confirmOtp_alert"), t("welcome_screen:confirmOtp_alert_msg"), [{text: t("welcome_screen:retry")}]);
+        }
+    }
 
     const handleProfile = async (values) => {
         try {
@@ -127,45 +183,96 @@ const OwnerProfileScreen = (props) => {
                     setModalVisible(!modalVisible);
                 }}
             >
-                <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                        <Text style={styles.modalText}>{t("ownerScreen:change_pass")}</Text>
-                        <Form
-                            initialValues={{password: ""}}
-                            onSubmit={(values) => handlePasswordUpdate(values)}
-                            validationSchema={validateSchemaPasswordChange}
-                        >
-                            <FormField
-                                autoCapitalize="none"
-                                autoCorrect={false}
-                                icon="lock"
-                                name="password"
-                                placeholder={t("welcome_screen:new_pass")}
-                                secureTextEntry
-                                textContentType="password"
-                            />
-                            {loading ? (
-                                <>
-                                    <ActivityIndicator
-                                        style={{marginTop: 10}}
-                                        size={"large"}
-                                        color={colors.primary}
+                {updatePasswordView ? (
+                    <>
+                        {OTPView ? (
+                            <View style={styles.centeredView}>
+                                <View style={styles.modalView}>
+                                <Text style={styles.modalText}>{t("welcome_screen:otp_msg_forget")}</Text>
+                                <Form
+                                    initialValues={{otp: ""}}
+                                    onSubmit={(values) => handleConfirmOTP(values)}
+                                    validationSchema={validationSchemaConfirmOtp}
+                                >
+                                    <FormField
+                                        icon="phone"
+                                        keyboardType="decimal-pad"
+                                        maxLength={4}
+                                        name='otp'
+                                        placeholder={t("welcome_screen:enter_otp")}
+                                        textContentType="oneTimeCode"
                                     />
-                                </>
-                            ) : (
-                                <SubmitButton title={t("welcome_screen:update_pass")}/>
-                            )}
-                        </Form>
-                        <TouchableOpacity
-                            style={styles.openButton}
-                            onPress={() => {
-                                setModalVisible(!modalVisible);
-                            }}
-                        >
-                            <Text style={styles.textStyle}>{t("welcome_screen:cancel")}</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                                    <SubmitButton title={t("welcome_screen:confirm_otp")}/>
+                                    <TouchableOpacity
+                                        style={styles.openButton}
+                                        onPress={() => {
+                                            setOTPView(false)
+                                            setModalVisible(false);
+                                        }}
+                                    >
+                                        <Text style={styles.textStyle}>{t("welcome_screen:cancel")}</Text>
+                                    </TouchableOpacity>
+                                </Form>
+                                </View>
+                            </View>
+                        ) : (
+                            <View style={styles.centeredView}>
+                                <View style={styles.modalView}>
+                                    <Text style={styles.modalText}>{t("ownerScreen:change_pass")}</Text>
+                                    <Form
+                                        initialValues={{password: ""}}
+                                        onSubmit={(values) => {
+                                            setOTPView(true)
+                                            setNewPassword(values)
+                                            const value = {
+                                                phone: userData.phone
+                                            }
+                                            handleOTP(value, values).then((res) => {
+
+                                            }).catch((err) => {
+                                                setLoading(false);
+                                                console.log("catch...", err);
+                                            });
+                                        }}
+                                        validationSchema={validateSchemaPasswordChange}
+                                    >
+                                        <FormField
+                                            autoCapitalize="none"
+                                            autoCorrect={false}
+                                            icon="lock"
+                                            name="password"
+                                            placeholder={t("welcome_screen:new_pass")}
+                                            secureTextEntry
+                                            textContentType="password"
+                                        />
+                                        {loading ? (
+                                            <>
+                                                <ActivityIndicator
+                                                    style={{marginTop: 10}}
+                                                    size={"large"}
+                                                    color={colors.primary}
+                                                />
+                                            </>
+                                        ) : (
+                                            <SubmitButton title={t("welcome_screen:update_pass")}/>
+                                        )}
+                                    </Form>
+                                    <TouchableOpacity
+                                        style={styles.openButton}
+                                        onPress={() => {
+                                            setOTPView(false)
+                                            setModalVisible(!modalVisible);
+                                        }}
+                                    >
+                                        <Text style={styles.textStyle}>{t("welcome_screen:cancel")}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        )
+                        }
+                    </>
+                ) : null
+                }
             </Modal>
             <View style={styles.container}>
                 <TouchableOpacity onPress={pickImage} >
@@ -212,6 +319,7 @@ const OwnerProfileScreen = (props) => {
                     uppercase={false}
                     mode={"outlined"}
                     onPress={() => {
+                        setUpdatePasswordView(true);
                         setModalVisible(true);
                     }}
                 >{t("ownerScreen:change_pass")}</Button>

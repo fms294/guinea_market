@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 import { uri } from "../config/app_uri";
 
 export const registration_otp = (data) => {
-    //console.log("registration otp... api call", data);
+    console.log("registration otp... api call", data);
     return new Promise((resolve, reject) => {
         return (
             axios.post(`${uri}/users/register_OTP`, data,
@@ -17,9 +17,9 @@ export const registration_otp = (data) => {
                     console.log(res)
                     resolve(res)
                 })
-                .catch((error) => {
-                    console.log("reject...",error.e);
-                    reject(error);
+                .catch(error => {
+                    console.log("reject...",error.message.substr(error.message.length - 3));
+                    reject(error.message.substr(error.message.length - 3));
                 })
         );
     })
@@ -31,6 +31,29 @@ export const forgetPassword = (phone) => {
     return new Promise((resolve, reject) => {
         return (
             axios.post(`${uri}/users/forgetPass`,phone,
+                {
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                })
+                .then(res => {
+                    //console.log(res)
+                    resolve(res)
+                })
+                .catch((error) => {
+                    reject(error);
+                    console.log(error)
+                })
+        );
+    })
+};
+
+export const changePassword = (phone) => {
+    console.log("Change Password... api call", phone);
+    return new Promise((resolve, reject) => {
+        return (
+            axios.post(`${uri}/users/changePass`,phone,
                 {
                     headers: {
                         Accept: 'application/json',

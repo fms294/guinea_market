@@ -14,7 +14,6 @@ import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 import * as Analytics from "expo-firebase-analytics";
 
-
 const rootReducer = combineReducers({
     auth: authReducers,
     listing: listingReducers,

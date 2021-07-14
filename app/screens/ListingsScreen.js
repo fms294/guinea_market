@@ -210,14 +210,26 @@ const ListingsScreen = (props) => {
             setLoading(false);
         }
         setLoading(false);
-    }, [dispatch]);
+    }, []);
 
-    useEffect(() => {
-        props.navigation.addListener('focus', loadFeed);
-        return () => {
-            props.navigation.removeListener('focus', loadFeed);
-        };
-    }, [loadFeed]);
+    // useEffect(() => {
+    //     // console.log("ddd", props.route.params)
+    //     // props.navigation.addListener('focus', () => {
+    //     //     console.log("in focus", props.route.params)
+    //     //     if (props.route.params !== undefined) {
+    //     //         loadFeed.then(() => {
+    //     //             console.log('Heheh')})
+    //     //     }
+    //     // })
+    //     props.navigation.addListener('focus', () => {
+    //         if (props.route.params !== undefined) {
+    //             loadFeed
+    //         }
+    //     });
+    //     return () => {
+    //         props.navigation.removeListener('focus', loadFeed);
+    //     };
+    // }, [loadFeed]);
 
     useEffect(() => {
         setLoading(true);
@@ -258,7 +270,7 @@ const ListingsScreen = (props) => {
     }
 
     useEffect(() => {
-        setSortedData(sortBy(data));
+        setSortedData(sortBy(data))
     });
 
     const RenderSeparator = () => {
@@ -514,7 +526,7 @@ const ListingsScreen = (props) => {
                                                     refreshControl={
                                                         <RefreshControl refreshing={loading} onRefresh={loadFeed}/>
                                                     }
-                                                    //inverted
+                                                    // inverted
                                                     data={filterData}
                                                     keyExtractor={(item, index) => index.toString()}
                                                     renderItem={(itemData) => {
@@ -569,13 +581,13 @@ const ListingsScreen = (props) => {
                                     </>
                                     :
                                     <>
-                                        {sortedData.length === 0 ? (<><View style={styles.centered}><Text>{t("listing_screen:no_feed")}</Text></View></>) :
+                                        {sortedData.length === 0 ? (<></>) : //<View style={styles.centered}><Text>{t("listing_screen:no_feed")}</Text></View>
                                             (
                                                 <FlatList
                                                     refreshControl={
                                                         <RefreshControl refreshing={loading} onRefresh={loadFeed}/>
                                                     }
-                                                    //inverted
+                                                    // inverted
                                                     data={sortedData}
                                                     renderItem={(itemData) => {
                                                         //console.log("listings", itemData.item);

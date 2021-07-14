@@ -1,7 +1,7 @@
 export const categories = [
-    {category: "Vehicles", sub_category: ["Cars", "Trucks"]},
+    {category: "Vehicles", sub_category: ["Cars", "Trucks", "Mini Buses"]},
     {category: "Mobile phones"},
-    {category: "Immovable", sub_category: ["Apartments", "House", "Ground", "Office & Store", "Holiday home", "Other Immovables"]},
+    {category: "Immovable", sub_category: ["Apartments for Rent", "House for Rent", "Ground to Sell", "Office & Store", "Holiday home", "Other Immovables"]},
     {category: "Electronic", sub_category: ["Computers", "Tele", "Cameras", "Video games", "Other Electronics"]},
     {category: "Heavy machinery"},
     {category: "Construction", sub_category: ["Doors and windows", "Construction materials", "Materials", "Other construction equipment"]},
@@ -17,7 +17,7 @@ export const categories = [
     {category: "Jewellery"},
     {category: "Books & Magazines"},
     {category: "Clothing & Accessories"},
-    {category: "Job", sub_category: ["Fixed-term contract", "Permanent contract", "Other Type of Work"]},
+    {category: "Job", sub_category: ["Employer", "Job seeker", "Other Type of employment"]},
     {category: "Health", sub_category: ["Hospital", "Pharmacies", "Private clinics"]},
     {category: "Services", sub_category: ["Automobile repair", "Car rental", "Beauty salon", "Carpentry", "Repair of Telephones", "Electrician Services", "Event planning", "Financial service", "Rental of Heavy Equipment", "Hotels", "Legal services", "Motels", "Plumbers", "Restaurants", "Travel & Vacation Agency", "Other services"]},
 ];

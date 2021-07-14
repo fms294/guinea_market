@@ -252,6 +252,7 @@ const ChatScreen = (props) => {
                     placeholder={t("detail_screen:type_msg")}
                     value={text}
                     onChangeText={text => setText(text)}
+                    multiline={true}
                     // onContentSizeChange={(event) => {
                     //     onContentSizeChange(event)
                     // }}

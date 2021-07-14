@@ -57,12 +57,12 @@ const MyListingsScreen = (props) => {
         ]);
     };
 
-    useEffect(() => {
-        props.navigation.addListener('focus', loadFeed);
-        return () => {
-            props.navigation.removeListener('focus', loadFeed);
-        };
-    }, [loadFeed]);
+    // useEffect(() => {
+    //     props.navigation.addListener('focus', loadFeed);
+    //     return () => {
+    //         props.navigation.removeListener('focus', loadFeed);
+    //     };
+    // }, [loadFeed]);
 
     useEffect(() => {
         setLoading(true);
@@ -105,9 +105,9 @@ const MyListingsScreen = (props) => {
                 </>
             ) : (
                     <FlatList
-                        refreshControl={
-                            <RefreshControl refreshing={loading} onRefresh={loadFeed}/>
-                        }
+                        // refreshControl={
+                        //     <RefreshControl refreshing={loading} onRefresh={loadFeed}/>
+                        // }
                         data={sortedData}
                         renderItem={(itemData) => {
                             //console.log("listings", itemData.item);

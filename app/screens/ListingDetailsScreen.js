@@ -46,7 +46,7 @@ const ListingDetailsScreen = (props) => {
 
     const nameImageHandler = (nameData) => {
         let name = nameData.split(" ");
-        const newName = name.map((name) => name[0]).join('');
+        const newName = name.slice(0,2).map((name) => name[0]).join('');
         setImageName(newName.toUpperCase());
     };
 
@@ -293,6 +293,7 @@ const ListingDetailsScreen = (props) => {
                                         mode={"outlined"}
                                         placeholder={t("detail_screen:input_placeholder")}
                                         value={text}
+                                        multiline={true}
                                         onChangeText={text => setText(text)}
                                     />
                                     <IconButton
@@ -343,7 +344,7 @@ const ListingDetailsScreen = (props) => {
                                             />
                                         </>
                                     }
-                                    <View style={{marginHorizontal: 20, justifyContent: "center"}}>
+                                    <View style={{marginHorizontal: 20, justifyContent: "center", maxWidth: "80%"}}>
                                         <Text style={{fontSize: 28}}>{listedUser.username}</Text>
                                         <Text style={{fontSize: 15, color:colors.medium}}>{listedUser.feed_count + " " +t("detail_screen:listings")}</Text>
                                     </View>

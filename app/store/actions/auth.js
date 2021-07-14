@@ -96,21 +96,24 @@ export const login = (phone, password) => {
             const resData =  await response.json();
             const {userData} = resDataHandler(resData);
             dispatch({type: USER_LOGIN, token: resData.token, userData: userData});
+
         }catch(err) {
             throw new Error(err);
         }
     }
 }
 
-export const updateProfile = (imageData, username) => {
+export const updateProfile = (imageData, username, email) => {
     return async (dispatch , getState) => {
-        console.log("action...", imageData, username)
+        console.log("action...", imageData, username, email)
         const token = getState().auth.token;
         const formData = new FormData();
         if(imageData === null) {
             formData.append("username", username);
+            formData.append("email", email);
         } else {
             formData.append("username", username);
+            formData.append("email", email);
             formData.append("profile_img", "NA");
             formData.append("images", {uri: imageData.uri, type: `image/${imageData.type}`, name: new Date().getTime().toString()+".jpg"});
         }
@@ -158,6 +161,7 @@ const resDataHandler = (resData) => {
     const userData = {
         userId: resData.user._id,
         username: resData.user.username,
+        userEmail: resData.user.email,
         userPhone: resData.user.phone,
         userImage: resData.user.profile_img,
         userNotification_token: resData.user.notification_token

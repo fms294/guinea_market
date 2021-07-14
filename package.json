@@ -19,9 +19,12 @@
     "axios": "^0.21.1",
     "expo": "~38.0.8",
     "expo-constants": "^9.3.5",
+    "expo-firebase-analytics": "~2.4.1",
+    "expo-firebase-core": "~1.1.1",
     "expo-image-manipulator": "^9.0.0",
     "expo-image-picker": "~8.3.0",
     "expo-image-picker-multiple": "git+https://github.com/smartsuhani/expo-image-picker-multiple.git",
+    "expo-notifications": "~0.3.3",
     "expo-permissions": "~9.0.1",
     "formik": "^2.1.4",
     "google-translate-api": "^2.3.0",
@@ -32,6 +35,7 @@
     "react-dom": "~16.11.0",
     "react-i18next": "^7.8.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-38.0.2.tar.gz",
+    "react-native-appsflyer": "^6.3.20",
     "react-native-expo-image-cache": "^4.1.0",
     "react-native-gesture-handler": "~1.6.0",
     "react-native-image-slider-box": "^1.0.12",
@@ -48,10 +52,7 @@
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "undefined": "https://github.com/smartsuhani/expo-image-picker-multiple",
-    "yup": "^0.29.3",
-    "expo-notifications": "~0.3.3",
-    "expo-firebase-core": "~1.1.1",
-    "expo-firebase-analytics": "~2.4.1"
+    "yup": "^0.29.3"
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",
