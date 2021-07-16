@@ -13,18 +13,18 @@ const AppFormPicker = (props) => {
         //console.log("props", props);
     })
     return (
-    <>
-      <AppPicker
-        items={items}
-        //numberOfColumns={numberOfColumns}
-        onSelectItem={(item) => setFieldValue(name, item)}
-        PickerItemComponent={PickerItemComponent}
-        placeholder={placeholder}
-        selectedItem={values[name]}
-      />
-      <ErrorMessage error={errors[name]} visible={touched[name]} />
-    </>
-  );
+        <>
+            <AppPicker
+                items={items}
+                //numberOfColumns={numberOfColumns}
+                onSelectItem={(item) => setFieldValue(name, item)}
+                PickerItemComponent={PickerItemComponent}
+                placeholder={placeholder}
+                selectedItem={values[name]}
+            />
+            <ErrorMessage error={errors[name]} visible={touched[name]} />
+        </>
+    );
 }
 
 export default AppFormPicker;

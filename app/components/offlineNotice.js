@@ -9,7 +9,7 @@ import colors from '../config/colors';
 function offlineNotice(props) {
     const netInfo = useNetInfo();
 
-    if(netInfo.type !== "unkown" && netInfo.isInternetReachable === false)
+    if(netInfo.type !== "unknown" && netInfo.isInternetReachable === false)
         return (
             <View style={styles.container}>
                 <Text style={styles.text}>No internet Connection</Text>

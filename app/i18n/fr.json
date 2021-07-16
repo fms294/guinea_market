@@ -115,7 +115,10 @@
     "user_already": "Utilisateur déjà enregistré",
     "error_phone_msg": "Entrez un numéro de téléphone valide",
     "otp_msg_forget": "OTP reçu sur le numéro de téléphone mobile que vous avez enregistré.",
-    "otp_msg_register": "OTP reçu sur votre numéro de mobile."
+    "otp_msg_forget_email_or_phone": "OTP reçu sur le numéro de mobile ou l'e-mail que vous avez enregistré.",
+    "otp_msg_register": "OTP reçu sur votre numéro de mobile.",
+    "otp_msg_register_email": "OTP reçu sur votre e-mail.",
+    "otp_msg_register_email_or_phone": "OTP reçu sur votre numéro de mobile ou email."
   },
   "listing_screen": {
     "feed": "Page d'accueil",

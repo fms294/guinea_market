@@ -1,9 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
-
 import colors from '../config/colors';
-
 
 const AppButton = (props) => {
     const { title, onPress, color="primary" } = props;
@@ -31,6 +29,5 @@ const styles = StyleSheet.create({
         fontWeight:"bold"
     }
 })
-
 
 export default AppButton;

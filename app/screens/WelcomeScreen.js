@@ -6,7 +6,7 @@ import {
     Image,
     Text,
     TouchableOpacity,
-    Alert, ActivityIndicator
+    Alert, ActivityIndicator, Keyboard, TouchableWithoutFeedback
 } from 'react-native';
 import Modal from "react-native-modal";
 import colors from "../config/colors";
@@ -57,6 +57,17 @@ const WelcomeScreen = (props) => {
         name: Yup.string().required().label("Name"),
         // email: Yup.string().required().email().label("Email"),
         // phone: Yup.string().required().matches(/^\d{9}$/, {message: t("welcome_screen:error_phone_msg")}),
+        // phone: Yup.string().when('isEmailValue', {
+        //     is: 'true',
+        //     then: Yup
+        //         .string()
+        //         .email('Please enter valid email')
+        //         .required('This field is required'),
+        //     otherwise: Yup
+        //         .string()
+        //         .matches(/^\d{9}$/, 'Please enter valid phone number')
+        //         .required('This field is required'),
+        // }),
         password: Yup.string().required().min(6).label("Password"),
         confirmPassword: Yup.string().label("Password Confirm").required()
             .oneOf([Yup.ref('password')], 'Confirm Password must matched Password'),
@@ -232,7 +243,10 @@ const WelcomeScreen = (props) => {
                     setModalVisible(!modalVisible);
                 }}
             >
-                <View style={styles.centeredView}>
+                <TouchableWithoutFeedback
+                    style={styles.centeredView}
+                    onPress={Keyboard.dismiss}
+                >
                     <View style={styles.modalView}>
                         {title === t("welcome_screen:login") ? (
                             <>
@@ -359,7 +373,7 @@ const WelcomeScreen = (props) => {
                                             {emailLogin ? (
                                                 <FormField
                                                     icon={"email"}
-                                                    keyboardType={"default"}
+                                                    keyboardType={"email-address"}
                                                     name={"phone"}
                                                     placeholder={t("welcome_screen:email")}
                                                 />
@@ -432,7 +446,7 @@ const WelcomeScreen = (props) => {
                             <>
                             {registerOTPView ?
                                     <>
-                                        <Text style={styles.modalText}>{t("welcome_screen:otp_msg_register")}</Text>
+                                        <Text style={styles.modalText}>{t("welcome_screen:otp_msg_register_email_or_phone")}</Text>
                                         <Form
                                             initialValues={{otp: ""}}
                                             onSubmit={(values) => {
@@ -501,7 +515,6 @@ const WelcomeScreen = (props) => {
                                         />
                                         <FormField
                                             icon={"phone"}
-                                            keyboardType={"decimal-pad"}
                                             // maxLength={9}
                                             name={"phone"}
                                             placeholder={t("welcome_screen:email_or_phone")}
@@ -570,7 +583,7 @@ const WelcomeScreen = (props) => {
                             <Text style={styles.textStyle}>{t("welcome_screen:cancel")}</Text>
                         </TouchableOpacity>
                     </View>
-                </View>
+                </TouchableWithoutFeedback>
             </Modal>
 
             <View style={styles.logoContainer}>

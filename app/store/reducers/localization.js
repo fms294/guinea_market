@@ -1,4 +1,4 @@
-import { CHANGE_LANGAUGE } from '../actions/localization';
+import { CHANGE_LANGUAGE } from '../actions/localization';
 
 const initialState = {
     language : 'fr'
@@ -6,7 +6,7 @@ const initialState = {
 
 export default (state = initialState, action) =>{
     switch (action.type){
-        case CHANGE_LANGAUGE:
+        case CHANGE_LANGUAGE:
             return{
                 ...state,
                 language: action.language

@@ -23,7 +23,6 @@ const AppNavigator = (props) => {
                 name="FeedNavigator"
                 component={FeedNavigator}
                 options={{
-                    unmountOnBlur: true,
                     tabBarIcon: ({ color, size}) =>
                     <Ionicons name="home-sharp" color={color} size={30}/>
                 }}

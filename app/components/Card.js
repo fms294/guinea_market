@@ -5,7 +5,6 @@ import { Image } from 'react-native-expo-image-cache';
 import colors from '../config/colors';
 import AppText from './Text';
 
-
 function Card({title, subTitle, imageUrl, onPress, thumbnailUrl}){
     return(
         <TouchableWithoutFeedback onPress={onPress}>

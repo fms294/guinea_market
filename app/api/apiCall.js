@@ -25,7 +25,6 @@ export const registration_otp = (data) => {
     })
 };
 
-
 export const forgetPassword = (phone) => {
     //console.log("ForgetPassword... api call", phone);
     return new Promise((resolve, reject) => {
@@ -50,7 +49,7 @@ export const forgetPassword = (phone) => {
 };
 
 export const changePassword = (phone) => {
-    console.log("Change Password... api call", phone);
+    // console.log("Change Password... api call", phone);
     return new Promise((resolve, reject) => {
         return (
             axios.post(`${uri}/users/changePass`,phone,
@@ -72,9 +71,8 @@ export const changePassword = (phone) => {
     })
 };
 
-export const updatePassword = (id,password) => {
+export const updatePassword = (id, password) => {
     // console.log(`${uri}/users/updatePassword/${id}`, password);
-    // console.log(id, password);
     return new Promise((resolve, reject) => {
         return (
             axios.patch(`${uri}/users/updatePassword/${id}`,password,

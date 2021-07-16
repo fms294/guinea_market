@@ -2,7 +2,6 @@ import React, { useRef } from 'react';
 import {View, StyleSheet, ScrollView} from 'react-native';
 import ImageInput from './ImageInput';
 
-
 const ImageInputList = (props) => {
     console.log("props......", props);
     const { imageUris = [], onRemoveImage, onAddImage } = props;
@@ -28,7 +27,7 @@ const ImageInputList = (props) => {
                 </View>
             </ScrollView>
         </View>
-  );
+    );
 }
 
 const styles = StyleSheet.create({
@@ -39,4 +38,5 @@ const styles = StyleSheet.create({
         marginRight:10
     }
 })
+
 export default ImageInputList;

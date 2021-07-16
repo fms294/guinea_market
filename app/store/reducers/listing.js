@@ -1,10 +1,11 @@
-import {FETCH_ITEM, FETCH_PROFILE_ITEM, FETCH_USER_ITEM} from "../actions/listing";
+import {FETCH_ITEM, FETCH_PROFILE_ITEM, FETCH_USER_ITEM, REFRESH_TAB} from "../actions/listing";
 
 const initialState = {
     listing_data: [],
     listing_userData: [],
     listing_profileData: [],
-    user_profileData : {}
+    user_profileData : {},
+    refreshTab:false
 };
 
 export default (state= initialState, action) => {
@@ -25,6 +26,11 @@ export default (state= initialState, action) => {
                 ...state,
                 listing_profileData: action.listing_profileData,
                 user_profileData: action.user_profileData
+            }
+        case REFRESH_TAB:
+            return{
+                ...state,
+                refreshTab: !state.refreshTab
             }
         default:
             return state;

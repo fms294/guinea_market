@@ -1,10 +1,12 @@
 import React, {useEffect, useState} from "react";
-import {View, StyleSheet,
+import {
+    View, StyleSheet,
     Text,
     Alert,
     TouchableOpacity,
     Image,
-    ActivityIndicator
+    ActivityIndicator, KeyboardAvoidingView, Platform, Dimensions, TouchableWithoutFeedback, Keyboard,
+
 } from "react-native";
 import { translate } from "react-i18next";
 import {useDispatch, useSelector} from "react-redux";
@@ -186,9 +188,12 @@ const OwnerProfileScreen = (props) => {
                 {updatePasswordView ? (
                     <>
                         {OTPView ? (
-                            <View style={styles.centeredView}>
+                            <TouchableWithoutFeedback
+                                style={styles.centeredView}
+                                onPress={Keyboard.dismiss}
+                            >
                                 <View style={styles.modalView}>
-                                <Text style={styles.modalText}>{t("welcome_screen:otp_msg_forget")}</Text>
+                                <Text style={styles.modalText}>{t("welcome_screen:otp_msg_forget_email_or_phone")}</Text>
                                 <Form
                                     initialValues={{otp: ""}}
                                     onSubmit={(values) => handleConfirmOTP(values)}
@@ -201,6 +206,8 @@ const OwnerProfileScreen = (props) => {
                                         name='otp'
                                         placeholder={t("welcome_screen:enter_otp")}
                                         textContentType="oneTimeCode"
+                                        returnKeyType={"done"}
+                                        secureTextEntry={false}
                                     />
                                     <SubmitButton title={t("welcome_screen:confirm_otp")}/>
                                     <TouchableOpacity
@@ -214,9 +221,12 @@ const OwnerProfileScreen = (props) => {
                                     </TouchableOpacity>
                                 </Form>
                                 </View>
-                            </View>
+                            </TouchableWithoutFeedback>
                         ) : (
-                            <View style={styles.centeredView}>
+                            <TouchableWithoutFeedback
+                                style={styles.centeredView}
+                                onPress={Keyboard.dismiss}
+                            >
                                 <View style={styles.modalView}>
                                     <Text style={styles.modalText}>{t("ownerScreen:change_pass")}</Text>
                                     <Form
@@ -267,7 +277,7 @@ const OwnerProfileScreen = (props) => {
                                         <Text style={styles.textStyle}>{t("welcome_screen:cancel")}</Text>
                                     </TouchableOpacity>
                                 </View>
-                            </View>
+                            </TouchableWithoutFeedback>
                         )
                         }
                     </>

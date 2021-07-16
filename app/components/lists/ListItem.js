@@ -4,7 +4,6 @@ import{View, StyleSheet , Image,TouchableHighlight } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import AppText from '../Text';
 
-
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import colors from "../../config/colors";
 
@@ -36,7 +35,6 @@ function ListItem({title, subTitle, image, IconComponent, onPress, renderRightAc
     );
 }
 
-
 const styles = StyleSheet.create({
     container:{
         alignItems:"center",
@@ -63,4 +61,5 @@ const styles = StyleSheet.create({
     }
 
 })
+
 export default ListItem;

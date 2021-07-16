@@ -39,10 +39,10 @@ export const signup = (username, phone, password) => {
             if(!response.ok){
                 const resData = await response.json();
                 if (resData.name === 'MongoError' && resData.code === 11000) {
-                    if(resData.keyPattern.phone === 1){
+                    if (resData.keyPattern.phone === 1) {
                         console.log("error 1");
                         throw new Error('User already Exists with this Phone Number');
-                    }else {
+                    } else {
                         throw new Error('User already Exists with this Email');
                     }
                 } else {
@@ -103,17 +103,15 @@ export const login = (phone, password) => {
     }
 }
 
-export const updateProfile = (imageData, username, email) => {
+export const updateProfile = (imageData, username) => {
     return async (dispatch , getState) => {
-        console.log("action...", imageData, username, email)
+        console.log("action...", imageData, username)
         const token = getState().auth.token;
         const formData = new FormData();
         if(imageData === null) {
             formData.append("username", username);
-            formData.append("email", email);
         } else {
             formData.append("username", username);
-            formData.append("email", email);
             formData.append("profile_img", "NA");
             formData.append("images", {uri: imageData.uri, type: `image/${imageData.type}`, name: new Date().getTime().toString()+".jpg"});
         }
@@ -161,7 +159,6 @@ const resDataHandler = (resData) => {
     const userData = {
         userId: resData.user._id,
         username: resData.user.username,
-        userEmail: resData.user.email,
         userPhone: resData.user.phone,
         userImage: resData.user.profile_img,
         userNotification_token: resData.user.notification_token

@@ -9,6 +9,7 @@ import axios from "axios";
 export const FETCH_ITEM = "FETCH_ITEM";
 export const FETCH_USER_ITEM = "FETCH_USER_ITEM";
 export const FETCH_PROFILE_ITEM = "FETCH_PROFILE_ITEM";
+export const REFRESH_TAB = "REFRESH_TAB"
 
 //Adding item to the DB
 export const add_item = (finalData) => {
@@ -117,6 +118,15 @@ export const update_item = (finalData, id) => {
         }
     }
 }
+
+export const refreshTab = () => {
+        return (dispatch) =>{
+            dispatch({
+                type: REFRESH_TAB,
+            })
+        }
+}
+
 
 //Fetch all items from DB
 export const fetchFeed = () => {

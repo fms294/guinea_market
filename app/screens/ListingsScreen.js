@@ -29,6 +29,8 @@ import * as listingActions from "../store/actions/listing";
 import * as Notifications from "expo-notifications";
 import AsyncStorage from "@react-native-community/async-storage";
 import {ImageBackground} from "react-native-web";
+import RNRestart from 'react-native-restart';
+import {useIsFocused} from "@react-navigation/native";
 
 const ListingsScreen = (props) => {
     const {t, i18n} = props;
@@ -49,8 +51,9 @@ const ListingsScreen = (props) => {
     //console.log("listing screen",data);
     const [notification, setNotification] = useState({});
     const userData = useSelector((state) => state.auth);
+    const refreshTab = useSelector((state) => state.listing.refreshTab);
     // console.log("userData", userData.userData.userNotification_token);
-
+    const isFocus  = useIsFocused();
     useEffect(() => {
         AsyncStorage.getItem("notification_token").then((res) => {
             if(res !== null) {
@@ -70,6 +73,17 @@ const ListingsScreen = (props) => {
             // console.log("in listings... token...",resToken.token);
         });
     }, []);
+
+    // useEffect(() => {
+    //     if (props.route.params !== undefined) {
+    //         RNRestart.Restart();
+    //     }
+    // })
+    useEffect(() => {
+        if(isFocus){
+            loadFeed()
+        }
+    }, [refreshTab]);
 
     const handleNotification = notification => {
         // setNotification({ notification: notification });
@@ -211,6 +225,12 @@ const ListingsScreen = (props) => {
         }
         setLoading(false);
     }, []);
+
+    const unsubscribe = props.navigation.addListener('tabPress', e => {
+        // Prevent default action
+        e.preventDefault();
+
+    });
 
     // useEffect(() => {
     //     // console.log("ddd", props.route.params)

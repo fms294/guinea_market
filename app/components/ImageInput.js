@@ -62,11 +62,11 @@ const styles = StyleSheet.create({
         justifyContent:'center',
         overflow:'hidden',
         width:100
-
     },
     image:{
         height:100,
         width:100
     }
 })
+
 export default ImageInput;
